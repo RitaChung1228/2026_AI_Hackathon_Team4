@@ -1,0 +1,79 @@
+{
+  "_meta": {
+    "note": "尚未取得廠商正式提供的相關主檔設定，本檔案為虛擬服務商/服務項目示範資料，所有名稱皆為自創虛擬名稱，不對應任何真實品牌。取得正式檔案後請整份覆蓋替換。"
+  },
+  "vendors": [
+    {
+      "name": "晴語家居服務",
+      "description": "提供到府居家清潔與家電深層清洗服務的虛擬服務商（示範資料，非真實品牌）。",
+      "services": [
+        {
+          "type": "1",
+          "name": "居家深層清潔",
+          "img_url": "https://picsum.photos/seed/qingyu-clean/400/300",
+          "description": "客廳、臥室、廚房、衛浴全室清潔服務。"
+        },
+        {
+          "type": "2",
+          "name": "冷氣家電清洗",
+          "img_url": "https://picsum.photos/seed/qingyu-ac/400/300",
+          "description": "分離式冷氣、洗衣機、抽油煙機拆洗服務。"
+        }
+      ]
+    },
+    {
+      "name": "職人水電工坊",
+      "description": "專營居家水電修繕、管線檢修的虛擬服務商（核心示範情境，非真實品牌）。",
+      "services": [
+        {
+          "type": "10",
+          "name": "居家水電修繕",
+          "img_url": "https://picsum.photos/seed/craftsman-repair/400/300",
+          "description": "漏水抓修、插座迴路檢修、燈具安裝等到府服務。"
+        }
+      ]
+    },
+    {
+      "name": "好味餐旅集團",
+      "description": "整合餐廳訂位與美食外送的虛擬服務商（示範資料，非真實品牌）。",
+      "services": [
+        {
+          "type": "6",
+          "name": "餐廳訂位服務",
+          "img_url": "https://picsum.photos/seed/haowei-reserve/400/300",
+          "description": "熱門餐廳線上訂位服務。"
+        },
+        {
+          "type": "9",
+          "name": "美食外送服務",
+          "img_url": "https://picsum.photos/seed/haowei-delivery/400/300",
+          "description": "在地美食快速外送到府。"
+        }
+      ]
+    },
+    {
+      "name": "順遞快運",
+      "description": "提供包裹寄送與代收服務的虛擬服務商（示範資料，非真實品牌）。",
+      "services": [
+        {
+          "type": "3",
+          "name": "包裹寄送服務",
+          "img_url": "https://picsum.photos/seed/shundi-parcel/400/300",
+          "description": "全台包裹寄送與到府收件服務。"
+        }
+      ]
+    },
+    {
+      "name": "悠選生活商城",
+      "description": "提供日用品與生活選物的虛擬電商服務商（示範資料，非真實品牌）。",
+      "services": [
+        {
+          "type": "11",
+          "name": "生活選物商城",
+          "img_url": "https://picsum.photos/seed/youxuan-mall/400/300",
+          "description": "嚴選生活雜貨、家用品線上商城。"
+        }
+      ]
+    }
+  ]
+}

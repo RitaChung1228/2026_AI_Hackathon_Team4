@@ -1,0 +1,68 @@
+{
+  "_meta": {
+    "note": "尚未取得廠商正式提供的訂單紀錄範例資料，本檔案為虛擬示範訂單。依黑客松規則不做真實金流模擬，訂單狀態一律顯示「已成立」等文字說明，不做假付款流程。所有服務商/餐廳名稱皆為自創虛擬名稱。member_* 個資欄位將於匯入時以 AES-256-GCM 加密後寫入 DB。"
+  },
+  "orders": [
+    {
+      "order_no": "ORD20260801001",
+      "vendor_name": "職人水電工坊",
+      "service_name": "居家水電修繕",
+      "form_name": "居家水電修繕諮詢單",
+      "order_type": "01",
+      "order_status": "11",
+      "member_name": "林小姐",
+      "member_phone": "0912345678",
+      "member_email": "demo.user01@example.com",
+      "contact_address_county": "01",
+      "contact_address_district": "011",
+      "contact_address_detail": "台北市大安區示範路100號5樓",
+      "deposit_amount": 1000,
+      "original_amount": 0,
+      "final_amount": 1000,
+      "order_points": 0,
+      "order_items": [{ "name": "到府評估費", "qty": 1, "unit_price": 1000 }],
+      "vendor_data": { "assigned_technician": "示範技師A" },
+      "remark": "已成立，預計 2026 年 8 月完成到府評估與報價，實際費用以現場評估為準。"
+    },
+    {
+      "order_no": "ORD20260802001",
+      "vendor_name": "好味餐旅集團",
+      "service_name": "餐廳訂位服務",
+      "order_type": "02",
+      "order_status": "03",
+      "member_name": "陳先生",
+      "member_phone": "0922333444",
+      "member_email": "demo.user02@example.com",
+      "contact_address_county": "02",
+      "contact_address_district": "021",
+      "contact_address_detail": "新北市板橋區示範街20號",
+      "service_time": "2026-08-10T18:30:00+08:00",
+      "final_amount": 0,
+      "order_items": [{ "name": "4人桌訂位", "qty": 1 }],
+      "vendor_data": { "restaurant_name": "虛擬示範餐廳", "table_size": 4 },
+      "remark": "已成立，訂位資訊已通知店家，敬請準時抵達。"
+    },
+    {
+      "order_no": "ORD20260803001",
+      "vendor_name": "悠選生活商城",
+      "service_name": "生活選物商城",
+      "order_type": "05",
+      "order_status": "80",
+      "member_name": "王小姐",
+      "member_phone": "0933555666",
+      "member_email": "demo.user03@example.com",
+      "contact_address_county": "03",
+      "contact_address_district": "031",
+      "contact_address_detail": "台中市西屯區示範路88號",
+      "original_amount": 1580,
+      "discount_amount": 100,
+      "shipping_fee_amount": 60,
+      "final_amount": 1540,
+      "earn_points": 15,
+      "point_status": "01",
+      "order_items": [{ "name": "居家收納盒組", "qty": 2, "unit_price": 790 }],
+      "vendor_data": { "payment_note": "貨到付款" },
+      "remark": "已成立，預計 2026 年 8 月完成匯款與出貨。"
+    }
+  ]
+}

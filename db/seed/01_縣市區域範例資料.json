@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "note": "尚未取得廠商正式提供的縣市區域範例資料，本檔案為示範用途之精簡子集（3 個縣市 x 3 個行政區），取得正式檔案後請整份覆蓋替換。",
+    "cre_id": "0198a3f1-6e42-7d3a-9c1b-4f8e2a7d5c60"
+  },
+  "sys_county": [
+    { "code": "01", "name": "台北市", "sort": 1 },
+    { "code": "02", "name": "新北市", "sort": 2 },
+    { "code": "03", "name": "台中市", "sort": 3 }
+  ],
+  "sys_district": [
+    { "code": "011", "county_code": "01", "name": "大安區", "name_with_county": "台北市大安區", "zip": "106", "sort": 1 },
+    { "code": "012", "county_code": "01", "name": "信義區", "name_with_county": "台北市信義區", "zip": "110", "sort": 2 },
+    { "code": "013", "county_code": "01", "name": "內湖區", "name_with_county": "台北市內湖區", "zip": "114", "sort": 3 },
+    { "code": "021", "county_code": "02", "name": "板橋區", "name_with_county": "新北市板橋區", "zip": "220", "sort": 1 },
+    { "code": "022", "county_code": "02", "name": "三重區", "name_with_county": "新北市三重區", "zip": "241", "sort": 2 },
+    { "code": "023", "county_code": "02", "name": "新莊區", "name_with_county": "新北市新莊區", "zip": "242", "sort": 3 },
+    { "code": "031", "county_code": "03", "name": "西屯區", "name_with_county": "台中市西屯區", "zip": "407", "sort": 1 },
+    { "code": "032", "county_code": "03", "name": "北屯區", "name_with_county": "台中市北屯區", "zip": "406", "sort": 2 },
+    { "code": "033", "county_code": "03", "name": "南屯區", "name_with_county": "台中市南屯區", "zip": "408", "sort": 3 }
+  ]
+}

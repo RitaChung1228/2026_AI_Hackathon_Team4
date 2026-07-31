@@ -1,0 +1,85 @@
+{
+  "_meta": {
+    "note": "尚未取得廠商正式提供的諮詢單相關範例資料，本檔案為主打場景「水電修繕」的示範表單資料。feedback_examples 內的聯絡人個資為虛構測試資料，將於匯入時以 AES-256-GCM 加密後寫入 DB（不會以明文存放）。取得正式檔案後請整份覆蓋替換。",
+    "pms_form_topic_type_note": "type 對照（依常見表單題型推測，正式規格待廠商確認）：01 單行文字 / 02 多行文字 / 03 單選 / 04 多選 / 05 日期 / 06 照片上傳 / 07 數字"
+  },
+  "forms": [
+    {
+      "vendor_name": "職人水電工坊",
+      "type": "2",
+      "sub_type": "2",
+      "name": "居家水電修繕諮詢單",
+      "intro_content": "請簡述您遇到的水電問題，並上傳現場照片，我們將盡快為您評估報價。",
+      "notice_content": "到府評估需視地區安排時段，實際報價依現場狀況為準。",
+      "terms_content": "送出諮詢單即同意由職人水電工坊聯繫您安排到府評估。",
+      "is_enable": "1",
+      "groups": [
+        {
+          "name": "問題描述",
+          "remark": "請描述您遇到的水電問題",
+          "topics": [
+            {
+              "type": "03",
+              "title": "問題類型",
+              "remark": "請選擇最符合的問題類型",
+              "is_required": "1",
+              "options": [
+                { "name": "漏水/滲水" },
+                { "name": "插座/迴路異常" },
+                { "name": "燈具安裝/更換" },
+                { "name": "其他水電問題" }
+              ]
+            },
+            {
+              "type": "02",
+              "title": "問題詳細說明",
+              "remark": "請簡述問題發生時間、地點與狀況",
+              "is_required": "1"
+            },
+            {
+              "type": "06",
+              "title": "現場照片",
+              "remark": "請上傳問題現場照片，方便師傅初步評估",
+              "is_required": "0",
+              "minimum_medias_upload": 0,
+              "maximum_medias_upload": 5,
+              "media": [
+                { "img_url": "https://picsum.photos/seed/repair-example-1/600/400" }
+              ]
+            },
+            {
+              "type": "05",
+              "title": "希望到府時間",
+              "remark": "請選擇希望的到府評估日期",
+              "is_required": "1",
+              "start_date_offset_days": 1,
+              "end_date_offset_days": 14
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "feedback_examples": [
+    {
+      "form_name": "居家水電修繕諮詢單",
+      "service_name": "居家水電修繕",
+      "type": "2",
+      "is_read": "0",
+      "status": "01",
+      "answers": {
+        "問題類型": "漏水/滲水",
+        "問題詳細說明": "浴室天花板昨晚開始滲水，懷疑是樓上管線漏水。",
+        "希望到府時間": "2026-08-05"
+      },
+      "contact_name": "林小姐",
+      "contact_mobile": "0912345678",
+      "contact_email": "demo.user01@example.com",
+      "preferred_contact_time": "2",
+      "contact_address_county": "01",
+      "contact_address_district": "011",
+      "contact_address_detail": "台北市大安區示範路100號5樓",
+      "description": "希望盡快安排，感謝。"
+    }
+  ]
+}
