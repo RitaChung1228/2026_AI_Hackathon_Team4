@@ -653,6 +653,30 @@ export default function ChatPanel({
         <div ref={bottomRef} />
       </div>
 
+      {/* Chat input */}
+      <div style={{ padding: "10px 16px", borderTop: "1px solid #E5E7EB", display: "flex", gap: 8, alignItems: "center", flexShrink: 0, background: "white" }}>
+        <div className="input-ring" style={{ flex: 1, display: "flex", alignItems: "center", background: "#F8F9FC", borderRadius: 24, border: "1.5px solid #E5E7EB", padding: "0 16px", transition: "all 0.15s" }}>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
+            placeholder="輸入你的需求或直接說話..."
+            style={{ flex: 1, border: "none", outline: "none", background: "transparent", padding: "12px 0", fontSize: 14, fontFamily: "var(--font-body)", color: "#0F0A2E" }}
+          />
+        </div>
+        <button
+          onClick={() => handleSend()}
+          disabled={!input.trim()}
+          style={{ width: 40, height: 40, borderRadius: "50%", border: "none", background: input.trim() ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB", cursor: input.trim() ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s", flexShrink: 0 }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
       {/* Active services tray */}
       {trayItems.length > 0 && (
         <div style={{ padding: "8px 16px", borderTop: "1px solid #F8F9FC", display: "flex", gap: 8, overflowX: "auto", flexShrink: 0 }} className="scrollbar-hide">

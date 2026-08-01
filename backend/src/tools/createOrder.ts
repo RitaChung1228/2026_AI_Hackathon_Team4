@@ -1,24 +1,47 @@
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { ddb } from "../lib/dynamo.js";
 import type { CreateOrderInput, CreateOrderOutput } from "./types.js";
+
+const TABLE_NAME = process.env.DYNAMO_USER_LISTS_TABLE ?? "UserLists";
 
 /**
  * 建立訂單草稿（需使用者確認後才正式成立）
- * 後端 B 實作：寫入 DynamoDB
+ * 寫入 DynamoDB UserLists table
  */
 export async function createOrder(input: CreateOrderInput): Promise<CreateOrderOutput> {
-  // TODO: 後端 B 實作真正的 DynamoDB 寫入
-  // 目前回傳 mock data 供後端 A 測試 agent loop
-
+  const orderId = `ord-${Date.now()}`;
+  const now = new Date().toISOString();
   const totalPrice = input.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const order = {
-    orderId: `ord-${Date.now()}`,
+    orderId,
     userId: input.userId,
     items: input.items,
     totalPrice,
     status: "draft" as const,
     remark: input.remark,
-    createdAt: new Date().toISOString(),
+    createdAt: now,
   };
+
+  // 寫入 DynamoDB
+  await ddb.send(
+    new PutCommand({
+      TableName: TABLE_NAME,
+      Item: {
+        user_id: input.userId,
+        list_type_id: `ORDER#${orderId}`,
+        type: "order_record",
+        order_no: orderId,
+        order_type: "05", // 商品訂單
+        order_status: "01", // 待確認
+        order_items: input.items,
+        final_amount: totalPrice,
+        remark: input.remark ?? "",
+        order_time: now,
+        updated_at: now,
+      },
+    })
+  );
 
   return { order };
 }

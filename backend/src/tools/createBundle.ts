@@ -1,15 +1,19 @@
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { ddb } from "../lib/dynamo.js";
 import type { CreateBundleInput, CreateBundleOutput } from "./types.js";
+
+const TABLE_NAME = process.env.DYNAMO_USER_LISTS_TABLE ?? "UserLists";
 
 /**
  * 建立行程包草稿
- * 後端 B 實作：寫入 DynamoDB
+ * 寫入 DynamoDB UserLists table
  */
 export async function createBundle(input: CreateBundleInput): Promise<CreateBundleOutput> {
-  // TODO: 後端 B 實作真正的 DynamoDB 寫入
-  // 目前回傳 mock data 供後端 A 測試 agent loop
+  const bundleId = `bnd-${Date.now()}`;
+  const now = new Date().toISOString();
 
   const bundle = {
-    bundleId: `bnd-${Date.now()}`,
+    bundleId,
     userId: input.userId,
     title: input.title,
     steps: input.steps.map((step, i) => ({
@@ -20,8 +24,32 @@ export async function createBundle(input: CreateBundleInput): Promise<CreateBund
       completed: false,
     })),
     status: "draft" as const,
-    createdAt: new Date().toISOString(),
+    createdAt: now,
   };
+
+  // 寫入 DynamoDB
+  await ddb.send(
+    new PutCommand({
+      TableName: TABLE_NAME,
+      Item: {
+        user_id: input.userId,
+        list_type_id: `TASK#${bundleId}`,
+        type: "scenario_package",
+        title: input.title,
+        status: "draft",
+        progress_percent: 0,
+        is_saved_as_template: false,
+        modules: input.steps.map((step, i) => ({
+          module_name: step.description,
+          status: "pending",
+          detail: step.serviceId ?? step.productId ?? "",
+          step_id: `step-${i + 1}`,
+        })),
+        created_at: now,
+        updated_at: now,
+      },
+    })
+  );
 
   return { bundle };
 }
