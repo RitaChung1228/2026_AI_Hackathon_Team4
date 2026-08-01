@@ -1,55 +1,95 @@
-# 2026 雲湧智生：AI 智慧管家 黑客松專案
+# UNI Flow — AI 智慧零售管家
 
-透過 AI 統整使用者需求，串接後端資料表產生諮詢單／訂單紀錄的智慧管家 Demo。
-核心主推情境：**水電修繕**（居家水電問題諮詢 → AI 對話收集資訊 → 產生諮詢單／訂單）。
+> 2026 雲湧智生：臺灣生成式 AI 應用黑客松
 
-> 黑客松規則重點：所有服務商／服務名稱皆為自創虛擬名稱，不使用任何真實/競業品牌；
-> 不做真實金流模擬，訂單狀態一律以文字說明呈現（例：「已成立，預計 X 月完成匯款」）。
+UNI Flow 是一款基於生成式 AI 的智慧社區與零售服務管家。透過自然語言對話，AI 自動理解使用者情境、
+預測需求，一站式完成「食衣住行育樂」的服務整合與商品打包下單。
 
-## 目前進度
+---
 
-- [x] **Phase 1**：專案目錄結構
-- [x] **Phase 2**：本機 PostgreSQL（Docker）+ 建表 + 種子資料匯入
-- [x] **Phase 3**：個資加密工具（AES-256-GCM + SHA-256 Hash）+ UUID v7
-- [ ] **Phase 4**：AI 對話與意圖理解（水電修繕場景，待團隊到齊後設計）
-- [ ] **Phase 5**：部署至 AWS
+## 系統架構
+
+```
+┌──────────────┐     ┌────────────────────────────────────────────┐
+│   Frontend   │     │               Backend (Express)             │
+│  Vite+React  │────▶│  /api/chat/agent                            │
+│   :5173      │     │       │                                     │
+└──────────────┘     │       ▼                                     │
+                     │  agent.ts (Bedrock Agent Loop)              │
+                     │       │                                     │
+                     │       ▼ Claude 決定呼叫哪個 Tool            │
+                     │  ┌─────────────────────────────────┐        │
+                     │  │ Tools                           │        │
+                     │  │  get_user_profile  → DynamoDB   │        │
+                     │  │  search_product    → DynamoDB   │        │
+                     │  │  search_service    → DynamoDB   │        │
+                     │  │  create_bundle     → DynamoDB   │        │
+                     │  │  create_order      → DynamoDB   │        │
+                     │  │  get_weather       → mock/API   │        │
+                     │  └─────────────────────────────────┘        │
+                     └────────────────────────────────────────────┘
+                                        │
+                              ┌─────────┴──────────┐
+                              ▼                    ▼
+                     ┌─────────────┐      ┌──────────────┐
+                     │  DynamoDB   │      │   Bedrock    │
+                     │  (us-west-2)│      │  Claude 4    │
+                     │  4 Tables   │      │  (us-west-2) │
+                     └─────────────┘      └──────────────┘
+```
+
+---
 
 ## 技術棧
 
-- **Runtime**：Node.js 22 + TypeScript（`tsx` 直接執行，免額外編譯）
-- **資料庫**：PostgreSQL 16（本地 Docker，未來可換 AWS RDS）
-- **加密**：Node `crypto` 原生模組（AES-256-GCM + SHA-256），無額外套件依賴
-- **測試**：Vitest
+| 層級 | 技術 |
+|---|---|
+| Frontend | React + TypeScript + Vite + TailwindCSS |
+| Backend | Node.js + TypeScript + Express (ESM) |
+| AI | AWS Bedrock (Claude Sonnet 4) |
+| Database | AWS DynamoDB (4 tables) |
+| Runtime | Node.js 22 |
+| Package Manager | npm |
+
+---
 
 ## 目錄結構
 
 ```
 2026_AI_Hackathon/
-├── docker-compose.yml       # 本機 PostgreSQL 容器設定
-├── .env.example             # 環境變數範本（複製為 .env 後填值）
-├── db/
-│   ├── schema/               # 建表 DDL（依檔名順序執行）
-│   │   ├── 00_相關主檔.sql         # cms_homepage_service_vendor / cms_homepage_service
-│   │   ├── 01_縣市區域檔.sql        # sys_county / sys_district
-│   │   ├── 02_諮詢單相關table.sql   # pms_form 系列
-│   │   └── 03_mms_order_record.sql # 訂單紀錄表
-│   ├── seed/                 # 種子資料（虛擬示範資料，依檔名順序匯入）
-│   │   ├── 01_縣市區域範例資料.json
-│   │   ├── 02_相關主檔設定.json
-│   │   ├── 03_諮詢單相關範例資料.json
-│   │   ├── 04_order_record範例資料.json
-│   │   └── 04_order_record範例資料.csv   # 與上者內容相同，CSV 格式備用
-│   └── scripts/               # 匯入/管理腳本
-│       ├── client.ts          # pg Pool 連線
-│       ├── migrate.ts         # 依序執行 schema/*.sql 建表
-│       ├── seed.ts            # 依序匯入 seed/*.json（含個資加密）
-│       └── reset.ts           # 依 FK 反向順序清空所有資料表
-└── src/
-    └── crypto/
-        ├── crypto.ts          # AES-256-GCM 加解密 + SHA-256 Hash
-        ├── uuid.ts            # UUID v7 產生器
-        └── crypto.test.ts     # 單元測試
+├── backend/
+│   └── src/
+│       ├── index.ts           # Express server (API routes)
+│       ├── agent.ts           # Bedrock Agent Loop (tool use)
+│       ├── bedrock.ts         # Bedrock client 封裝
+│       ├── lambda.ts          # Lambda handler (部署用)
+│       ├── lib/
+│       │   └── dynamo.ts      # DynamoDB client
+│       └── tools/
+│           ├── index.ts       # Tool 分發器 + 定義
+│           ├── types.ts       # Tool input/output 型別
+│           ├── getUserProfile.ts
+│           ├── searchProduct.ts
+│           ├── searchService.ts
+│           ├── createBundle.ts
+│           ├── createOrder.ts
+│           └── getWeather.ts
+├── frontend/
+│   └── src/
+│       ├── App.tsx
+│       ├── components/        # UI 元件
+│       ├── data.ts            # Mock data (情境包模板等)
+│       └── types.ts           # 前端型別定義
+├── db/                        # 主辦方規格參考 (PostgreSQL DDL + seed JSON)
+├── docs/
+│   └── DATABASE.md            # DynamoDB 資料庫交付文件
+├── src/crypto/                # AES-256-GCM 加密工具
+├── package.json
+├── tsconfig.json
+└── .env                       # 環境變數 (不進 git)
 ```
+
+---
 
 ## 快速開始
 
@@ -57,94 +97,138 @@
 
 ```bash
 npm install
+cd frontend && npm install && cd ..
 ```
 
 ### 2. 設定環境變數
 
 ```bash
 cp .env.example .env
-# 產生一組 32 bytes 的 AES-256 金鑰並填入 PII_ENCRYPTION_KEY
-node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
-### 3. 啟動本機 PostgreSQL
+填入以下值（從 Workshop Studio 的 "Get AWS CLI credentials" 取得）：
+
+```env
+AWS_REGION=us-west-2
+AWS_ACCESS_KEY_ID=ASIA...
+AWS_SECRET_ACCESS_KEY=...
+AWS_SESSION_TOKEN=...
+BEDROCK_MODEL_ID=us.anthropic.claude-sonnet-4-20250514-v1:0
+```
+
+### 3. 啟動後端
 
 ```bash
-npm run db:up      # docker compose up -d
+npm run dev
 ```
 
-### 4. 建表 + 匯入種子資料
+後端跑在 `http://localhost:3000`
+
+### 4. 啟動前端
+
+開另一個 terminal：
 
 ```bash
-npm run db:migrate
-npm run db:seed
+cd frontend
+npm run dev
 ```
 
-若需重來，先清空再重新建表匯入：
+前端跑在 `http://localhost:5173`
+
+### 5. 測試
+
+在前端聊天框輸入任何訊息（如「幫我找咖啡」），觀察：
+- 前端顯示 AI 回覆
+- 後端 terminal 印出 `[Agent] 使用工具: search_product {...}`
+
+---
+
+## DynamoDB 資料庫
+
+詳細規格見 [docs/DATABASE.md](./docs/DATABASE.md)
+
+### 4 張 Table 總覽
+
+| Table | PK | SK | 用途 |
+|---|---|---|---|
+| `UserProfile` | `user_id` | — | 使用者偏好、標籤 |
+| `UserLists` | `user_id` | `list_type_id` | 行程包、購物車、訂單 |
+| `ServicesCatalog` | `vendor_id` | `service_id` | 服務項目、零售商品 |
+| `ChatHistory` | `session_id` | — | AI 對話紀錄 |
+
+---
+
+## AI Agent 工具
+
+| Tool | 功能 | 讀/寫 |
+|---|---|---|
+| `get_user_profile` | 取得使用者偏好標籤 | 讀 UserProfile |
+| `search_product` | 搜尋零售商品 | 讀 ServicesCatalog |
+| `search_service` | 搜尋服務項目 | 讀 ServicesCatalog |
+| `create_bundle` | 建立行程包草稿 | 寫 UserLists |
+| `create_order` | 建立訂單草稿 | 寫 UserLists |
+| `get_weather` | 查詢天氣（情境推薦觸發） | 外部 API |
+
+---
+
+## 部署
+
+### Lambda 打包
 
 ```bash
-npm run db:reset
-npm run db:migrate
-npm run db:seed
+npm run build:lambda
+# 輸出：dist-lambda/index.js
 ```
 
-### 5. 執行測試
+將 `dist-lambda/index.js` 上傳至 AWS Lambda，搭配 API Gateway 即可對外服務。
 
-```bash
-npm test
+---
+
+## API Endpoints
+
+| Method | Path | 說明 |
+|---|---|---|
+| GET | `/health` | 健康檢查 |
+| POST | `/api/chat` | 簡易版 AI 回覆 |
+| POST | `/api/chat/messages` | 多輪對話版 |
+| POST | `/api/chat/agent` | Agent Loop（含 Tool Use） |
+
+### Agent 請求格式
+
+```json
+POST /api/chat/agent
+{
+  "userId": "usr_jamie_888",
+  "message": "幫我找咖啡",
+  "history": []
+}
 ```
 
-## 資料表關聯
+### 回應格式
 
-```
-sys_county ─┬─ sys_district
-            │
-cms_homepage_service_vendor ─┬─ cms_homepage_service
-                              │
-pms_form ─┬─ pms_form_group ─┬─ pms_form_topic ─┬─ pms_topic_media
-          │                  │                   └─ pms_topic_option
-          │                  └───────────────────────┘
-          └─ pms_form_feedback（使用者填寫結果，含加密個資）
-
-mms_order_record（統一訂單紀錄表，對應 service_vendor_id / service_id）
+```json
+{
+  "reply": "找到以下咖啡商品...",
+  "history": [...]
+}
 ```
 
-## 個資加密設計
+---
 
-`contact_name`、`contact_mobile`、`contact_email`、`member_name`、`member_phone`、
-`member_email`、`contact_address_detail` 等欄位皆以 **AES-256-GCM** 加密後存入
-`bytea` 欄位（格式：`iv(12 bytes) + authTag(16 bytes) + ciphertext`），對應的
-`*_hash` 欄位存放正規化後的 **SHA-256 base64** Hash（44 字元，符合 `varchar(50)`
-長度限制），供查詢比對使用而不需解密。
+## 團隊分工
 
-```ts
-import { encryptField, decryptFromBuffer } from "./src/crypto/crypto.js";
+| 角色 | 負責內容 |
+|---|---|
+| 資料庫後端 | DynamoDB table 設計、seed 資料、Tool 串接實作 |
+| AI 智能回覆 | Bedrock Agent Loop、System Prompt、Tool 定義 |
+| 前端 | React UI、聊天介面、情境包展示 |
+| 簡報/架構 | 系統架構圖、demo 腳本、投影片 |
 
-const { encrypted, hash } = encryptField("0912345678", "phone");
-// encrypted -> 存入 bytea 欄位；hash -> 存入 *_hash 欄位
-
-const plaintext = decryptFromBuffer(encrypted); // "0912345678"
-```
-
-## 虛擬種子資料說明
-
-⚠️ 目前尚未取得主辦方正式提供的 `.sql` / `.json` 檔案，`db/schema/` 與
-`db/seed/` 皆為依 README 規格文件**重建**的版本（各檔案開頭皆有註記）。
-取得正式檔案後，直接覆蓋對應檔案並重新執行 `db:reset` → `db:migrate` →
-`db:seed` 即可。
-
-種子資料涵蓋的虛擬服務商（皆為自創名稱，非真實品牌）：
-
-| 服務商         | 服務項目                     | type |
-| -------------- | ----------------------------- | ---- |
-| 晴語家居服務   | 居家深層清潔 / 冷氣家電清洗   | 1 / 2 |
-| 職人水電工坊   | 居家水電修繕（核心主推情境）  | 10   |
-| 好味餐旅集團   | 餐廳訂位服務 / 美食外送服務   | 6 / 9 |
-| 順遞快運       | 包裹寄送服務                  | 3    |
-| 悠選生活商城   | 生活選物商城                  | 11   |
+---
 
 ## 注意事項
 
-- 不做真實金流模擬：訂單狀態一律顯示「已成立」+ 文字說明（見 `mms_order_record.remark`）
-- 種子資料中的縣市/行政區僅為示範子集（3 縣市 x 3 行政區），待正式檔案提供後補齊全台資料
-- `.env` 已列入 `.gitignore`，切勿提交金鑰或資料庫密碼
+- Workshop Studio 的 credentials **會過期**，過期後需重新取得並更新 `.env`
+- `.env` 已列入 `.gitignore`，不會進 git
+- 所有服務商名稱皆為虛擬名稱，不使用真實品牌
+- 不做真實金流模擬，訂單狀態以文字說明呈現

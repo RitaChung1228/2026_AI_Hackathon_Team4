@@ -1,33 +1,52 @@
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { ddb } from "../lib/dynamo.js";
 import type { SearchServiceInput, SearchServiceOutput } from "./types.js";
+
+const TABLE_NAME = process.env.DYNAMO_SERVICES_TABLE ?? "ServicesCatalog";
 
 /**
  * 搜尋服務項目
- * 後端 B 實作：接上 DynamoDB 查詢
+ * 從 DynamoDB ServicesCatalog table 查詢非 product 類別的項目（即服務類）
  */
 export async function searchService(input: SearchServiceInput): Promise<SearchServiceOutput> {
-  // TODO: 後端 B 實作真正的 DynamoDB 查詢
-  // 目前回傳 mock data 供後端 A 測試 agent loop
+  // 建立 filter 條件：排除 category="product"，其餘都算服務
+  let filterExpr = "#cat <> :cat";
+  const exprNames: Record<string, string> = { "#cat": "category" };
+  const exprValues: Record<string, unknown> = { ":cat": "product" };
 
-  const mockServices = [
-    { id: "s1", vendorId: "v1", vendorName: "速達清潔", name: "居家清潔", type: 1, description: "專業到府清潔服務" },
-    { id: "s2", vendorId: "v1", vendorName: "速達清潔", name: "冷氣清洗", type: 2, description: "分離式/窗型冷氣清洗" },
-    { id: "s3", vendorId: "v2", vendorName: "快行車隊", name: "機場接送", type: 3, description: "桃園機場接送服務" },
-    { id: "s4", vendorId: "v2", vendorName: "快行車隊", name: "高鐵接駁", type: 3, description: "高鐵站點接駁" },
-    { id: "s5", vendorId: "v3", vendorName: "好味外送", name: "餐廳外送", type: 9, description: "合作餐廳外送到府" },
-    { id: "s6", vendorId: "v4", vendorName: "美食訂位", name: "餐廳訂位", type: 6, description: "熱門餐廳線上訂位" },
-    { id: "s7", vendorId: "v5", vendorName: "便利購物", name: "門市購物", type: 11, description: "門市商品預訂取貨" },
-  ];
-
-  let results = mockServices;
-
+  // 如果有指定 type，加入 filter
   if (input.type !== undefined) {
-    results = results.filter((s) => s.type === input.type);
+    filterExpr += " AND #tp = :tp";
+    exprNames["#tp"] = "type";
+    exprValues[":tp"] = String(input.type);
   }
 
+  const { Items } = await ddb.send(
+    new ScanCommand({
+      TableName: TABLE_NAME,
+      FilterExpression: filterExpr,
+      ExpressionAttributeNames: exprNames,
+      ExpressionAttributeValues: exprValues,
+    })
+  );
+
+  let results = (Items ?? []).map((item) => ({
+    id: item.service_id,
+    vendorId: item.vendor_id,
+    vendorName: item.vendor_name ?? "",
+    name: item.service_name ?? "",
+    type: Number(item.type) || 0,
+    description: item.description ?? "",
+  }));
+
+  // keyword filter
   if (input.keyword) {
     const kw = input.keyword.toLowerCase();
     results = results.filter(
-      (s) => s.name.includes(kw) || s.description.includes(kw) || s.vendorName.includes(kw)
+      (s) =>
+        s.name.toLowerCase().includes(kw) ||
+        s.description.toLowerCase().includes(kw) ||
+        s.vendorName.toLowerCase().includes(kw)
     );
   }
 

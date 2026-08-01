@@ -1,34 +1,46 @@
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { ddb } from "../lib/dynamo.js";
 import type { SearchProductInput, SearchProductOutput } from "./types.js";
+
+const TABLE_NAME = process.env.DYNAMO_SERVICES_TABLE ?? "ServicesCatalog";
 
 /**
  * 搜尋零售商品
- * 後端 B 實作：接上 DynamoDB 查詢
+ * 從 DynamoDB ServicesCatalog table 查詢 category="product" 的項目
  */
 export async function searchProduct(input: SearchProductInput): Promise<SearchProductOutput> {
-  // TODO: 後端 B 實作真正的 DynamoDB 查詢
-  // 目前回傳 mock data 供後端 A 測試 agent loop
+  const { Items } = await ddb.send(
+    new ScanCommand({
+      TableName: TABLE_NAME,
+      FilterExpression: "#cat = :cat",
+      ExpressionAttributeNames: { "#cat": "category" },
+      ExpressionAttributeValues: { ":cat": "product" },
+    })
+  );
 
-  const mockProducts = [
-    { id: "p1", name: "濃萃美式咖啡", price: 55, description: "門市現煮美式", category: "飲品" },
-    { id: "p2", name: "拿鐵咖啡", price: 65, description: "門市現煮拿鐵", category: "飲品" },
-    { id: "p3", name: "能量補給B群", price: 89, description: "提神保健食品", category: "保健" },
-    { id: "p4", name: "熱壓吐司(火腿起司)", price: 45, description: "門市熱食", category: "食品" },
-    { id: "p5", name: "雨傘(折疊)", price: 199, description: "輕便折疊傘", category: "生活用品" },
-  ];
+  let results = (Items ?? []).map((item) => ({
+    id: item.service_id,
+    name: item.service_name,
+    price: item.price ?? 0,
+    description: item.description ?? "",
+    category: item.type ?? "retail",
+  }));
 
-  let results = mockProducts;
-
+  // keyword filter
   if (input.keyword) {
     const kw = input.keyword.toLowerCase();
     results = results.filter(
-      (p) => p.name.includes(kw) || p.description.includes(kw) || p.category.includes(kw)
+      (p) => p.name.toLowerCase().includes(kw) || p.description.toLowerCase().includes(kw)
     );
   }
 
+  // category filter
   if (input.category) {
-    results = results.filter((p) => p.category === input.category);
+    const cat = input.category.toLowerCase();
+    results = results.filter((p) => p.category.toLowerCase().includes(cat));
   }
 
+  // limit
   if (input.limit) {
     results = results.slice(0, input.limit);
   }
