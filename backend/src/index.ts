@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { chat, invokeBedrockClaude, ChatMessage } from "./bedrock.js";
-import { runAgentLoop } from "./agent.js";
+import { agentChat } from "./agent.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -72,20 +72,20 @@ app.post("/api/chat/messages", async (req, res) => {
 
 /**
  * POST /api/chat/agent
- * Body: { messages: ChatMessage[], systemPrompt?: string }
- * Agent 版：模型可自行決定是否呼叫工具（查資料庫）取得資訊後再回覆
+ * Body: { userId: string, message: string, history?: array }
+ * Agent Loop 版：Claude 自行決定呼叫工具，完成後回覆
  */
 app.post("/api/chat/agent", async (req, res) => {
   try {
-    const { messages, systemPrompt } = req.body;
+    const { userId, message, history } = req.body;
 
-    if (!Array.isArray(messages) || messages.length === 0) {
-      res.status(400).json({ error: "messages 欄位為必填且須為非空陣列" });
+    if (!message || typeof message !== "string") {
+      res.status(400).json({ error: "message 欄位為必填且須為字串" });
       return;
     }
 
-    const reply = await runAgentLoop(messages as ChatMessage[], systemPrompt);
-    res.json({ reply });
+    const result = await agentChat(userId || "anonymous", message, history || []);
+    res.json({ reply: result.reply, history: result.history });
   } catch (err: unknown) {
     console.error("Agent Loop 呼叫失敗:", err);
     const errorMessage = err instanceof Error ? err.message : "未知錯誤";

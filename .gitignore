@@ -3,3 +3,4 @@ dist/
 dist-lambda/
 .env
 *.log
+docs/notice.md
