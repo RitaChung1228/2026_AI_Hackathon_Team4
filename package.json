@@ -4,20 +4,32 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "tsx watch backend/src/index.ts",
+    "start": "tsx backend/src/index.ts",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "db:migrate": "tsx db/scripts/migrate.ts",
     "db:seed": "tsx db/scripts/seed.ts",
     "db:reset": "tsx db/scripts/reset.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:lambda": "esbuild backend/src/lambda.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist-lambda/index.js"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1101.0",
+    "@aws-sdk/client-dynamodb": "^3.1101.0",
+    "@aws-sdk/lib-dynamodb": "^3.1101.0",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.5",
+    "express": "^5.2.1",
     "pg": "^8.13.1"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.162",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^22.10.5",
     "@types/pg": "^8.11.10",
+    "esbuild": "^0.28.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "^2.1.8"
