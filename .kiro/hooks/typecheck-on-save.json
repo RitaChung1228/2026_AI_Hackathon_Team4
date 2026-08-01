@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "TypeScript 型別檢查",
+      "trigger": "PostFileSave",
+      "description": "在儲存 TypeScript 檔案後自動執行型別檢查",
+      "matcher": "\\.(ts|tsx)$",
+      "action": {
+        "type": "command",
+        "command": "npx tsc --noEmit"
+      }
+    }
+  ]
+}
