@@ -4,27 +4,18 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-<<<<<<< HEAD
-=======
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
->>>>>>> b06c164aaed31121740ed3ca1c4c1f17e506a877
     "jsx": "react-jsx",
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
     "esModuleInterop": true,
-<<<<<<< HEAD
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src"]
-=======
     "forceConsistentCasingInFileNames": true,
     "types": ["node"]
   },
   "include": ["src", "vite.config.ts"]
->>>>>>> b06c164aaed31121740ed3ca1c4c1f17e506a877
 }

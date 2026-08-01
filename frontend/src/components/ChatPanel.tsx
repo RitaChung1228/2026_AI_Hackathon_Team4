@@ -522,11 +522,27 @@ export default function ChatPanel({
       return;
     }
 
+    // === Fallback: 呼叫後端 Agent API（真正的 Bedrock + Tool Use）===
     setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      appendMessage({ role: "ai", type: "text", text: "收到！你可以告訴我更具體的需求，例如出差目的地、時間，或是想完成什麼事，我來幫你規劃。", quickReplies: ["下週三去東京出差兩天", "今晚朋友生日", "幫我查看任務進度"] });
-    }, 1100);
+    fetch("http://localhost:3000/api/chat/agent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: "u1", message: text }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setIsTyping(false);
+        if (data.reply) {
+          appendMessage({ role: "ai", type: "text", text: data.reply });
+        } else {
+          appendMessage({ role: "ai", type: "text", text: data.error || "抱歉，發生錯誤" });
+        }
+      })
+      .catch((err) => {
+        setIsTyping(false);
+        console.error("Agent API 錯誤:", err);
+        appendMessage({ role: "ai", type: "text", text: "連線失敗，請確認後端是否已啟動。" });
+      });
   }, [awaitingFollowup, onContextChange, onTransportUpdate, onProductAdd, runPlanning]);
 
   const handleSend = (text?: string) => {

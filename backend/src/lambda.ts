@@ -23,8 +23,10 @@ export async function handler(
       }
 
       if (isAgent) {
-        const reply = await runAgentLoop(body.messages as ChatMessage[], body.systemPrompt);
-        return json(200, { reply });
+        const lastMsg = body.messages[body.messages.length - 1];
+        const userMessage = typeof lastMsg?.content === "string" ? lastMsg.content : "";
+        const result = await agentChat(body.userId || "anonymous", userMessage, []);
+        return json(200, { reply: result.reply });
       }
 
       const response = await invokeBedrockClaude(
