@@ -3,7 +3,7 @@ import type {
   APIGatewayProxyStructuredResultV2,
 } from "aws-lambda";
 import { chat, invokeBedrockClaude, ChatMessage } from "./bedrock.js";
-import { runAgentLoop } from "./agent.js";
+import { agentChat } from "./agent.js";
 
 /**
  * Lambda 版 Bedrock chat handler，涵蓋 index.ts 的 /api/chat、/api/chat/messages、/api/chat/agent。
