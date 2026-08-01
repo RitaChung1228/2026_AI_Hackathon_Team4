@@ -1,1 +1,277 @@
+<<<<<<< HEAD
 @import "tailwindcss";
+=======
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-sidebar: #130E28;
+  --color-sidebar-hover: rgba(255,255,255,0.06);
+  --color-sidebar-active: rgba(98,70,234,0.25);
+  --color-primary: #6246EA;
+  --color-primary-hover: #5138D4;
+  --color-primary-light: #EDE9FF;
+  --color-primary-mid: #C4B5FD;
+  --color-bg: #F7F8FC;
+  --color-surface: #FFFFFF;
+  --color-text: #0F0A2E;
+  --color-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-success: #16A34A;
+  --color-success-bg: #DCFCE7;
+  --color-warning: #EA580C;
+  --color-warning-bg: #FFF7ED;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background: #130E28;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Phone frame — full screen on mobile, centered phone on desktop */
+.phone-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.app-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: white;
+  overflow: hidden;
+}
+
+.phone-side-btn { display: none; }
+
+@media (min-width: 500px) {
+  body {
+    background:
+      radial-gradient(circle at 50% 22%, rgba(98,70,234,0.30), transparent 55%),
+      radial-gradient(circle at 15% 82%, rgba(139,92,246,0.16), transparent 45%),
+      radial-gradient(circle at 88% 78%, rgba(98,70,234,0.14), transparent 40%),
+      #0D0820;
+  }
+
+  .phone-shell {
+    width: 458px;
+    height: min(960px, 94vh);
+    padding: 14px 14px 26px;
+    border-radius: 58px;
+    background: linear-gradient(155deg, #2b2640, #0d0a1c 65%);
+    box-shadow:
+      inset 0 0 0 2px rgba(255,255,255,0.08),
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 50px 140px rgba(0,0,0,0.75),
+      0 10px 50px rgba(98,70,234,0.28);
+  }
+
+  .phone-shell::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 28px;
+    background: #0D0820;
+    border-radius: 20px;
+    z-index: 20;
+  }
+
+  .phone-shell::after {
+    content: "";
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    z-index: 20;
+  }
+
+  .app-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 44px;
+  }
+
+  .phone-side-btn {
+    display: block;
+    position: absolute;
+    background: linear-gradient(90deg, #1c1830, #322c50);
+    border-radius: 2px;
+    z-index: -1;
+  }
+  .phone-side-btn.power {
+    right: -3px;
+    top: 180px;
+    width: 3px;
+    height: 74px;
+  }
+  .phone-side-btn.vol-up {
+    left: -3px;
+    top: 140px;
+    width: 3px;
+    height: 42px;
+  }
+  .phone-side-btn.vol-down {
+    left: -3px;
+    top: 192px;
+    width: 3px;
+    height: 42px;
+  }
+}
+
+.font-display { font-family: var(--font-display); }
+
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* Animations */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes slideOutToRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes slideInFromBottom {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseRing {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(1.18); opacity: 0.12; }
+}
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes bounceIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes typing {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes checkDraw {
+  from { stroke-dashoffset: 28; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes panelSlideIn {
+  from { transform: translateX(100%); opacity: 0.6; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes tagPop {
+  0% { transform: scale(0.85); opacity: 0; }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes stepReveal {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.msg-enter { animation: fadeSlideUp 0.32s cubic-bezier(0.22,1,0.36,1) both; }
+.msg-ai { animation: slideLeft 0.32s cubic-bezier(0.22,1,0.36,1) both; }
+.panel-enter { animation: slideRight 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.screen-enter { animation: slideInFromRight 0.32s cubic-bezier(0.32,0.72,0,1) both; }
+.screen-up { animation: slideInFromBottom 0.35s cubic-bezier(0.22,1,0.36,1) both; }
+.spin-slow { animation: spinSlow 2.4s linear infinite; }
+.bounce-in { animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+.slide-up { animation: slideUp 0.4s cubic-bezier(0.32,0.72,0,1) both; }
+.panel-slide-in { animation: panelSlideIn 0.3s cubic-bezier(0.32,0.72,0,1) both; }
+.tag-pop { animation: tagPop 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+.step-reveal { animation: stepReveal 0.3s cubic-bezier(0.22,1,0.36,1) both; }
+
+.ai-glow {
+  box-shadow: 0 0 0 1px rgba(98,70,234,0.15), 0 4px 20px rgba(98,70,234,0.12);
+}
+.ai-surface {
+  background: linear-gradient(135deg, rgba(98,70,234,0.06) 0%, rgba(139,92,246,0.03) 100%);
+  border: 1px solid rgba(98,70,234,0.14);
+}
+.card-shadow {
+  box-shadow: 0 1px 3px rgba(15,10,46,0.06), 0 4px 16px rgba(15,10,46,0.04);
+}
+.input-ring:focus-within {
+  box-shadow: 0 0 0 3px rgba(98,70,234,0.18);
+  border-color: #6246EA !important;
+}
+.purple-glow {
+  box-shadow: 0 6px 28px rgba(98,70,234,0.38), 0 2px 8px rgba(98,70,234,0.18);
+}
+
+/* Sidebar (kept for legacy) */
+.sidebar-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  transition: background 0.15s ease; color: rgba(255,255,255,0.55);
+  font-size: 14px; font-weight: 500; font-family: var(--font-display);
+  text-decoration: none; border: none; background: none;
+  width: 100%; text-align: left;
+}
+.sidebar-link:hover { background: var(--color-sidebar-hover); color: rgba(255,255,255,0.9); }
+.sidebar-link.active { background: var(--color-sidebar-active); color: #A78BFA; }
+
+.drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 200; animation: fadeIn 0.2s ease both;
+}
+>>>>>>> b06c164aaed31121740ed3ca1c4c1f17e506a877
