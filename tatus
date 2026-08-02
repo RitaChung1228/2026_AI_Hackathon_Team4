@@ -1,0 +1,3 @@
+[33m6f976cb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbackend[m[33m)[m feat: 串接 DynamoDB tools 實作 + 新增資料庫交付文件與系統 README
+[33mbff858b[m[33m ([m[1;31morigin/backend[m[33m)[m chore(frontend): resolve merge conflict in package-lock.json
+[33m0c8a9db[m refactor: remove agent test and consolidate chat flow in frontend and backend

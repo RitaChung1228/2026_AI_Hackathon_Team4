@@ -1,5 +1,5 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
-import { ddb } from "../../db/scripts/dynamo.js";
+import { ddb } from "./lib/dynamo.js";
 import type { ToolDefinition } from "./bedrock.js";
 
 export interface Tool extends ToolDefinition {
