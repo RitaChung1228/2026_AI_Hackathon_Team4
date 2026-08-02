@@ -36,6 +36,34 @@ const CATEGORY_TIPS: Record<string, string[]> = {
 };
 const DEFAULT_TIPS = ["建議提前確認相關細節", "如有疑問可與 UNI 對話進一步詢問"];
 
+/* ponytail: fallback suggestions when a task has no matching category data from the backend —
+   keeps every tab populated instead of showing an empty state. Swap for a real recs API later. */
+interface MockOption { id: string; icon: string; name: string; detail: string; price: number }
+const MOCK_TABS: Record<"transport" | "buy" | "book", { heading: string; options: MockOption[] }> = {
+  transport: {
+    heading: "建議交通方式",
+    options: [
+      { id: "mock-transport-taxi", icon: "🚕", name: "計程車直達", detail: "約 15-20 分鐘・車資依里程計算", price: 0 },
+      { id: "mock-transport-transit", icon: "🚇", name: "大眾運輸", detail: "捷運＋步行・約 25 分鐘", price: 0 },
+      { id: "mock-transport-walk", icon: "🚶", name: "步行前往", detail: "適合天氣良好、距離較近時", price: 0 },
+    ],
+  },
+  buy: {
+    heading: "建議準備物品",
+    options: [
+      { id: "mock-buy-kit", icon: "🎒", name: "隨行用品組", detail: "常見必備小物", price: 150 },
+      { id: "mock-buy-gift", icon: "🎁", name: "任務周邊小物", detail: "依任務內容建議準備", price: 280 },
+    ],
+  },
+  book: {
+    heading: "建議預約選項",
+    options: [
+      { id: "mock-book-slot", icon: "📅", name: "彈性預約時段", detail: "可依需求調整時間", price: 0 },
+      { id: "mock-book-confirm", icon: "☎️", name: "電話確認預約", detail: "建議提前一天致電確認", price: 0 },
+    ],
+  },
+};
+
 const TABS = [
   { id: "suggest", label: "建議", icon: "📍" },
   { id: "transport", label: "交通", icon: "🚗" },
@@ -74,6 +102,44 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
 
   const addReminder = () => {
     setReminders((prev) => [...prev, { id: `r${prev.length + 1}`, label: "自訂提醒", on: true }]);
+  };
+
+  const renderMockOptions = (kind: "transport" | "buy" | "book") => {
+    const { heading, options } = MOCK_TABS[kind];
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ background: "linear-gradient(135deg, rgba(76,110,145,0.07), rgba(110,146,180,0.04))", border: "1px solid rgba(76,110,145,0.15)", borderRadius: 14, padding: "10px 14px", fontSize: 12, color: "#4C6E91", fontWeight: 500 }}>
+            ✦ 這個任務沒有指定方案，以下是 AI 建議選項
+        </div>
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#16232E", marginBottom: 8, fontFamily: "var(--font-display)" }}>{heading}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {options.map((opt) => {
+              const inCart = cartItems.some((c) => c.id === opt.id);
+              return (
+                <div key={opt.id} style={{ display: "flex", alignItems: "center", gap: 10, background: "white", borderRadius: 12, padding: "10px 12px", border: "1px solid #F1F5F9" }}>
+                  <span style={{ fontSize: 20, flexShrink: 0 }}>{opt.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12, color: "#16232E" }}>{opt.name}</div>
+                    <div style={{ fontSize: 11, color: "#94A3B8" }}>{opt.detail}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                    {opt.price > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: "#16232E", fontFamily: "var(--font-display)" }}>NT${opt.price}</span>}
+                    <button
+                      onClick={() => !inCart && onProductAdd({ id: opt.id, name: opt.name, detail: opt.detail, price: opt.price, qty: 1, icon: opt.icon })}
+                      disabled={inCart}
+                      style={{ padding: "6px 12px", borderRadius: 20, border: "none", cursor: inCart ? "default" : "pointer", background: inCart ? "#DCFCE7" : "#4C6E91", color: inCart ? "#16A34A" : "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11, whiteSpace: "nowrap" }}
+                    >
+                      {inCart ? "✓ 已加入" : "加入"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const bookableCard = bookableId ? (
@@ -236,20 +302,20 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
               </a>
             </div>
           ) : (
-            <EmptyTabState text="這個任務不需要額外交通安排" />
+            renderMockOptions("transport")
           )
         )}
 
         {tab === "buy" && (
           (task.category === "retail" || task.category === "product") && bookableCard
             ? bookableCard
-            : <EmptyTabState text="沒有需要購買的商品" />
+            : renderMockOptions("buy")
         )}
 
         {tab === "book" && (
           (task.category === "travel" || task.category === "home_service" || task.category === "fitness") && bookableCard
             ? bookableCard
-            : <EmptyTabState text="沒有需要預約的項目" />
+            : renderMockOptions("book")
         )}
 
         {tab === "remind" && (
@@ -283,11 +349,5 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
         </button>
       </div>
     </div>
-  );
-}
-
-function EmptyTabState({ text }: { text: string }) {
-  return (
-    <div style={{ textAlign: "center", padding: "48px 0", color: "#A9C0D6", fontSize: 13 }}>{text}</div>
   );
 }

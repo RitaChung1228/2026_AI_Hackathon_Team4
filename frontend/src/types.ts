@@ -115,6 +115,8 @@ export interface ChatMessage {
   type: MessageType;
   text?: string;
   quickReplies?: string[];
+  /** true = 這則 AI 訊息要附上行事曆讓使用者點選日期 */
+  datePicker?: boolean;
   data?: any;
   ts: number;
 }

@@ -76,7 +76,7 @@ export const WELCOME_MESSAGES: ChatMessage[] = [
     id: "w1",
     role: "ai",
     type: "text",
-    text: "Hi Jamie 👋 我是 Lifepack AI，你的一站式智慧管家。\n\n告訴我你想做什麼，我來搞定。",
+    text: "Hi👋 我是 Lifepack AI，你的一站式智慧管家。\n\n告訴我你想做什麼，我來搞定。",
     ts: Date.now(),
   },
   {
