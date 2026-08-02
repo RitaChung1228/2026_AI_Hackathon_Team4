@@ -12,7 +12,8 @@
     "db:seed": "tsx db/scripts/seed.ts",
     "db:reset": "tsx db/scripts/reset.ts",
     "test": "vitest run",
-    "build:lambda": "esbuild backend/src/lambda.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist-lambda/index.js"
+    "build:lambda": "esbuild backend/src/lambda.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist-lambda/index.js",
+    "package:lambda": "npm run build:lambda && rm -f function.zip && zip -j function.zip dist-lambda/index.js"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1101.0",
