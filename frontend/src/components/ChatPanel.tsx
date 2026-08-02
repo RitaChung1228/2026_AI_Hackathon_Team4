@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { ChatMessage, ContextView, CartItem } from "../types";
 import { recommendations, UNSPLASH } from "../data";
 
@@ -8,6 +9,8 @@ interface ChatPanelProps {
   onProductAdd: (item: CartItem) => void;
   onPanelToggle: () => void;
   onMenuOpen: () => void;
+  /* AI 建立計畫後 → 通知外層新增到「我的任務」 */
+  onMissionCreate?: (packId: string, date?: string) => void;
   cartItems: CartItem[];
   contextView: ContextView;
   panelOpen: boolean;
@@ -111,7 +114,7 @@ function parseReply(reply: string): { text: string; quickReplies?: string[] } {
 }
 
 export default function ChatPanel({
-  onContextChange, onPanelToggle, onMenuOpen,
+  onContextChange, onPanelToggle, onMenuOpen, onMissionCreate,
   cartItems, contextView, panelOpen, isMobile, onAgentMission,
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(WELCOME_MESSAGES);
@@ -122,12 +125,24 @@ export default function ChatPanel({
   const [planningStepsVisible, setPlanningStepsVisible] = useState<number[]>([]);
   const [currentPlanningSteps, setCurrentPlanningSteps] = useState<PlanStep[]>([]);
   const [currentPlanningTitle, setCurrentPlanningTitle] = useState("");
+  const [inputFocused, setInputFocused] = useState(false);
   const agentHistory = useRef<any[]>([]);
+  /* 由情境卡片開啟的流程 → 記住情境包 id，AI 建立計畫後同步到「我的任務」 */
+  const pendingPackId = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, planningActive]);
+
+  /* 輸入框隨內容長高，最多 96px */
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 96)}px`;
+  }, [input]);
 
   /* Derive tray items from current state */
   const trayItems: ServiceTrayItem[] = [];
@@ -257,6 +272,12 @@ export default function ChatPanel({
             onContextChange("agent-mission");
             onAgentMission?.(missionData);
 
+            /* 由情境卡片啟動的流程 → 同步到「我的任務」分頁 */
+            if (pendingPackId.current) {
+              onMissionCreate?.(pendingPackId.current);
+              pendingPackId.current = null;
+            }
+
             setTimeout(showReply, 500);
             return;
           }
@@ -269,7 +290,7 @@ export default function ChatPanel({
         console.error("Agent API 錯誤:", err);
         appendMessage({ role: "ai", type: "text", text: "連線失敗，請確認後端服務是否已啟動。" });
       });
-  }, [appendMessage, onContextChange, onAgentMission, runPlanning]);
+  }, [appendMessage, onContextChange, onAgentMission, onMissionCreate, runPlanning]);
 
   const handleSend = useCallback((text?: string) => {
     const msg = (text ?? input).trim();
@@ -283,8 +304,17 @@ export default function ChatPanel({
   const handleScenarioStart = useCallback((scenarioId: string) => {
     const prompt = SCENARIO_PROMPTS[scenarioId];
     if (!prompt) return;
+    pendingPackId.current = scenarioId;
     handleSend(prompt);
   }, [handleSend]);
+
+  /* Enter 送出、Shift+Enter 換行；輸入法組字中不送出 */
+  const handleInputKeyDown = (e: ReactKeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", background: "white" }}>
@@ -386,30 +416,6 @@ export default function ChatPanel({
         <div ref={bottomRef} />
       </div>
 
-      {/* Chat input */}
-      <div style={{ padding: "10px 16px", borderTop: "1px solid #E5E7EB", display: "flex", gap: 8, alignItems: "center", flexShrink: 0, background: "white" }}>
-        <div className="input-ring" style={{ flex: 1, display: "flex", alignItems: "center", background: "#F8F9FC", borderRadius: 24, border: "1.5px solid #E5E7EB", padding: "0 16px", transition: "all 0.15s" }}>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-            placeholder="輸入你的需求或直接說話..."
-            style={{ flex: 1, border: "none", outline: "none", background: "transparent", padding: "12px 0", fontSize: 14, fontFamily: "var(--font-body)", color: "#0F0A2E" }}
-          />
-        </div>
-        <button
-          onClick={() => handleSend()}
-          disabled={!input.trim()}
-          style={{ width: 40, height: 40, borderRadius: "50%", border: "none", background: input.trim() ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB", cursor: input.trim() ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.15s", flexShrink: 0 }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </div>
-
       {/* Active services tray */}
       {trayItems.length > 0 && (
         <div style={{ padding: "8px 16px", borderTop: "1px solid #F8F9FC", display: "flex", gap: 8, overflowX: "auto", flexShrink: 0 }} className="scrollbar-hide">
@@ -434,6 +440,82 @@ export default function ChatPanel({
           ))}
         </div>
       )}
+
+      {/* Composer — bottom input bar */}
+      <div
+        style={{
+          flexShrink: 0,
+          borderTop: "1px solid #F3F4F6",
+          background: "white",
+          padding: "10px 14px 12px",
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 8,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "flex-end",
+            background: "#F3F4F6",
+            borderRadius: 22,
+            border: `1.5px solid ${inputFocused ? "#6246EA" : "transparent"}`,
+            padding: "8px 14px",
+            transition: "border-color 0.15s",
+          }}
+        >
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            onKeyDown={handleInputKeyDown}
+            rows={1}
+            placeholder="告訴我你想做什麼…"
+            aria-label="輸入訊息"
+            style={{
+              flex: 1,
+              border: "none",
+              outline: "none",
+              background: "transparent",
+              resize: "none",
+              maxHeight: 96,
+              fontSize: 14,
+              lineHeight: 1.5,
+              fontFamily: "var(--font-body)",
+              color: "#0F0A2E",
+            }}
+            className="scrollbar-hide"
+          />
+        </div>
+        <button
+          onClick={() => handleSend()}
+          disabled={!input.trim()}
+          aria-label="送出訊息"
+          title="送出"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            border: "none",
+            flexShrink: 0,
+            cursor: input.trim() ? "pointer" : "default",
+            background: input.trim() ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB",
+            color: input.trim() ? "white" : "#9CA3AF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: input.trim() ? "0 4px 14px rgba(98,70,234,0.32)" : "none",
+            transition: "all 0.15s",
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
 
     </div>
   );

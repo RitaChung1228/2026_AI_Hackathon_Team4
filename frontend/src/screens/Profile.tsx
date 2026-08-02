@@ -1,16 +1,24 @@
 import { useState } from "react"; // v2
 import { mockUser, scenarioPacks } from "../data";
+import type { AuthUser } from "../types";
 
 interface ProfileProps {
+  user?: AuthUser | null;
   savedPackIds?: string[];
   onPackSelect?: (packId: string) => void;
   onUnsavePack?: (packId: string) => void;
+  onLogout?: () => void;
 }
 
-export default function Profile({ savedPackIds = [], onPackSelect, onUnsavePack }: ProfileProps) {
+export default function Profile({ user, savedPackIds = [], onPackSelect, onUnsavePack, onLogout }: ProfileProps) {
   const [aiEnabled, setAiEnabled] = useState(true);
   const [tags, setTags] = useState(mockUser.tags);
   const [showTagSuggestion, setShowTagSuggestion] = useState(true);
+
+  /* 登入帳號優先，未登入時退回示範資料 */
+  const displayName = user?.name ?? mockUser.name;
+  const displayAvatar = user?.avatar ?? mockUser.avatar;
+  const displaySub = user?.isGuest ? "訪客模式" : user?.email || mockUser.profile;
 
   const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag));
 
@@ -85,7 +93,7 @@ export default function Profile({ savedPackIds = [], onPackSelect, onUnsavePack 
               color: "white",
             }}
           >
-            {mockUser.avatar}
+            {displayAvatar}
           </div>
           <h2
             style={{
@@ -97,10 +105,10 @@ export default function Profile({ savedPackIds = [], onPackSelect, onUnsavePack 
               marginBottom: 4,
             }}
           >
-            {mockUser.name}
+            {displayName}
           </h2>
           <p style={{ fontSize: 14, color: "rgba(255,255,255,0.75)", margin: 0 }}>
-            {mockUser.profile}
+            {displaySub}
           </p>
         </div>
       </div>
@@ -441,6 +449,28 @@ export default function Profile({ savedPackIds = [], onPackSelect, onUnsavePack 
             ))}
           </div>
         </div>
+
+        {/* Logout */}
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            style={{
+              width: "100%",
+              marginTop: 16,
+              padding: "15px",
+              borderRadius: 16,
+              border: "1.5px solid #FCA5A5",
+              background: "white",
+              color: "#DC2626",
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+              fontSize: 15,
+              cursor: "pointer",
+            }}
+          >
+            登出
+          </button>
+        )}
       </div>
     </div>
   );

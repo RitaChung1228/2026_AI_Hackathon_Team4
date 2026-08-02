@@ -107,6 +107,52 @@ app.post("/api/chat/agent", async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// 讀取類 endpoint
+// 邏輯都在 backend/src/api/ 底下，與 Lambda 版共用同一份實作。
+// ---------------------------------------------------------------------------
+
+/** 把讀取邏輯包成 Express handler，統一錯誤處理 */
+function readRoute<T>(
+  label: string,
+  fn: (userId: string) => Promise<T>
+): (req: express.Request, res: express.Response) => Promise<void> {
+  return async (req, res) => {
+    // Express 5 的 params 型別是 string | string[]，正規化成單一字串
+    const raw = req.params.userId;
+    const userId = Array.isArray(raw) ? raw[0] : raw;
+
+    if (!userId) {
+      res.status(400).json({ error: "userId 為必填" });
+      return;
+    }
+
+    try {
+      res.json(await fn(userId));
+    } catch (err: unknown) {
+      console.error(`${label} 查詢失敗:`, err);
+      const detail = err instanceof Error ? err.message : "未知錯誤";
+      res.status(500).json({ error: `${label}查詢失敗`, detail });
+    }
+  };
+}
+
+/** GET /api/profile/:userId — 使用者偏好標籤（與 AI 看到的同一份） */
+app.get("/api/profile/:userId", readRoute("Profile", getProfile));
+
+/** GET /api/bundles/:userId — 行程包列表，最新的排前面 */
+app.get("/api/bundles/:userId", readRoute("行程包", async (userId) => ({
+  bundles: await listBundles(userId),
+})));
+
+/** GET /api/cart/:userId — 購物車，沒有時回空的 */
+app.get("/api/cart/:userId", readRoute("購物車", getCart));
+
+/** GET /api/orders/:userId — 訂單列表，最新的排前面 */
+app.get("/api/orders/:userId", readRoute("訂單", async (userId) => ({
+  orders: await listOrders(userId),
+})));
+
 app.listen(PORT, () => {
   console.log(`Backend server running on http://localhost:${PORT}`);
 });

@@ -1,0 +1,192 @@
+{
+  "_note": [
+    "ServicesCatalog（DynamoDB）的種子資料來源。",
+    "PK = vendor_id，SK = service_id；兩者相同即為同一筆，重跑會覆蓋（upsert）。",
+    "要新增資料，直接在 items 陣列後面加物件，然後執行：npm run db:seed:services",
+    "category：商品用 \"product\"（給 search_product）；服務用非 product 的值（給 search_service），",
+    "現有服務使用 transport / home_service / travel / retail。",
+    "type：1清潔 2家電清洗 3寄件 6訂位 9外送 10水電修繕 11購物，商品用 retail / travel 等自訂碼。"
+  ],
+  "items": [
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_adapter",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "萬國轉接頭",
+      "category": "product",
+      "type": "retail",
+      "price": 299,
+      "description": "日本/歐洲適用萬用轉接頭",
+      "img_url": "data:image/avif;base64,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"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_bgroup",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "能量補給B群",
+      "category": "product",
+      "type": "retail",
+      "price": 89,
+      "description": "提神保健食品",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/B_vitamin_supplement_tablets.jpg/500px-B_vitamin_supplement_tablets.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_coffee_americano",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "濃萃美式咖啡",
+      "category": "product",
+      "type": "retail",
+      "price": 55,
+      "description": "門市現煮美式咖啡",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Convenience-store-coffee-cup-famima-small-and-middle.jpg/500px-Convenience-store-coffee-cup-famima-small-and-middle.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_dehumidifier",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "除濕劑(3入)",
+      "category": "product",
+      "type": "retail",
+      "price": 129,
+      "description": "換季衣櫃必備除濕包",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/HK_plastic_container_n_bag_%E7%A1%85%E8%86%A0%E4%B9%BE%E7%87%A5%E5%8A%91_Silica_gel_Desiccant_small_pack_Feb-2014.JPG/500px-HK_plastic_container_n_bag_%E7%A1%85%E8%86%A0%E4%B9%BE%E7%87%A5%E5%8A%91_Silica_gel_Desiccant_small_pack_Feb-2014.JPG"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_latte",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "拿鐵咖啡",
+      "category": "product",
+      "type": "retail",
+      "price": 65,
+      "description": "門市現煮拿鐵",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Caffe_Latte_cup.jpg/500px-Caffe_Latte_cup.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_pen_uni",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "UNI 原子筆 0.5mm 黑色 3入",
+      "category": "product",
+      "type": "retail",
+      "price": 75,
+      "description": "辦公文具",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Ballpoint_Pen_DS.jpg/500px-Ballpoint_Pen_DS.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_powerbank",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "行動電源 20000mAh",
+      "category": "product",
+      "type": "retail",
+      "price": 799,
+      "description": "大容量快充行動電源",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Power_bank.JPG/500px-Power_bank.JPG"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_snack_box",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "派對零食箱",
+      "category": "product",
+      "type": "retail",
+      "price": 259,
+      "description": "洋芋片+餅乾+堅果 超值組合",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Creision_Jones_o_Gymru.jpg/500px-Creision_Jones_o_Gymru.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_toast",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "熱壓吐司(火腿起司)",
+      "category": "product",
+      "type": "retail",
+      "price": 45,
+      "description": "門市熱食",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Ham%26Cheese_Toast.jpg/500px-Ham%26Cheese_Toast.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_turmeric",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "解酒薑黃飲",
+      "category": "product",
+      "type": "retail",
+      "price": 69,
+      "description": "聚餐前後護肝補給",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Turmeric_Latte_%2843134398655%29.jpg/500px-Turmeric_Latte_%2843134398655%29.jpg"
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "prod_umbrella",
+      "vendor_name": "7-ELEVEN",
+      "service_name": "折疊雨傘",
+      "category": "product",
+      "type": "retail",
+      "price": 199,
+      "description": "輕便折疊傘",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Folding_umbrella_01.jpg/500px-Folding_umbrella_01.jpg"
+    },
+    {
+      "vendor_id": "vendor_klook",
+      "service_id": "prod_esim_jp_5gb",
+      "vendor_name": "Klook",
+      "service_name": "日本 eSIM 5GB/5日",
+      "category": "product",
+      "type": "travel",
+      "price": 399,
+      "description": "掃描 QR Code 即刻啟用，日本高速上網",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Nano_SIM_card_and_tray.jpg/500px-Nano_SIM_card_and_tray.jpg"
+    },
+    {
+      "vendor_id": "vendor_yoxi",
+      "service_id": "srv_yoxi_airport",
+      "vendor_name": "yoxi 叫車服務",
+      "service_name": "yoxi 機場尊榮接送",
+      "category": "transport",
+      "type": "02",
+      "price": 1200,
+      "description": "06:00 門口接送直達桃園機場 T2，提供商務車型與專屬司機服務。",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/A_TX4_Taxi_at_Heathrow_Airport_Terminal_5.jpg/500px-A_TX4_Taxi_at_Heathrow_Airport_Terminal_5.jpg",
+      "service_vendor_id": 1
+    },
+    {
+      "vendor_id": "vendor_711",
+      "service_id": "srv_711_pickup",
+      "vendor_name": "7-ELEVEN 門市服務",
+      "service_name": "門市包裹取件與寄件",
+      "category": "retail",
+      "type": "3",
+      "price": 0,
+      "description": "提供 24 小時門市取件服務與 ibon 雲端列印。",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Interior_of_7-Eleven_Chaofu_Store_in_New_Year_Eve_20151231.jpg/500px-Interior_of_7-Eleven_Chaofu_Store_in_New_Year_Eve_20151231.jpg",
+      "service_vendor_id": 2
+    },
+    {
+      "vendor_id": "vendor_cleaning",
+      "service_id": "srv_home_clean",
+      "vendor_name": "統一社區清潔夥伴",
+      "service_name": "一般居家清潔服務",
+      "category": "home_service",
+      "type": "1",
+      "price": 1500,
+      "description": "專業清潔人員 3 小時重點區域打掃。",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Woman_dusting_and_using_a_vacuum.tif/lossy-page1-500px-Woman_dusting_and_using_a_vacuum.tif.jpg",
+      "service_vendor_id": 3
+    },
+    {
+      "vendor_id": "vendor_klook",
+      "service_id": "srv_klook_esim",
+      "vendor_name": "Klook 旅遊體驗",
+      "service_name": "日本 5GB/5日 高速 eSIM",
+      "category": "travel",
+      "type": "11",
+      "price": 399,
+      "description": "掃描 QR Code 即刻啟用，出差旅遊上網吃到飽不卡關。",
+      "img_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Xiaomi_Redmi_Note_3_dual_SIM_card_tray.jpg/500px-Xiaomi_Redmi_Note_3_dual_SIM_card_tray.jpg",
+      "service_vendor_id": 4
+    }
+  ]
+}

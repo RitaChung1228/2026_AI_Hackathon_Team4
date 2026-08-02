@@ -10,6 +10,8 @@
     "db:down": "docker compose down",
     "db:migrate": "tsx db/scripts/migrate.ts",
     "db:seed": "tsx db/scripts/seed.ts",
+    "db:seed:services": "tsx db/scripts/seed-services-catalog.ts",
+    "db:check:images": "tsx db/scripts/check-image-urls.ts",
     "db:reset": "tsx db/scripts/reset.ts",
     "test": "vitest run",
     "build:lambda": "esbuild backend/src/lambda.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist-lambda/index.js",
