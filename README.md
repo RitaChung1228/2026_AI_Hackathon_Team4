@@ -97,16 +97,13 @@ flowchart LR
 | 後端 | Node.js + TypeScript (ESM) + Express 5，以 `tsx` 直跑免編譯 | `backend/src/index.ts` |
 | 後端（部署版） | AWS Lambda handler，與 Express 共用商業邏輯 | `backend/src/lambda.ts` |
 | AI 引擎 | AWS Bedrock Converse API（Claude Sonnet 4） | `backend/src/agent.ts` |
-| 線上資料庫 | AWS DynamoDB（4 張表，PAY_PER_REQUEST，`us-west-2`） | `backend/src/lib/dynamo.ts` |
-| 離線資料庫 | PostgreSQL 16（Docker，主辦方 schema 對照用，**不在執行路徑上**） | `docker-compose.yml`、`db/` |
+| 資料庫 | AWS DynamoDB（4 張表，PAY_PER_REQUEST，`us-west-2`） | `backend/src/lib/dynamo.ts` |
 | 個資加密 | Node `crypto`（AES-256-GCM + SHA-256） | `src/crypto/` |
 | 外部 API | Open-Meteo（天氣，免 API Key） | `backend/src/tools/getWeather.ts` |
 | 測試 | Vitest 2 | `backend/src/lambda.test.ts` |
 | 打包 | esbuild → 單檔 CJS bundle → zip | `npm run package:lambda` |
 | 前端 Hosting | AWS Amplify（`amplify.yml`，appRoot `frontend/`） | `amplify.yml` |
 
-> **線上跑的是 Bedrock + DynamoDB。** `db/` 底下的 PostgreSQL schema 是主辦方規格的對照實作，
-> 沒有任何 runtime 程式碼讀它。
 
 ---
 
