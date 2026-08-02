@@ -63,7 +63,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
       role: "ai",
       text: missionTitle
         ? `你目前在「${missionTitle}」任務中。有什麼需要調整的嗎？`
-        : "你好！我是 UNI AI，有什麼需要幫忙的嗎？",
+        : "你好！我是 Lifepack AI，有什麼需要幫忙的嗎？",
     },
   ]);
   const [input, setInput] = useState("");
@@ -77,7 +77,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
           role: "ai",
           text: missionTitle
             ? `你目前在「${missionTitle}」任務中。有什麼需要調整的嗎？`
-            : "你好！我是 UNI AI，有什麼需要幫忙的嗎？",
+            : "你好！我是 Lifepack AI，有什麼需要幫忙的嗎？",
         },
       ]);
     }
@@ -127,7 +127,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
         style={{
           position: "absolute",
           inset: 0,
-          background: "rgba(15,10,46,0.5)",
+          background: "rgba(22,35,46,0.5)",
           backdropFilter: "blur(4px)",
         }}
       />
@@ -137,7 +137,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
         className="bottom-sheet"
         style={{
           position: "relative",
-          background: "#F8F9FC",
+          background: "#F5F7FA",
           borderRadius: "24px 24px 0 0",
           height: "82%",
           display: "flex",
@@ -152,7 +152,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
               width: 36,
               height: 4,
               borderRadius: 2,
-              background: "#D1D5DB",
+              background: "#CBD5E1",
               margin: "0 auto 16px",
             }}
           />
@@ -162,7 +162,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                 width: 36,
                 height: 36,
                 borderRadius: "50%",
-                background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -176,25 +176,25 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                   fontFamily: "var(--font-display)",
                   fontWeight: 700,
                   fontSize: 15,
-                  color: "#0F0A2E",
+                  color: "#16232E",
                 }}
               >
-                UNI AI
+                Lifepack AI
               </div>
-              <div style={{ fontSize: 12, color: "#6B7280" }}>隨時幫你調整任務</div>
+              <div style={{ fontSize: 12, color: "#64748B" }}>隨時幫你調整任務</div>
             </div>
             <button
               onClick={onClose}
               style={{
                 marginLeft: "auto",
-                background: "#F3F4F6",
+                background: "#F1F5F9",
                 border: "none",
                 borderRadius: "50%",
                 width: 32,
                 height: 32,
                 cursor: "pointer",
                 fontSize: 16,
-                color: "#6B7280",
+                color: "#64748B",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -214,10 +214,10 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                   flexShrink: 0,
                   padding: "6px 14px",
                   borderRadius: 20,
-                  border: "1px solid #E5E7EB",
+                  border: "1px solid #E2E8F0",
                   background: "white",
                   fontSize: 12,
-                  color: "#6246EA",
+                  color: "#4C6E91",
                   fontWeight: 500,
                   cursor: "pointer",
                   whiteSpace: "nowrap",
@@ -255,7 +255,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                     width: 28,
                     height: 28,
                     borderRadius: "50%",
-                    background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                    background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -275,9 +275,9 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                     borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "4px 18px 18px 18px",
                     background:
                       msg.role === "user"
-                        ? "linear-gradient(135deg, #6246EA, #8B5CF6)"
+                        ? "linear-gradient(135deg, #4C6E91, #6E92B4)"
                         : "white",
-                    color: msg.role === "user" ? "white" : "#0F0A2E",
+                    color: msg.role === "user" ? "white" : "#16232E",
                     fontSize: 14,
                     lineHeight: 1.5,
                     boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
@@ -294,9 +294,9 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                         style={{
                           padding: "9px 14px",
                           borderRadius: 12,
-                          border: "1.5px solid #6246EA",
+                          border: "1.5px solid #4C6E91",
                           background: "white",
-                          color: "#6246EA",
+                          color: "#4C6E91",
                           fontSize: 13,
                           fontWeight: 500,
                           cursor: "pointer",
@@ -333,7 +333,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                   width: 28,
                   height: 28,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                  background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -359,7 +359,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
                       width: 6,
                       height: 6,
                       borderRadius: "50%",
-                      background: "#6246EA",
+                      background: "#4C6E91",
                       animation: `bounce 1.2s ease-in-out ${d * 0.2}s infinite`,
                     }}
                   />
@@ -374,7 +374,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
         <div
           style={{
             padding: "12px 16px 20px",
-            borderTop: "1px solid #E5E7EB",
+            borderTop: "1px solid #E2E8F0",
             background: "white",
             display: "flex",
             gap: 10,
@@ -391,12 +391,12 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
               flex: 1,
               padding: "10px 14px",
               borderRadius: 20,
-              border: "1.5px solid #E5E7EB",
-              background: "#F8F9FC",
+              border: "1.5px solid #E2E8F0",
+              background: "#F5F7FA",
               fontSize: 14,
               outline: "none",
               fontFamily: "var(--font-body)",
-              color: "#0F0A2E",
+              color: "#16232E",
             }}
           />
           <button
@@ -405,7 +405,7 @@ export default function AIAssistant({ isOpen, onClose, missionTitle, onTransport
               width: 40,
               height: 40,
               borderRadius: "50%",
-              background: input.trim() ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB",
+              background: input.trim() ? "linear-gradient(135deg, #4C6E91, #6E92B4)" : "#E2E8F0",
               border: "none",
               cursor: "pointer",
               display: "flex",

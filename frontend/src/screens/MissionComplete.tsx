@@ -29,7 +29,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
     <div
       style={{
         height: "100%",
-        background: "#F8F9FC",
+        background: "#F5F7FA",
         overflowY: "auto",
         paddingBottom: 100,
       }}
@@ -41,7 +41,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
           background: "white",
           padding: "60px 24px 32px",
           textAlign: "center",
-          borderBottom: "1px solid #F3F4F6",
+          borderBottom: "1px solid #F1F5F9",
         }}
       >
         <div
@@ -78,7 +78,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
             fontFamily: "var(--font-display)",
             fontWeight: 800,
             fontSize: 22,
-            color: "#0F0A2E",
+            color: "#16232E",
             margin: 0,
             marginBottom: 8,
             letterSpacing: "-0.3px",
@@ -86,7 +86,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
         >
           {isBirthday ? "生日準備完成！🎂" : "東京出差準備完成！"}
         </h2>
-        <p style={{ fontSize: 14, color: "#6B7280", margin: 0 }}>
+        <p style={{ fontSize: 14, color: "#64748B", margin: 0 }}>
           所有任務已準備就緒，出發順利！
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
             borderRadius: 16,
             padding: "16px",
             marginBottom: 16,
-            border: "1px solid #F3F4F6",
+            border: "1px solid #F1F5F9",
           }}
         >
           <h3
@@ -107,7 +107,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
               fontFamily: "var(--font-display)",
               fontWeight: 700,
               fontSize: 14,
-              color: "#0F0A2E",
+              color: "#16232E",
               margin: 0,
               marginBottom: 12,
             }}
@@ -142,7 +142,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
                 <span
                   style={{
                     fontSize: 14,
-                    color: "#0F0A2E",
+                    color: "#16232E",
                     fontFamily: "var(--font-display)",
                     fontWeight: 500,
                   }}
@@ -161,7 +161,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
             borderRadius: 16,
             padding: "16px",
             marginBottom: 16,
-            border: "1px solid #F3F4F6",
+            border: "1px solid #F1F5F9",
           }}
         >
           <h3
@@ -169,7 +169,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
               fontFamily: "var(--font-display)",
               fontWeight: 700,
               fontSize: 14,
-              color: "#0F0A2E",
+              color: "#16232E",
               margin: 0,
               marginBottom: 12,
             }}
@@ -184,15 +184,15 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
                     width: 6,
                     height: 6,
                     borderRadius: "50%",
-                    background: "#6246EA",
+                    background: "#4C6E91",
                     flexShrink: 0,
                     marginLeft: 8,
                   }}
                 />
-                <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 600, minWidth: 80 }}>
+                <span style={{ fontSize: 12, color: "#94A3B8", fontWeight: 600, minWidth: 80 }}>
                   {item.time}
                 </span>
-                <span style={{ fontSize: 13, color: "#0F0A2E" }}>{item.text}</span>
+                <span style={{ fontSize: 13, color: "#16232E" }}>{item.text}</span>
               </div>
             ))}
           </div>
@@ -201,8 +201,8 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
         {/* Save prompt */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(98,70,234,0.07), rgba(139,92,246,0.04))",
-            border: "1px solid rgba(98,70,234,0.15)",
+            background: "linear-gradient(135deg, rgba(76,110,145,0.07), rgba(110,146,180,0.04))",
+            border: "1px solid rgba(76,110,145,0.15)",
             borderRadius: 16,
             padding: "16px",
             marginBottom: 24,
@@ -213,7 +213,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
             <p
               style={{
                 fontSize: 14,
-                color: "#0F0A2E",
+                color: "#16232E",
                 margin: 0,
                 lineHeight: 1.5,
                 fontFamily: "var(--font-display)",
@@ -231,7 +231,7 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
                 padding: "12px",
                 borderRadius: 14,
                 border: "none",
-                background: "#6246EA",
+                background: "#4C6E91",
                 color: "white",
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
@@ -247,9 +247,9 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
                 flex: 1,
                 padding: "12px",
                 borderRadius: 14,
-                border: "1.5px solid #E5E7EB",
+                border: "1.5px solid #E2E8F0",
                 background: "white",
-                color: "#6B7280",
+                color: "#64748B",
                 fontFamily: "var(--font-display)",
                 fontWeight: 600,
                 fontSize: 14,
@@ -268,13 +268,13 @@ export default function MissionComplete({ isBirthday, onSave, onDismiss, onGoHom
             padding: "16px",
             borderRadius: 16,
             border: "none",
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
             color: "white",
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: 16,
             cursor: "pointer",
-            boxShadow: "0 8px 24px rgba(98,70,234,0.3)",
+            boxShadow: "0 8px 24px rgba(76,110,145,0.3)",
           }}
         >
           回到首頁

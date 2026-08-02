@@ -25,10 +25,10 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
   };
 
   const tagColors: Record<string, string> = {
-    timesaver: "#6246EA",
+    timesaver: "#4C6E91",
     pickup: "#16A34A",
     business: "#0EA5E9",
-    traveler: "#8B5CF6",
+    traveler: "#6E92B4",
     birthday: "#DB2777",
   };
 
@@ -36,7 +36,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
     <div
       style={{
         height: "100%",
-        background: "#F8F9FC",
+        background: "#F5F7FA",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -47,7 +47,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
         style={{
           background: "white",
           padding: "52px 20px 0",
-          borderBottom: "1px solid #F3F4F6",
+          borderBottom: "1px solid #F1F5F9",
           flexShrink: 0,
         }}
       >
@@ -57,7 +57,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
               fontFamily: "var(--font-display)",
               fontWeight: 800,
               fontSize: 20,
-              color: "#0F0A2E",
+              color: "#16232E",
               margin: 0,
               letterSpacing: "-0.3px",
             }}
@@ -73,7 +73,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                 gap: 6,
                 padding: "8px 14px",
                 borderRadius: 20,
-                background: "#6246EA",
+                background: "#4C6E91",
                 border: "none",
                 cursor: "pointer",
                 color: "white",
@@ -90,8 +90,8 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
         {/* AI context */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(98,70,234,0.07), rgba(139,92,246,0.04))",
-            border: "1px solid rgba(98,70,234,0.15)",
+            background: "linear-gradient(135deg, rgba(76,110,145,0.07), rgba(110,146,180,0.04))",
+            border: "1px solid rgba(76,110,145,0.15)",
             borderRadius: 12,
             padding: "10px 12px",
             marginBottom: 16,
@@ -101,7 +101,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
           }}
         >
           <span style={{ fontSize: 14 }}>✦</span>
-          <p style={{ fontSize: 12, color: "#6246EA", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
+          <p style={{ fontSize: 12, color: "#4C6E91", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
             根據你的東京出差任務，為你推薦以下商品與服務。
           </p>
         </div>
@@ -120,9 +120,9 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                 cursor: "pointer",
                 fontSize: 14,
                 fontWeight: tab === t ? 700 : 500,
-                color: tab === t ? "#6246EA" : "#9CA3AF",
+                color: tab === t ? "#4C6E91" : "#94A3B8",
                 fontFamily: "var(--font-display)",
-                borderBottom: `2px solid ${tab === t ? "#6246EA" : "transparent"}`,
+                borderBottom: `2px solid ${tab === t ? "#4C6E91" : "transparent"}`,
                 transition: "all 0.2s",
               }}
             >
@@ -138,7 +138,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {products.map((p) => {
               const isAdded = addedIds.includes(p.id);
-              const reasonColor = tagColors[p.reasonTag] || "#6246EA";
+              const reasonColor = tagColors[p.reasonTag] || "#4C6E91";
               return (
                 <div
                   key={p.id}
@@ -146,8 +146,8 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                     background: "white",
                     borderRadius: 16,
                     padding: "14px",
-                    boxShadow: "0 1px 4px rgba(15,10,46,0.05)",
-                    border: "1px solid #F3F4F6",
+                    boxShadow: "0 1px 4px rgba(22,35,46,0.05)",
+                    border: "1px solid #F1F5F9",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -156,7 +156,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                         width: 48,
                         height: 48,
                         borderRadius: 14,
-                        background: "#F8F9FC",
+                        background: "#F5F7FA",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -173,7 +173,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                             fontFamily: "var(--font-display)",
                             fontWeight: 700,
                             fontSize: 14,
-                            color: "#0F0A2E",
+                            color: "#16232E",
                           }}
                         >
                           {p.name}
@@ -182,8 +182,8 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           style={{
                             fontSize: 10,
                             fontWeight: 600,
-                            color: "#6246EA",
-                            background: "#EDE9FF",
+                            color: "#4C6E91",
+                            background: "#E7EEF5",
                             padding: "2px 6px",
                             borderRadius: 20,
                           }}
@@ -191,7 +191,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           {p.tag}
                         </span>
                       </div>
-                      <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>{p.detail}</div>
+                      <div style={{ fontSize: 12, color: "#64748B", marginBottom: 4 }}>{p.detail}</div>
                       <div style={{ fontSize: 12, color: reasonColor, display: "flex", alignItems: "center", gap: 4 }}>
                         <span>✦</span> {p.reason}
                       </div>
@@ -202,7 +202,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           fontFamily: "var(--font-display)",
                           fontWeight: 800,
                           fontSize: 16,
-                          color: "#0F0A2E",
+                          color: "#16232E",
                         }}
                       >
                         NT${p.price}
@@ -213,7 +213,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           padding: "6px 14px",
                           borderRadius: 20,
                           border: isAdded ? "1.5px solid #16A34A" : "none",
-                          background: isAdded ? "white" : "#6246EA",
+                          background: isAdded ? "white" : "#4C6E91",
                           color: isAdded ? "#16A34A" : "white",
                           fontSize: 13,
                           fontWeight: 600,
@@ -234,7 +234,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
         {tab === "services" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {services.map((s) => {
-              const reasonColor = tagColors[s.reasonTag] || "#6246EA";
+              const reasonColor = tagColors[s.reasonTag] || "#4C6E91";
               return (
                 <div
                   key={s.id}
@@ -242,8 +242,8 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                     background: "white",
                     borderRadius: 16,
                     padding: "14px",
-                    boxShadow: "0 1px 4px rgba(15,10,46,0.05)",
-                    border: "1px solid #F3F4F6",
+                    boxShadow: "0 1px 4px rgba(22,35,46,0.05)",
+                    border: "1px solid #F1F5F9",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -252,7 +252,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                         width: 48,
                         height: 48,
                         borderRadius: 14,
-                        background: "#F8F9FC",
+                        background: "#F5F7FA",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -269,7 +269,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                             fontFamily: "var(--font-display)",
                             fontWeight: 700,
                             fontSize: 14,
-                            color: "#0F0A2E",
+                            color: "#16232E",
                           }}
                         >
                           {s.name}
@@ -287,7 +287,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           {s.tag}
                         </span>
                       </div>
-                      <div style={{ fontSize: 12, color: "#6B7280", marginBottom: 4 }}>{s.detail}</div>
+                      <div style={{ fontSize: 12, color: "#64748B", marginBottom: 4 }}>{s.detail}</div>
                       <div style={{ fontSize: 12, color: reasonColor, display: "flex", alignItems: "center", gap: 4 }}>
                         <span>✦</span> {s.reason}
                       </div>
@@ -298,7 +298,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           fontFamily: "var(--font-display)",
                           fontWeight: 800,
                           fontSize: 16,
-                          color: "#0F0A2E",
+                          color: "#16232E",
                         }}
                       >
                         NT${s.price.toLocaleString()}
@@ -308,7 +308,7 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
                           padding: "6px 14px",
                           borderRadius: 20,
                           border: "none",
-                          background: "#6246EA",
+                          background: "#4C6E91",
                           color: "white",
                           fontSize: 13,
                           fontWeight: 600,
@@ -337,13 +337,13 @@ export default function Shopping({ onAddToCart, onViewCart, cartCount }: Shoppin
               padding: "16px",
               borderRadius: 16,
               border: "none",
-              background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+              background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
               color: "white",
               fontFamily: "var(--font-display)",
               fontWeight: 700,
               fontSize: 16,
               cursor: "pointer",
-              boxShadow: "0 8px 24px rgba(98,70,234,0.35)",
+              boxShadow: "0 8px 24px rgba(76,110,145,0.35)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

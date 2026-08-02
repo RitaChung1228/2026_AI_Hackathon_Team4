@@ -17,7 +17,7 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
     <div
       style={{
         height: "100%",
-        background: "#F8F9FC",
+        background: "#F5F7FA",
         overflowY: "auto",
         paddingBottom: 80,
       }}
@@ -28,7 +28,7 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
         style={{
           background: "white",
           padding: "52px 20px 20px",
-          borderBottom: "1px solid #F3F4F6",
+          borderBottom: "1px solid #F1F5F9",
         }}
       >
         <div
@@ -36,14 +36,14 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            background: "#EDE9FF",
+            background: "#E7EEF5",
             borderRadius: 20,
             padding: "4px 12px",
             marginBottom: 12,
           }}
         >
           <span style={{ fontSize: 12 }}>✦</span>
-          <span style={{ fontSize: 12, fontWeight: 600, color: "#6246EA", fontFamily: "var(--font-display)" }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: "#4C6E91", fontFamily: "var(--font-display)" }}>
             AI 推薦方案
           </span>
         </div>
@@ -52,14 +52,14 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
             fontFamily: "var(--font-display)",
             fontWeight: 800,
             fontSize: 22,
-            color: "#0F0A2E",
+            color: "#16232E",
             margin: 0,
             letterSpacing: "-0.3px",
           }}
         >
           為你選擇最適合的方案
         </h2>
-        <p style={{ fontSize: 14, color: "#6B7280", margin: 0, marginTop: 6 }}>
+        <p style={{ fontSize: 14, color: "#64748B", margin: 0, marginTop: 6 }}>
           根據你的 #TimeSaver 偏好自動推薦
         </p>
       </div>
@@ -80,8 +80,8 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
                   cursor: "pointer",
                   textAlign: "left",
                   boxShadow: isSelected
-                    ? `0 4px 20px rgba(98,70,234,0.15)`
-                    : "0 1px 4px rgba(15,10,46,0.05)",
+                    ? `0 4px 20px rgba(76,110,145,0.15)`
+                    : "0 1px 4px rgba(22,35,46,0.05)",
                   transition: "all 0.2s ease",
                   overflow: "hidden",
                 }}
@@ -89,7 +89,7 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
                 {rec.isDefault && (
                   <div
                     style={{
-                      background: "linear-gradient(90deg, #6246EA, #8B5CF6)",
+                      background: "linear-gradient(90deg, #4C6E91, #6E92B4)",
                       padding: "6px 14px",
                       fontSize: 11,
                       fontWeight: 700,
@@ -124,12 +124,12 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
                             fontFamily: "var(--font-display)",
                             fontWeight: 800,
                             fontSize: 16,
-                            color: "#0F0A2E",
+                            color: "#16232E",
                           }}
                         >
                           {rec.label}
                         </div>
-                        <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{rec.desc}</div>
+                        <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>{rec.desc}</div>
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
@@ -138,7 +138,7 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
                           fontFamily: "var(--font-display)",
                           fontWeight: 800,
                           fontSize: 18,
-                          color: "#0F0A2E",
+                          color: "#16232E",
                         }}
                       >
                         NT${rec.total.toLocaleString()}
@@ -165,11 +165,11 @@ export default function Recommendations({ onSelect }: RecommendationsProps) {
                         key={item}
                         style={{
                           fontSize: 12,
-                          color: "#6B7280",
-                          background: "#F8F9FC",
+                          color: "#64748B",
+                          background: "#F5F7FA",
                           padding: "4px 10px",
                           borderRadius: 20,
-                          border: "1px solid #E5E7EB",
+                          border: "1px solid #E2E8F0",
                         }}
                       >
                         {item}

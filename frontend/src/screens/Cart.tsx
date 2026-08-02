@@ -72,13 +72,13 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: 18,
-            color: "#0F0A2E",
+            color: "#16232E",
             margin: 0,
           }}
         >
           結帳成功！
         </p>
-        <p style={{ fontSize: 14, color: "#6B7280", margin: 0 }}>正在更新任務...</p>
+        <p style={{ fontSize: 14, color: "#64748B", margin: 0 }}>正在更新任務...</p>
       </div>
     );
   }
@@ -87,7 +87,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
     <div
       style={{
         height: "100%",
-        background: "#F8F9FC",
+        background: "#F5F7FA",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -98,7 +98,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
         style={{
           background: "white",
           padding: "52px 20px 16px",
-          borderBottom: "1px solid #F3F4F6",
+          borderBottom: "1px solid #F1F5F9",
           flexShrink: 0,
         }}
       >
@@ -107,13 +107,13 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             fontFamily: "var(--font-display)",
             fontWeight: 800,
             fontSize: 20,
-            color: "#0F0A2E",
+            color: "#16232E",
             margin: 0,
           }}
         >
           購物車
         </h2>
-        <p style={{ fontSize: 13, color: "#6B7280", margin: 0, marginTop: 4 }}>
+        <p style={{ fontSize: 13, color: "#64748B", margin: 0, marginTop: 4 }}>
           東京商務出差 · {items.length} 件商品
         </p>
       </div>
@@ -132,7 +132,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 display: "flex",
                 alignItems: "center",
                 gap: 12,
-                boxShadow: "0 1px 3px rgba(15,10,46,0.05)",
+                boxShadow: "0 1px 3px rgba(22,35,46,0.05)",
               }}
             >
               <div
@@ -140,7 +140,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: "#F8F9FC",
+                  background: "#F5F7FA",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -156,12 +156,12 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                     fontFamily: "var(--font-display)",
                     fontWeight: 600,
                     fontSize: 14,
-                    color: "#0F0A2E",
+                    color: "#16232E",
                   }}
                 >
                   {item.name}
                 </div>
-                <div style={{ fontSize: 12, color: "#6B7280" }}>{item.detail}</div>
+                <div style={{ fontSize: 12, color: "#64748B" }}>{item.detail}</div>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
                 <span
@@ -169,7 +169,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                     fontFamily: "var(--font-display)",
                     fontWeight: 700,
                     fontSize: 15,
-                    color: "#0F0A2E",
+                    color: "#16232E",
                   }}
                 >
                   NT${(item.price * item.qty).toLocaleString()}
@@ -180,11 +180,11 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                     width: 24,
                     height: 24,
                     borderRadius: "50%",
-                    background: "#F3F4F6",
+                    background: "#F1F5F9",
                     border: "none",
                     cursor: "pointer",
                     fontSize: 12,
-                    color: "#9CA3AF",
+                    color: "#94A3B8",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -204,7 +204,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             borderRadius: 14,
             padding: "14px",
             marginBottom: 16,
-            border: "1px solid #E5E7EB",
+            border: "1px solid #E2E8F0",
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
@@ -214,13 +214,13 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
                 fontSize: 14,
-                color: "#0F0A2E",
+                color: "#16232E",
               }}
             >
               門市取貨
             </span>
           </div>
-          <div style={{ fontSize: 13, color: "#6B7280" }}>
+          <div style={{ fontSize: 13, color: "#64748B" }}>
             7-ELEVEN 松仁門市 · 今天 18:30 後可取
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             borderRadius: 14,
             padding: "14px",
             marginBottom: 16,
-            border: "1px solid #E5E7EB",
+            border: "1px solid #E2E8F0",
           }}
         >
           <h3
@@ -240,7 +240,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
               fontFamily: "var(--font-display)",
               fontWeight: 700,
               fontSize: 14,
-              color: "#0F0A2E",
+              color: "#16232E",
               margin: 0,
               marginBottom: 12,
             }}
@@ -260,10 +260,10 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 18 }}>⭐</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#0F0A2E", fontFamily: "var(--font-display)" }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#16232E", fontFamily: "var(--font-display)" }}>
                   OPENPOINT 點數
                 </div>
-                <div style={{ fontSize: 11, color: "#6B7280" }}>使用 240 點 → 折抵 NT$120</div>
+                <div style={{ fontSize: 11, color: "#64748B" }}>使用 240 點 → 折抵 NT$120</div>
               </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -274,7 +274,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                   width: 40,
                   height: 22,
                   borderRadius: 11,
-                  background: useOpenPoint ? "#6246EA" : "#D1D5DB",
+                  background: useOpenPoint ? "#4C6E91" : "#CBD5E1",
                   position: "relative",
                   cursor: "pointer",
                   transition: "background 0.2s",
@@ -308,10 +308,10 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 18 }}>🎟</span>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#0F0A2E", fontFamily: "var(--font-display)" }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#16232E", fontFamily: "var(--font-display)" }}>
                   出差優惠券
                 </div>
-                <div style={{ fontSize: 11, color: "#6B7280" }}>商品滿 NT$1,000 折 NT$60</div>
+                <div style={{ fontSize: 11, color: "#64748B" }}>商品滿 NT$1,000 折 NT$60</div>
               </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -322,7 +322,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                   width: 40,
                   height: 22,
                   borderRadius: 11,
-                  background: useCoupon ? "#6246EA" : "#D1D5DB",
+                  background: useCoupon ? "#4C6E91" : "#CBD5E1",
                   position: "relative",
                   cursor: "pointer",
                   transition: "background 0.2s",
@@ -356,24 +356,24 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, color: "#6B7280" }}>商品小計</span>
-            <span style={{ fontSize: 13, color: "#0F0A2E" }}>NT${subtotal.toLocaleString()}</span>
+            <span style={{ fontSize: 13, color: "#64748B" }}>商品小計</span>
+            <span style={{ fontSize: 13, color: "#16232E" }}>NT${subtotal.toLocaleString()}</span>
           </div>
           {useOpenPoint && (
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-              <span style={{ fontSize: 13, color: "#6B7280" }}>OPENPOINT 折抵</span>
+              <span style={{ fontSize: 13, color: "#64748B" }}>OPENPOINT 折抵</span>
               <span style={{ fontSize: 13, color: "#16A34A" }}>- NT${openPointDiscount}</span>
             </div>
           )}
           {useCoupon && (
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-              <span style={{ fontSize: 13, color: "#6B7280" }}>優惠券折抵</span>
+              <span style={{ fontSize: 13, color: "#64748B" }}>優惠券折抵</span>
               <span style={{ fontSize: 13, color: "#16A34A" }}>- NT${couponDiscount}</span>
             </div>
           )}
           <div
             style={{
-              borderTop: "1px solid #F3F4F6",
+              borderTop: "1px solid #F1F5F9",
               marginTop: 8,
               paddingTop: 12,
               display: "flex",
@@ -385,7 +385,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
                 fontSize: 16,
-                color: "#0F0A2E",
+                color: "#16232E",
               }}
             >
               合計
@@ -395,7 +395,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 fontFamily: "var(--font-display)",
                 fontWeight: 800,
                 fontSize: 20,
-                color: "#6246EA",
+                color: "#4C6E91",
               }}
             >
               NT${total.toLocaleString()}
@@ -413,13 +413,13 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             padding: "16px",
             borderRadius: 16,
             border: "none",
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
             color: "white",
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: 16,
             cursor: "pointer",
-            boxShadow: "0 8px 24px rgba(98,70,234,0.35)",
+            boxShadow: "0 8px 24px rgba(76,110,145,0.35)",
           }}
         >
           確認結帳 · NT${total.toLocaleString()}
@@ -432,7 +432,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
           style={{
             position: "absolute",
             inset: 0,
-            background: "rgba(15,10,46,0.5)",
+            background: "rgba(22,35,46,0.5)",
             display: "flex",
             alignItems: "flex-end",
             zIndex: 200,
@@ -452,7 +452,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 width: 36,
                 height: 4,
                 borderRadius: 2,
-                background: "#D1D5DB",
+                background: "#CBD5E1",
                 margin: "0 auto 24px",
               }}
             />
@@ -461,7 +461,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 fontFamily: "var(--font-display)",
                 fontWeight: 800,
                 fontSize: 20,
-                color: "#0F0A2E",
+                color: "#16232E",
                 margin: 0,
                 marginBottom: 8,
                 textAlign: "center",
@@ -469,19 +469,19 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
             >
               確認結帳
             </h3>
-            <p style={{ textAlign: "center", fontSize: 14, color: "#6B7280", marginBottom: 24 }}>
+            <p style={{ textAlign: "center", fontSize: 14, color: "#64748B", marginBottom: 24 }}>
               共 {items.length} 件商品 · 合計 NT${total.toLocaleString()}
             </p>
             <div
               style={{
-                background: "#F8F9FC",
+                background: "#F5F7FA",
                 borderRadius: 14,
                 padding: "14px",
                 marginBottom: 20,
-                border: "1px solid #E5E7EB",
+                border: "1px solid #E2E8F0",
               }}
             >
-              <div style={{ fontSize: 13, color: "#6B7280", textAlign: "center" }}>
+              <div style={{ fontSize: 13, color: "#64748B", textAlign: "center" }}>
                 📦 7-ELEVEN 松仁門市取貨 · 今天 18:30 後
               </div>
             </div>
@@ -492,7 +492,7 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 padding: "16px",
                 borderRadius: 16,
                 border: "none",
-                background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
                 color: "white",
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
@@ -509,9 +509,9 @@ export default function Cart({ items, onCheckout, onUpdateItems }: CartProps) {
                 width: "100%",
                 padding: "14px",
                 borderRadius: 16,
-                border: "1.5px solid #E5E7EB",
+                border: "1.5px solid #E2E8F0",
                 background: "white",
-                color: "#6B7280",
+                color: "#64748B",
                 fontFamily: "var(--font-display)",
                 fontWeight: 600,
                 fontSize: 15,

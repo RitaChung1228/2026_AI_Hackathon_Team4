@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { daysUntil, formatDateLabel, relativeDayLabel } from "../dateUtils";
+import AddToCalendar from "../components/AddToCalendar";
 import type { ScheduledTrip } from "../types";
 
 interface MissionsProps {
@@ -14,7 +15,7 @@ interface MissionsProps {
 function missionStatus(trip: ScheduledTrip) {
   const diff = daysUntil(trip.date);
   if (trip.progress >= 100) return { label: "已完成", color: "#16A34A", bg: "#DCFCE7" };
-  if (diff < 0) return { label: "已過期", color: "#9CA3AF", bg: "#F3F4F6" };
+  if (diff < 0) return { label: "已過期", color: "#94A3B8", bg: "#F1F5F9" };
   if (diff === 0) return { label: "進行中", color: trip.color, bg: trip.bgColor };
   return { label: "準備中", color: "#EA580C", bg: "#FFF7ED" };
 }
@@ -44,7 +45,7 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
     <div
       style={{
         height: "100%",
-        background: "#F8F9FC",
+        background: "#F5F7FA",
         overflowY: "auto",
         paddingBottom: 100,
       }}
@@ -55,7 +56,7 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
         style={{
           background: "white",
           padding: "52px 20px 20px",
-          borderBottom: "1px solid #F3F4F6",
+          borderBottom: "1px solid #F1F5F9",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -64,7 +65,7 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
               fontFamily: "var(--font-display)",
               fontWeight: 800,
               fontSize: 22,
-              color: "#0F0A2E",
+              color: "#16232E",
               margin: 0,
             }}
           >
@@ -75,8 +76,8 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
               style={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#6246EA",
-                background: "#EDE9FF",
+                color: "#4C6E91",
+                background: "#E7EEF5",
                 padding: "4px 10px",
                 borderRadius: 20,
               }}
@@ -95,7 +96,7 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
               background: "white",
               borderRadius: 18,
               padding: "36px 24px",
-              border: "1px dashed #E5E7EB",
+              border: "1px dashed #E2E8F0",
               textAlign: "center",
             }}
           >
@@ -104,7 +105,7 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
                 width: 64,
                 height: 64,
                 borderRadius: "50%",
-                background: "#EDE9FF",
+                background: "#E7EEF5",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -114,10 +115,10 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
             >
               ◈
             </div>
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, color: "#0F0A2E", marginBottom: 6 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 16, color: "#16232E", marginBottom: 6 }}>
               還沒有任務
             </div>
-            <p style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.6, margin: "0 0 20px" }}>
+            <p style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6, margin: "0 0 20px" }}>
               選一個情境包、設定行程日期後，<br />任務會自動出現在這裡。
             </p>
             {onBrowsePacks && (
@@ -127,13 +128,13 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
                   padding: "12px 24px",
                   borderRadius: 16,
                   border: "none",
-                  background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                  background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
                   color: "white",
                   fontFamily: "var(--font-display)",
                   fontWeight: 700,
                   fontSize: 14,
                   cursor: "pointer",
-                  boxShadow: "0 8px 24px rgba(98,70,234,0.3)",
+                  boxShadow: "0 8px 24px rgba(76,110,145,0.3)",
                 }}
               >
                 使用情境包 →
@@ -154,10 +155,10 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
                 background: "white",
                 borderRadius: 18,
                 padding: "16px",
-                border: "1px solid #F3F4F6",
+                border: "1px solid #F1F5F9",
                 cursor: "pointer",
                 textAlign: "left",
-                boxShadow: "0 1px 4px rgba(15,10,46,0.05)",
+                boxShadow: "0 1px 4px rgba(22,35,46,0.05)",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
@@ -182,13 +183,13 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
                       fontFamily: "var(--font-display)",
                       fontWeight: 700,
                       fontSize: 15,
-                      color: "#0F0A2E",
+                      color: "#16232E",
                       marginBottom: 3,
                     }}
                   >
                     {m.name}
                   </div>
-                  <div style={{ fontSize: 12, color: "#9CA3AF" }}>{missionSubtitle(m)}</div>
+                  <div style={{ fontSize: 12, color: "#94A3B8" }}>{missionSubtitle(m)}</div>
                 </div>
                 <span
                   style={{
@@ -207,10 +208,10 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
 
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, color: "#9CA3AF" }}>{done ? "已完成準備" : "進度"}</span>
+                  <span style={{ fontSize: 11, color: "#94A3B8" }}>{done ? "已完成準備" : "進度"}</span>
                   <span style={{ fontSize: 11, fontWeight: 600, color: m.color }}>{m.progress}%</span>
                 </div>
-                <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden" }}>
+                <div style={{ height: 4, background: "#F1F5F9", borderRadius: 2, overflow: "hidden" }}>
                   <div
                     style={{
                       height: "100%",
@@ -222,8 +223,9 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
                 </div>
               </div>
 
-              {/* Save as pack button */}
-              <div style={{ marginTop: 12, borderTop: "1px solid #F3F4F6", paddingTop: 10 }}>
+              {/* Actions: 加入行事曆 + 儲存為常用行程包 */}
+              <div style={{ marginTop: 12, borderTop: "1px solid #F1F5F9", paddingTop: 10, display: "flex", flexDirection: "column", gap: 8 }}>
+                <AddToCalendar id={m.packId} date={m.date} color={m.color} />
                 {(() => {
                   const isSaved = savedPackIds.includes(m.packId);
                   const isJustSaved = justSaved === m.packId;
@@ -232,9 +234,9 @@ export default function Missions({ trips = [], onMissionClick, onBrowsePacks, sa
                       onClick={(e) => handleSave(e, m.packId)}
                       style={{
                         display: "flex", alignItems: "center", gap: 6, padding: "6px 14px",
-                        borderRadius: 20, border: `1.5px solid ${isSaved ? m.color : "#E5E7EB"}`,
+                        borderRadius: 20, border: `1.5px solid ${isSaved ? m.color : "#E2E8F0"}`,
                         background: isSaved ? m.bgColor : "white",
-                        color: isSaved ? m.color : "#6B7280",
+                        color: isSaved ? m.color : "#64748B",
                         fontSize: 12, fontWeight: 600, cursor: "pointer",
                         fontFamily: "var(--font-display)", transition: "all 0.2s",
                       }}

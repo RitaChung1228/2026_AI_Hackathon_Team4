@@ -5,6 +5,17 @@ export const mockUser = {
   tags: ["#TimeSaver", "#FrequentPickup", "#Traveler", "#CoffeeLover"],
 };
 
+/** 常用取貨門市選項，訂單到貨提醒會用選定的門市 */
+export const pickupStores = [
+  { id: "songren", name: "7-ELEVEN 松仁門市", address: "台北市信義區松仁路 100 號", note: "距離 240m · 24 小時" },
+  { id: "xinyi", name: "7-ELEVEN 信義門市", address: "台北市信義區信義路五段 7 號", note: "距離 600m · 24 小時" },
+  { id: "family-taipei101", name: "全家 台北 101 店", address: "台北市信義區市府路 45 號", note: "距離 850m · 07:00–23:00" },
+  { id: "hilife-zhongxiao", name: "萊爾富 忠孝門市", address: "台北市大安區忠孝東路四段 45 號", note: "距離 1.2km · 24 小時" },
+];
+
+/** 頭像可選的樣式（英文縮寫或表情） */
+export const avatarOptions = ["JL", "🙂", "😎", "🐱", "🐶", "🌿", "⚡", "🎧"];
+
 export const UNSPLASH = {
   tokyo: "https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=800&h=400&fit=crop&auto=format",
   tokyoStreet: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=800&h=400&fit=crop&auto=format",
@@ -28,8 +39,8 @@ export const scenarioPacks = [
     id: "business-trip",
     icon: "💼",
     name: "商務出差",
-    color: "#6246EA",
-    bgColor: "#EDE9FF",
+    color: "#4C6E91",
+    bgColor: "#E7EEF5",
     image: "https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=600&h=280&fit=crop&auto=format",
     description: "快速完成出差前的必要準備",
     modules: [
@@ -96,8 +107,8 @@ export const scenarioPacks = [
     id: "fitness",
     icon: "💪",
     name: "健身計畫",
-    color: "#7C3AED",
-    bgColor: "#EDE9FF",
+    color: "#3B5876",
+    bgColor: "#E7EEF5",
     image: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&h=280&fit=crop&auto=format",
     description: "課表規劃、補給品採購、追蹤進度",
     modules: [
@@ -126,7 +137,7 @@ export const scenarioPacks = [
 
 export const products = [
   { id: "esim", icon: "📶", name: "日本 eSIM", detail: "5GB / 5 Days", price: 399, tag: "最快速", reason: "符合你的 #TimeSaver 偏好", reasonTag: "timesaver", image: "https://images.unsplash.com/photo-1753385158278-387d4dda60c4?w=120&h=90&fit=crop&auto=format" },
-  { id: "adapter", icon: "🔌", name: "萬國轉接頭", detail: "日本 / 全球適用", price: 299, tag: "必備", reason: "出差必備，可門市取貨", reasonTag: "pickup", image: "https://images.unsplash.com/photo-1749498682646-45e7c11506ec?w=120&h=90&fit=crop&auto=format" },
+  { id: "adapter", icon: "🔌", name: "萬國轉接頭", detail: "日本 / 全球適用", price: 299, tag: "必備", reason: "出差必備，可門市取貨", reasonTag: "pickup", image: "/images/adapter.jpg" },
   { id: "clicker", icon: "🖊", name: "簡報筆", detail: "藍牙 / 2.4G", price: 990, tag: "推薦", reason: "商務出差常用工具", reasonTag: "business", image: "https://images.unsplash.com/photo-1758525588495-0fa7618da4a3?w=120&h=90&fit=crop&auto=format" },
   { id: "powerbank", icon: "🔋", name: "行動電源", detail: "20000mAh / PD65W", price: 799, tag: "熱銷", reason: "符合你的長途旅行需求", reasonTag: "traveler", image: "https://images.unsplash.com/photo-1502301197179-65228ab57f78?w=120&h=90&fit=crop&auto=format" },
   { id: "cake", icon: "🎂", name: "生日蛋糕", detail: "6吋 草莓奶油", price: 780, tag: "今日可取", reason: "附近門市今日 18:30 後可取", reasonTag: "pickup", image: "https://images.unsplash.com/photo-1545696563-af8f6ec2295a?w=120&h=90&fit=crop&auto=format" },
@@ -159,12 +170,12 @@ export const tokyoMission = {
   image: "https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=720&h=200&fit=crop&auto=format",
   aiSummary: "",
   tasks: [
-    { id: "checklist", icon: "📋", title: "出差 Checklist", status: "in-progress", detail: "6 / 8 完成", action: "查看", color: "#6246EA" },
+    { id: "checklist", icon: "📋", title: "出差 Checklist", status: "in-progress", detail: "6 / 8 完成", action: "查看", color: "#4C6E91" },
     { id: "transport", icon: "🚕", title: "機場交通", status: "confirmed", detail: "yoxi 06:00 Pickup", action: "修改", color: "#0EA5E9" },
     { id: "esim", icon: "📶", title: "日本 eSIM", status: "confirmed", detail: "5GB / 5 Days · NT$399", action: "更換", color: "#16A34A" },
     { id: "goods", icon: "🛒", title: "必備用品", status: "pending", detail: "3 Items", action: "查看", color: "#EA580C" },
     { id: "insurance", icon: "🛡", title: "旅平險", status: "warning", detail: "尚未確認", action: "查看方案", color: "#DB2777" },
-    { id: "reminder", icon: "⏰", title: "Reminder", status: "confirmed", detail: "出發前一天 21:00", action: "修改", color: "#8B5CF6" },
+    { id: "reminder", icon: "⏰", title: "Reminder", status: "confirmed", detail: "出發前一天 21:00", action: "修改", color: "#6E92B4" },
   ],
 };
 
@@ -178,9 +189,9 @@ export const birthdayMission = {
   tasks: [
     { id: "cake", icon: "🎂", title: "生日蛋糕", status: "pending", detail: "7-ELEVEN 松仁門市 · NT$780", action: "確認", color: "#DB2777" },
     { id: "gift", icon: "🎁", title: "禮物", status: "pending", detail: "精品禮物組 · NT$680", action: "確認", color: "#EA580C" },
-    { id: "venue", icon: "🏠", title: "場地", status: "pending", detail: "尚未選擇場地", action: "查看", color: "#6246EA" },
+    { id: "venue", icon: "🏠", title: "場地", status: "pending", detail: "尚未選擇場地", action: "查看", color: "#4C6E91" },
     { id: "transport", icon: "🚌", title: "交通", status: "confirmed", detail: "捷運 → 信義安和站", action: "查看", color: "#0EA5E9" },
-    { id: "reminder", icon: "⏰", title: "Reminder", status: "confirmed", detail: "今天 17:30 出發提醒", action: "修改", color: "#8B5CF6" },
+    { id: "reminder", icon: "⏰", title: "Reminder", status: "confirmed", detail: "今天 17:30 出發提醒", action: "修改", color: "#6E92B4" },
   ],
 };
 
@@ -192,11 +203,11 @@ export const homeRepairMission = {
   image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=720&h=200&fit=crop&auto=format",
   aiSummary: "已找到 3 位評分 4.8+ 的師傅，「鑫盛水電」今天下午 14:00 有空檔，報價 NT$1,200。",
   tasks: [
-    { id: "diagnose", icon: "🔍", title: "問題確認", status: "confirmed", detail: "浴室水管漏水 · 已拍照", action: "查看", color: "#6246EA" },
+    { id: "diagnose", icon: "🔍", title: "問題確認", status: "confirmed", detail: "浴室水管漏水 · 已拍照", action: "查看", color: "#4C6E91" },
     { id: "technician", icon: "👷", title: "師傅預約", status: "in-progress", detail: "鑫盛水電 · 今天 14:00", action: "確認", color: "#0EA5E9" },
     { id: "quote", icon: "💰", title: "報價比較", status: "confirmed", detail: "NT$1,200 · 含零件費", action: "查看", color: "#16A34A" },
     { id: "parts", icon: "🔧", title: "零件採購", status: "pending", detail: "止水帶、生料帶 · NT$180", action: "預購", color: "#EA580C" },
-    { id: "verify", icon: "✅", title: "完工驗收", status: "pending", detail: "完工後確認 · 付款", action: "等待", color: "#8B5CF6" },
+    { id: "verify", icon: "✅", title: "完工驗收", status: "pending", detail: "完工後確認 · 付款", action: "等待", color: "#6E92B4" },
   ],
 };
 
@@ -208,10 +219,10 @@ export const petCareMission = {
   image: "https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=720&h=200&fit=crop&auto=format",
   aiSummary: "「台北動物醫院」本週六早診有名額，距你家步行 8 分鐘，評分 4.9。",
   tasks: [
-    { id: "clinic", icon: "🏥", title: "選擇診所", status: "confirmed", detail: "台北動物醫院 · 信義區", action: "查看", color: "#6246EA" },
+    { id: "clinic", icon: "🏥", title: "選擇診所", status: "confirmed", detail: "台北動物醫院 · 信義區", action: "查看", color: "#4C6E91" },
     { id: "appt", icon: "📅", title: "預約看診", status: "in-progress", detail: "週六 10:00 · 預防針", action: "確認", color: "#0EA5E9" },
     { id: "supplies", icon: "🛒", title: "寵物用品", status: "pending", detail: "飼料、玩具補充", action: "採購", color: "#EA580C" },
-    { id: "reminder", icon: "⏰", title: "出發提醒", status: "pending", detail: "週六 09:30 提醒", action: "設定", color: "#8B5CF6" },
+    { id: "reminder", icon: "⏰", title: "出發提醒", status: "pending", detail: "週六 09:30 提醒", action: "設定", color: "#6E92B4" },
   ],
 };
 
@@ -226,7 +237,7 @@ export const movingMission = {
     { id: "company", icon: "🚚", title: "搬家公司", status: "in-progress", detail: "選取公司", action: "確認", color: "#0EA5E9" },
     { id: "packing", icon: "📦", title: "打包用品", status: "pending", detail: "選擇欲採購項目", action: "採購", color: "#EA580C" },
     { id: "notify", icon: "📮", title: "地址", status: "pending", detail: "點選輸入詳細地址", action: "寄送", color: "#16A34A" },
-    { id: "checklist", icon: "📋", title: "搬家項目清單", status: "pending", detail: "輸入項目名稱", action: "查看", color: "#8B5CF6" },
+    { id: "checklist", icon: "📋", title: "搬家項目清單", status: "pending", detail: "輸入項目名稱", action: "查看", color: "#6E92B4" },
   ],
 };
 
@@ -238,7 +249,7 @@ export const fitnessMission = {
   image: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=720&h=200&fit=crop&auto=format",
   aiSummary: "週一/三/五/六訓練日，明天是胸肌日。補給品庫存不足，建議今天採購乳清蛋白。",
   tasks: [
-    { id: "gym", icon: "🏋️", title: "健身房", status: "confirmed", detail: "FitLife 信義店 · 月費 NT$1,200", action: "查看", color: "#6246EA" },
+    { id: "gym", icon: "🏋️", title: "健身房", status: "confirmed", detail: "FitLife 信義店 · 月費 NT$1,200", action: "查看", color: "#4C6E91" },
     { id: "schedule", icon: "📅", title: "訓練課表", status: "confirmed", detail: "本週：胸 / 背 / 腿 / 肩", action: "查看", color: "#16A34A" },
     { id: "nutrition", icon: "🥗", title: "飲食計畫", status: "in-progress", detail: "高蛋白 · 2,400 kcal / 天", action: "查看", color: "#0EA5E9" },
     { id: "supplements", icon: "💊", title: "補給品", status: "pending", detail: "乳清蛋白庫存不足", action: "採購", color: "#EA580C" },
@@ -295,9 +306,9 @@ export const fitnessPlanningSteps = [
 ];
 
 export const recommendations = [
-  { id: "fastest", icon: "⚡", label: "最省時間", desc: "最快完成所有準備", tag: "Recommended", tagColor: "#6246EA", reason: "符合你的 #TimeSaver 偏好", items: ["yoxi 接送", "eSIM 5GB", "轉接頭 + 行動電源", "7-ELEVEN 門市取貨"], total: 2777, isDefault: true },
+  { id: "fastest", icon: "⚡", label: "最省時間", desc: "最快完成所有準備", tag: "Recommended", tagColor: "#4C6E91", reason: "符合你的 #TimeSaver 偏好", items: ["yoxi 接送", "eSIM 5GB", "轉接頭 + 行動電源", "7-ELEVEN 門市取貨"], total: 2777, isDefault: true },
   { id: "budget", icon: "💰", label: "最划算", desc: "優先使用優惠與 OPENPOINT", tag: "省 NT$240", tagColor: "#16A34A", reason: "可使用即將到期的 OPENPOINT 點數", items: ["捷運 + 巴士", "eSIM 3GB", "轉接頭", "OPENPOINT 折抵 120"], total: 2198, isDefault: false },
-  { id: "complete", icon: "✨", label: "最完整", desc: "包含完整旅行服務", tag: "完整保障", tagColor: "#8B5CF6", reason: "包含旅平險與所有出行服務", items: ["yoxi 接送", "eSIM 5GB", "旅平險", "轉接頭 + 行動電源", "簡報筆"], total: 3917, isDefault: false },
+  { id: "complete", icon: "✨", label: "最完整", desc: "包含完整旅行服務", tag: "完整保障", tagColor: "#6E92B4", reason: "包含旅平險與所有出行服務", items: ["yoxi 接送", "eSIM 5GB", "旅平險", "轉接頭 + 行動電源", "簡報筆"], total: 3917, isDefault: false },
 ];
 
 export const cartItems = [

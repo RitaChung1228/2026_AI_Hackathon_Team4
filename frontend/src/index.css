@@ -3,18 +3,18 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-sidebar: #130E28;
+  --color-sidebar: #1B2A38;
   --color-sidebar-hover: rgba(255,255,255,0.06);
-  --color-sidebar-active: rgba(98,70,234,0.25);
-  --color-primary: #6246EA;
-  --color-primary-hover: #5138D4;
-  --color-primary-light: #EDE9FF;
-  --color-primary-mid: #C4B5FD;
-  --color-bg: #F7F8FC;
+  --color-sidebar-active: rgba(76,110,145,0.25);
+  --color-primary: #4C6E91;
+  --color-primary-hover: #3B5876;
+  --color-primary-light: #E7EEF5;
+  --color-primary-mid: #A9C0D6;
+  --color-bg: #F5F7FA;
   --color-surface: #FFFFFF;
-  --color-text: #0F0A2E;
-  --color-muted: #6B7280;
-  --color-border: #E5E7EB;
+  --color-text: #16232E;
+  --color-muted: #64748B;
+  --color-border: #E2E8F0;
   --color-success: #16A34A;
   --color-success-bg: #DCFCE7;
   --color-warning: #EA580C;
@@ -36,7 +36,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-body);
-  background: #130E28;
+  background: #1B2A38;
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -73,10 +73,10 @@ body {
 @media (min-width: 500px) {
   body {
     background:
-      radial-gradient(circle at 50% 22%, rgba(98,70,234,0.30), transparent 55%),
-      radial-gradient(circle at 15% 82%, rgba(139,92,246,0.16), transparent 45%),
-      radial-gradient(circle at 88% 78%, rgba(98,70,234,0.14), transparent 40%),
-      #0D0820;
+      radial-gradient(circle at 50% 22%, rgba(76,110,145,0.30), transparent 55%),
+      radial-gradient(circle at 15% 82%, rgba(110,146,180,0.16), transparent 45%),
+      radial-gradient(circle at 88% 78%, rgba(76,110,145,0.14), transparent 40%),
+      #111C25;
   }
 
   .phone-shell {
@@ -84,12 +84,12 @@ body {
     height: min(960px, 94vh);
     padding: 14px 14px 26px;
     border-radius: 58px;
-    background: linear-gradient(155deg, #2b2640, #0d0a1c 65%);
+    background: linear-gradient(155deg, #2A3E50, #101A23 65%);
     box-shadow:
       inset 0 0 0 2px rgba(255,255,255,0.08),
       0 0 0 1px rgba(255,255,255,0.05),
       0 50px 140px rgba(0,0,0,0.75),
-      0 10px 50px rgba(98,70,234,0.28);
+      0 10px 50px rgba(76,110,145,0.28);
   }
 
   .phone-shell::before {
@@ -100,7 +100,7 @@ body {
     transform: translateX(-50%);
     width: 120px;
     height: 28px;
-    background: #0D0820;
+    background: #111C25;
     border-radius: 20px;
     z-index: 20;
   }
@@ -127,7 +127,7 @@ body {
   .phone-side-btn {
     display: block;
     position: absolute;
-    background: linear-gradient(90deg, #1c1830, #322c50);
+    background: linear-gradient(90deg, #1D2E3C, #35506B);
     border-radius: 2px;
     z-index: -1;
   }
@@ -236,21 +236,21 @@ body {
 .step-reveal { animation: stepReveal 0.3s cubic-bezier(0.22,1,0.36,1) both; }
 
 .ai-glow {
-  box-shadow: 0 0 0 1px rgba(98,70,234,0.15), 0 4px 20px rgba(98,70,234,0.12);
+  box-shadow: 0 0 0 1px rgba(76,110,145,0.15), 0 4px 20px rgba(76,110,145,0.12);
 }
 .ai-surface {
-  background: linear-gradient(135deg, rgba(98,70,234,0.06) 0%, rgba(139,92,246,0.03) 100%);
-  border: 1px solid rgba(98,70,234,0.14);
+  background: linear-gradient(135deg, rgba(76,110,145,0.06) 0%, rgba(110,146,180,0.03) 100%);
+  border: 1px solid rgba(76,110,145,0.14);
 }
 .card-shadow {
-  box-shadow: 0 1px 3px rgba(15,10,46,0.06), 0 4px 16px rgba(15,10,46,0.04);
+  box-shadow: 0 1px 3px rgba(22,35,46,0.06), 0 4px 16px rgba(22,35,46,0.04);
 }
 .input-ring:focus-within {
-  box-shadow: 0 0 0 3px rgba(98,70,234,0.18);
-  border-color: #6246EA !important;
+  box-shadow: 0 0 0 3px rgba(76,110,145,0.18);
+  border-color: #4C6E91 !important;
 }
-.purple-glow {
-  box-shadow: 0 6px 28px rgba(98,70,234,0.38), 0 2px 8px rgba(98,70,234,0.18);
+.brand-glow {
+  box-shadow: 0 6px 28px rgba(76,110,145,0.38), 0 2px 8px rgba(76,110,145,0.18);
 }
 
 .sidebar-link {
@@ -262,7 +262,7 @@ body {
   width: 100%; text-align: left;
 }
 .sidebar-link:hover { background: var(--color-sidebar-hover); color: rgba(255,255,255,0.9); }
-.sidebar-link.active { background: var(--color-sidebar-active); color: #A78BFA; }
+.sidebar-link.active { background: var(--color-sidebar-active); color: #8FB0CC; }
 
 .drawer-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.5);

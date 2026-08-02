@@ -27,7 +27,7 @@ interface MissionWorkspaceProps {
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
   confirmed: { label: "已確認", bg: "#DCFCE7", color: "#16A34A" },
-  "in-progress": { label: "進行中", bg: "#EDE9FF", color: "#6246EA" },
+  "in-progress": { label: "進行中", bg: "#E7EEF5", color: "#4C6E91" },
   pending: { label: "待處理", bg: "#FFF7ED", color: "#EA580C" },
   warning: { label: "需確認", bg: "#FEE2E2", color: "#DC2626" },
 };
@@ -66,7 +66,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
     <div
       style={{
         height: "100%",
-        background: "#F8F9FC",
+        background: "#F5F7FA",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -77,7 +77,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
         style={{
           background: "white",
           padding: "52px 20px 20px",
-          borderBottom: "1px solid #F3F4F6",
+          borderBottom: "1px solid #F1F5F9",
           flexShrink: 0,
         }}
       >
@@ -87,7 +87,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
               width: 48,
               height: 48,
               borderRadius: 14,
-              background: "#EDE9FF",
+              background: "#E7EEF5",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -102,26 +102,26 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
                 fontFamily: "var(--font-display)",
                 fontWeight: 800,
                 fontSize: 18,
-                color: "#0F0A2E",
+                color: "#16232E",
                 margin: 0,
                 letterSpacing: "-0.3px",
               }}
             >
               {mission.title}
             </h2>
-            <p style={{ fontSize: 12, color: "#6B7280", margin: 0, marginTop: 2 }}>{mission.subtitle}</p>
+            <p style={{ fontSize: 12, color: "#64748B", margin: 0, marginTop: 2 }}>{mission.subtitle}</p>
           </div>
         </div>
 
         {/* Progress */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-            <span style={{ fontSize: 12, color: "#6B7280" }}>任務進度</span>
+            <span style={{ fontSize: 12, color: "#64748B" }}>任務進度</span>
             <span
               style={{
                 fontSize: 13,
                 fontWeight: 700,
-                color: "#6246EA",
+                color: "#4C6E91",
                 fontFamily: "var(--font-display)",
               }}
             >
@@ -131,7 +131,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
           <div
             style={{
               height: 6,
-              background: "#F3F4F6",
+              background: "#F1F5F9",
               borderRadius: 3,
               overflow: "hidden",
             }}
@@ -140,7 +140,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
               style={{
                 height: "100%",
                 width: `${progressPct}%`,
-                background: "linear-gradient(90deg, #6246EA, #8B5CF6)",
+                background: "linear-gradient(90deg, #4C6E91, #6E92B4)",
                 borderRadius: 3,
                 transition: "width 0.5s ease",
               }}
@@ -154,8 +154,8 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
         {/* AI Summary */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(98,70,234,0.07), rgba(139,92,246,0.04))",
-            border: "1px solid rgba(98,70,234,0.15)",
+            background: "linear-gradient(135deg, rgba(76,110,145,0.07), rgba(110,146,180,0.04))",
+            border: "1px solid rgba(76,110,145,0.15)",
             borderRadius: 14,
             padding: "12px 14px",
             marginBottom: 16,
@@ -165,7 +165,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
           }}
         >
           <span style={{ fontSize: 16, flexShrink: 0 }}>✦</span>
-          <p style={{ fontSize: 13, color: "#6246EA", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
+          <p style={{ fontSize: 13, color: "#4C6E91", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>
             {mission.aiSummary}
           </p>
         </div>
@@ -183,8 +183,8 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
                   background: "white",
                   borderRadius: 16,
                   padding: "14px 14px",
-                  boxShadow: "0 1px 4px rgba(15,10,46,0.05)",
-                  border: isUpdated ? "1.5px solid #16A34A" : "1px solid #F3F4F6",
+                  boxShadow: "0 1px 4px rgba(22,35,46,0.05)",
+                  border: isUpdated ? "1.5px solid #16A34A" : "1px solid #F1F5F9",
                   transition: "border-color 0.3s ease",
                 }}
               >
@@ -210,13 +210,13 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
                         fontFamily: "var(--font-display)",
                         fontWeight: 700,
                         fontSize: 14,
-                        color: "#0F0A2E",
+                        color: "#16232E",
                         marginBottom: 3,
                       }}
                     >
                       {task.title}
                     </div>
-                    <div style={{ fontSize: 12, color: "#6B7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 12, color: "#64748B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {task.id === "transport" && transportTime
                         ? `yoxi ${transportTime} Pickup`
                         : task.detail}
@@ -239,7 +239,7 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
                       onClick={() => handleAction(task.id)}
                       style={{
                         fontSize: 12,
-                        color: "#6246EA",
+                        color: "#4C6E91",
                         fontWeight: 600,
                         background: "none",
                         border: "none",
@@ -288,13 +288,13 @@ export default function MissionWorkspace({ mission, onContinue, transportTime }:
             padding: "16px",
             borderRadius: 16,
             border: "none",
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
             color: "white",
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: 16,
             cursor: "pointer",
-            boxShadow: "0 8px 24px rgba(98,70,234,0.35)",
+            boxShadow: "0 8px 24px rgba(76,110,145,0.35)",
           }}
         >
           繼續完成任務 →

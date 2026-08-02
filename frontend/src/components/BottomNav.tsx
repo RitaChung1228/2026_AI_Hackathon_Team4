@@ -18,7 +18,7 @@ export default function BottomNav({ activeTab, onTabChange, onAIOpen, cartCount 
       style={{
         height: 72,
         background: "white",
-        borderTop: "1px solid #E5E7EB",
+        borderTop: "1px solid #E2E8F0",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-around",
@@ -39,18 +39,18 @@ export default function BottomNav({ activeTab, onTabChange, onAIOpen, cartCount 
       <button
         onClick={onAIOpen}
         style={{
-          width: 56,
-          height: 56,
+          width: 64,
+          height: 64,
           borderRadius: "50%",
-          background: "linear-gradient(135deg, #6246EA 0%, #8B5CF6 100%)",
-          border: "none",
+          background: "white",
+          border: "1.5px solid #E2E8F0",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          boxShadow: "0 8px 24px rgba(98,70,234,0.4), 0 2px 8px rgba(98,70,234,0.2)",
+          boxShadow: "0 8px 24px rgba(76,110,145,0.4), 0 2px 8px rgba(76,110,145,0.2)",
           position: "relative",
-          top: -8,
+          top: -12,
           flexShrink: 0,
           transition: "transform 0.15s ease",
         }}
@@ -58,20 +58,11 @@ export default function BottomNav({ activeTab, onTabChange, onAIOpen, cartCount 
         onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 2C12 2 8 6 8 10C8 12.2 9.8 14 12 14C14.2 14 16 12.2 16 10C16 6 12 2 12 2Z"
-            fill="white"
-            opacity="0.9"
-          />
-          <path
-            d="M6 14C4 15.5 3 17.5 3 20H21C21 17.5 20 15.5 18 14C16.5 15.2 14.4 16 12 16C9.6 16 7.5 15.2 6 14Z"
-            fill="white"
-            opacity="0.7"
-          />
-          <circle cx="18" cy="6" r="2.5" fill="white" opacity="0.6" />
-          <circle cx="20" cy="10" r="1.5" fill="white" opacity="0.4" />
-        </svg>
+        <img
+          src="/logo-mark.png"
+          alt="Lifepack AI"
+          style={{ width: 40, height: 40, objectFit: "contain", pointerEvents: "none" }}
+        />
       </button>
 
       {tabs.slice(2).map((tab) => (
@@ -98,7 +89,7 @@ function TabButton({
   onClick: () => void;
   badge?: number;
 }) {
-  const color = active ? "#6246EA" : "#9CA3AF";
+  const color = active ? "#4C6E91" : "#94A3B8";
   return (
     <button
       onClick={onClick}
@@ -120,7 +111,7 @@ function TabButton({
             position: "absolute",
             top: 0,
             right: 8,
-            background: "#6246EA",
+            background: "#4C6E91",
             color: "white",
             fontSize: 10,
             fontWeight: 700,
@@ -156,7 +147,7 @@ function HomeIcon({ color }: { color: string }) {
       <path
         d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z"
         fill={color}
-        opacity={color === "#6246EA" ? 1 : 0.7}
+        opacity={color === "#4C6E91" ? 1 : 0.7}
       />
     </svg>
   );
