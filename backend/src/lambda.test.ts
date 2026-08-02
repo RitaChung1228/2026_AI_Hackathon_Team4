@@ -12,7 +12,12 @@ vi.mock("./bedrock.js", () => ({
 }));
 
 vi.mock("./agent.js", () => ({
-  runAgentLoop: vi.fn(async () => "agent reply"),
+  agentChat: vi.fn(async () => ({
+    reply: "agent reply",
+    history: [],
+    toolCalls: [],
+    sessionId: "sess_anonymous",
+  })),
 }));
 
 import { handler } from "./lambda.js";
@@ -44,11 +49,31 @@ describe("lambda handler", () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it("body.agent=true 時走 runAgentLoop()", async () => {
+  it("body.agent=true 時走 agentChat()", async () => {
     const res = await handler(
       event({ messages: [{ role: "user", content: "hi" }], agent: true })
     );
     expect(res.statusCode).toBe(200);
-    expect(JSON.parse(res.body as string)).toEqual({ reply: "agent reply" });
+    const parsed = JSON.parse(res.body as string);
+    expect(parsed.reply).toBe("agent reply");
+    expect(parsed.sessionId).toBe("sess_anonymous");
+  });
+
+  it("agent 模式吃前端的 message 字串格式", async () => {
+    const res = await handler(
+      event({ agent: true, userId: "u1", message: "hi", history: [] })
+    );
+    expect(res.statusCode).toBe(200);
+    expect(JSON.parse(res.body as string).reply).toBe("agent reply");
+  });
+
+  it("agent 模式缺 message 回 400", async () => {
+    const res = await handler(event({ agent: true, userId: "u1" }));
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("回應帶 CORS header", async () => {
+    const res = await handler(event({ message: "hi" }));
+    expect(res.headers?.["Access-Control-Allow-Origin"]).toBe("*");
   });
 });

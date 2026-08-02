@@ -16,6 +16,7 @@ interface ContextPanelProps {
   onSaveComplete: () => void;
   onDismissComplete: () => void;
   onProductAdd: (item: CartItem) => void;
+  agentMission?: any;
 }
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
@@ -46,7 +47,7 @@ const SHOP_PRODUCTS: Partial<Record<ContextView, typeof products>> = {
 
 export default function ContextPanel({
   view, transportTime, cartItems, onCartUpdate, onCheckout,
-  onSaveComplete, onDismissComplete, onProductAdd,
+  onSaveComplete, onDismissComplete, onProductAdd, agentMission,
 }: ContextPanelProps) {
   const [taskStates, setTaskStates] = useState<Record<string, string>>({});
   const [useOpenPoint, setUseOpenPoint] = useState(true);
@@ -199,6 +200,69 @@ export default function ContextPanel({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  /* ── AGENT MISSION VIEW (dynamic from AI) ── */
+  if (view === "agent-mission" && agentMission) {
+    const tasks = agentMission.tasks || [];
+    const confirmedCount = tasks.filter((t: any) => (taskStates[t.id] || t.status) === "confirmed").length;
+    const prog = tasks.length > 0 ? Math.round((confirmedCount / tasks.length) * 100) || agentMission.progress : 0;
+
+    return (
+      <div className="panel-enter" style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {/* Hero banner */}
+        <div style={{ position: "relative", height: 130, flexShrink: 0, overflow: "hidden" }}>
+          <img src={agentMission.image || "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=720&h=200&fit=crop&auto=format"} alt={agentMission.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(15,10,46,0.82))" }} />
+          <div style={{ position: "absolute", bottom: 12, left: 16, right: 16 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "white", marginBottom: 1 }}>{agentMission.title}</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)" }}>{agentMission.subtitle}</div>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div style={{ padding: "12px 16px 8px", background: "white", borderBottom: "1px solid #F3F4F6" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, color: "#6246EA", fontFamily: "var(--font-display)" }}>進度 {prog}%</span>
+            <span style={{ fontSize: 11, color: "#9CA3AF" }}>{confirmedCount}/{tasks.length} 完成</span>
+          </div>
+          <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${prog}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", borderRadius: 2, transition: "width 0.5s ease" }} />
+          </div>
+        </div>
+
+        {/* AI Summary */}
+        {agentMission.aiSummary && (
+          <div style={{ margin: "12px 16px 0", padding: "10px 14px", background: "linear-gradient(135deg, rgba(98,70,234,0.06), rgba(139,92,246,0.04))", border: "1px solid rgba(98,70,234,0.15)", borderRadius: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+              <span style={{ fontSize: 12 }}>✦</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#6246EA", fontFamily: "var(--font-display)" }}>AI 摘要</span>
+            </div>
+            <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.5 }}>{agentMission.aiSummary}</div>
+          </div>
+        )}
+
+        {/* Task list */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px" }} className="scrollbar-hide">
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {tasks.map((task: any) => {
+              const currentStatus = taskStates[task.id] || task.status;
+              const cfg = statusConfig[currentStatus] || statusConfig["pending"];
+              return (
+                <div key={task.id} style={{ background: "white", borderRadius: 12, padding: "12px 14px", border: "1px solid #E5E7EB", display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 20, flexShrink: 0 }}>{task.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, color: "#0F0A2E", marginBottom: 2 }}>{task.title}</div>
+                    <div style={{ fontSize: 11, color: "#6B7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{task.detail}</div>
+                  </div>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, padding: "3px 8px", borderRadius: 20, flexShrink: 0, fontFamily: "var(--font-display)" }}>{cfg.label}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );

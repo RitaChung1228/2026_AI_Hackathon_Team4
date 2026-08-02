@@ -1,10 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { ChatMessage, ContextView, CartItem, MessageType } from "../types";
-import {
-  tokyoMission, birthdayMission, homeRepairMission, petCareMission, movingMission, fitnessMission,
-  planningSteps, birthdayPlanningSteps, homeRepairPlanningSteps, petCarePlanningSteps, movingPlanningSteps, fitnessPlanningSteps,
-  recommendations, UNSPLASH,
-} from "../data";
+import type { ChatMessage, ContextView, CartItem } from "../types";
+import { recommendations, UNSPLASH } from "../data";
 
 interface ChatPanelProps {
   onContextChange: (view: ContextView) => void;
@@ -16,10 +12,35 @@ interface ChatPanelProps {
   contextView: ContextView;
   panelOpen: boolean;
   isMobile: boolean;
+  onAgentMission?: (mission: any) => void;
 }
+
+/**
+ * Agent API 位址。
+ * 本機不用設，預設打 Express 的 localhost:3000。
+ * 要改打部署好的 Lambda：在 frontend/.env.local 設 VITE_AGENT_URL 為完整 URL
+ * （API Gateway 的路徑沒有 /api/chat/agent 這段，所以要整條換掉）。
+ */
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:3000";
+const AGENT_URL = import.meta.env.VITE_AGENT_URL ?? `${API_BASE}/api/chat/agent`;
+
+/**
+ * Demo 使用者 ID。
+ * DynamoDB UserProfile 目前只有 usr_jamie_888 / usr_alex_666，
+ * 用 u1 會查不到 profile（AI 拿不到偏好標籤）。
+ * 要讓個人化生效就設 VITE_USER_ID=usr_jamie_888。
+ */
+const USER_ID = import.meta.env.VITE_USER_ID ?? "u1";
 
 let msgCounter = 1;
 const mkId = () => `msg-${++msgCounter}-${Date.now()}`;
+
+/* Planning animation step */
+interface PlanStep {
+  text: string;
+  delay: number;
+  pending?: boolean;
+}
 
 /* Service tray item config */
 interface ServiceTrayItem {
@@ -31,6 +52,16 @@ interface ServiceTrayItem {
   badge?: string;
   color: string;
 }
+
+/* Scenario card → natural language prompt sent to the AI */
+const SCENARIO_PROMPTS: Record<string, string> = {
+  "business-trip": "我想規劃一趟商務出差",
+  "home-repair": "我家需要修繕",
+  "birthday": "我要幫朋友準備生日",
+  "pet-care": "我的寵物需要照護",
+  "moving": "我要搬家",
+  "fitness": "我想開始健身",
+};
 
 const WELCOME_MESSAGES: ChatMessage[] = [
   {
@@ -48,10 +79,39 @@ const WELCOME_MESSAGES: ChatMessage[] = [
   },
 ];
 
+/** 依任務標題挑選合適的封面圖 */
+function pickMissionImage(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("出差") || t.includes("商務")) return UNSPLASH.tokyo;
+  if (t.includes("生日") || t.includes("蛋糕")) return UNSPLASH.birthdayCake;
+  if (t.includes("修繕") || t.includes("水電") || t.includes("漏水")) return UNSPLASH.homeRepair;
+  if (t.includes("寵物") || t.includes("看診")) return UNSPLASH.petCare;
+  if (t.includes("搬家") || t.includes("打包")) return UNSPLASH.moving;
+  if (t.includes("健身") || t.includes("運動")) return UNSPLASH.fitness;
+  if (t.includes("旅") || t.includes("玩") || t.includes("行程")) return UNSPLASH.tokyoStreet;
+  return UNSPLASH.tokyoAerial;
+}
+
+/** 解析 AI 回覆中的 [選項: A | B | C] 標記 */
+function parseReply(reply: string): { text: string; quickReplies?: string[] } {
+  const optionMatch = reply.match(/\[選項[:：]\s*(.+?)\]\s*$/s);
+  if (!optionMatch) return { text: reply.trim() };
+
+  const cleanText = reply.replace(/\[選項[:：]\s*(.+?)\]\s*$/s, "").trim();
+  const options = optionMatch[1]
+    .split("|")
+    .map((o) => o.trim())
+    .filter(Boolean);
+
+  return {
+    text: cleanText,
+    quickReplies: options.length > 0 ? options : undefined,
+  };
+}
+
 export default function ChatPanel({
-  onContextChange, onTransportUpdate, onProductAdd,
-  onPanelToggle, onMenuOpen,
-  cartItems, contextView, panelOpen, isMobile,
+  onContextChange, onPanelToggle, onMenuOpen,
+  cartItems, contextView, panelOpen, isMobile, onAgentMission,
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(WELCOME_MESSAGES);
   const [input, setInput] = useState("");
@@ -59,10 +119,9 @@ export default function ChatPanel({
   const [planningActive, setPlanningActive] = useState(false);
   const [planningProgress, setPlanningProgress] = useState(0);
   const [planningStepsVisible, setPlanningStepsVisible] = useState<number[]>([]);
-  const [currentPlanningSteps, setCurrentPlanningSteps] = useState(planningSteps);
+  const [currentPlanningSteps, setCurrentPlanningSteps] = useState<PlanStep[]>([]);
   const [currentPlanningTitle, setCurrentPlanningTitle] = useState("");
-  const [awaitingFollowup, setAwaitingFollowup] = useState<string | null>(null);
-  const tripMeta = useRef<{ country?: string; days?: string }>({});
+  const agentHistory = useRef<any[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,36 +130,25 @@ export default function ChatPanel({
 
   /* Derive tray items from current state */
   const trayItems: ServiceTrayItem[] = [];
-  if (contextView === "mission" || contextView === "complete") {
-    trayItems.push({ id: "mission", icon: "💼", label: "東京出差", view: "mission", progress: 65, color: "#6246EA" });
-  }
-  if (contextView === "birthday-mission" || contextView === "birthday-complete") {
-    trayItems.push({ id: "birthday", icon: "🎂", label: "生日準備", view: "birthday-mission", progress: 40, color: "#EC4899" });
-  }
-  if (contextView === "home-repair") {
-    trayItems.push({ id: "home-repair", icon: "🔧", label: "居家修繕", view: "home-repair", progress: 40, color: "#EA580C" });
-  }
-  if (contextView === "pet-care") {
-    trayItems.push({ id: "pet-care", icon: "🐾", label: "寵物看診", view: "pet-care", progress: 30, color: "#16A34A" });
-  }
-  if (contextView === "moving") {
-    trayItems.push({ id: "moving", icon: "📦", label: "搬家準備", view: "moving", progress: 20, color: "#0EA5E9" });
-  }
-  if (contextView === "fitness") {
-    trayItems.push({ id: "fitness", icon: "💪", label: "健身計畫", view: "fitness", progress: 35, color: "#7C3AED" });
+  if (contextView === "agent-mission") {
+    trayItems.push({ id: "agent-mission", icon: "📋", label: "AI 計畫", view: "agent-mission", progress: 10, color: "#6246EA" });
   }
   if (cartItems.length > 0) {
     trayItems.push({ id: "cart", icon: "🛒", label: "購物車", view: "cart", badge: String(cartItems.length), color: "#EA580C" });
   }
-  if (contextView === "shopping" || contextView === "home-repair-shop" || contextView === "pet-shop") {
-    trayItems.push({ id: "shopping", icon: "🛍", label: "推薦商品", view: contextView, color: "#0EA5E9" });
+  if (contextView === "shopping") {
+    trayItems.push({ id: "shopping", icon: "🛍", label: "推薦商品", view: "shopping", color: "#0EA5E9" });
   }
 
-  const appendMessage = (msg: Omit<ChatMessage, "id" | "ts">) => {
+  const appendMessage = useCallback((msg: Omit<ChatMessage, "id" | "ts">) => {
     setMessages((prev) => [...prev, { ...msg, id: mkId(), ts: Date.now() }]);
-  };
+  }, []);
 
-  const runPlanning = useCallback((steps: typeof planningSteps, title: string, onDone: () => void) => {
+  const runPlanning = useCallback((steps: PlanStep[], title: string, onDone: () => void) => {
+    if (steps.length === 0) {
+      onDone();
+      return;
+    }
     setPlanningActive(true);
     setCurrentPlanningSteps(steps);
     setCurrentPlanningTitle(title);
@@ -112,7 +160,7 @@ export default function ChatPanel({
         setPlanningProgress(Math.min(((i + 1) / steps.length) * 100, 92));
       }, s.delay);
     });
-    const totalTime = steps[steps.length - 1].delay + 1200;
+    const totalTime = steps[steps.length - 1].delay + 1000;
     setTimeout(() => {
       setPlanningProgress(100);
       setPlanningActive(false);
@@ -120,438 +168,122 @@ export default function ChatPanel({
     }, totalTime);
   }, []);
 
-  /* Scenario card clicked → guided flow */
-  const handleScenarioStart = useCallback((scenarioId: string) => {
-    const SCENARIOS: Record<string, { userMsg: string; analysisSteps: string[]; question: string; replies: string[]; followupKey: string }> = {
-      "business-trip": {
-        userMsg: "✈️ 我想規劃商務出差",
-        analysisSteps: ["理解你的需求", "套用動態標籤 #Traveler", "分析出差偏好", "搜尋最佳方案"],
-        question: "好的！先問你幾個問題～\n\n你要去哪個國家/城市？",
-        replies: [],
-        followupKey: "business-country",
-      },
-      "home-repair": {
-        userMsg: "🔧 我家需要修繕",
-        analysisSteps: ["理解修繕需求", "定位你的位置", "搜尋附近師傅", "比對評價與報價"],
-        question: "哪裡出問題了？",
-        replies: ["浴室水管漏水", "廁所馬桶不通", "電氣插座故障", "其他問題"],
-        followupKey: "scenario-repair",
-      },
-      "birthday": {
-        userMsg: "🎂 準備朋友生日",
-        analysisSteps: ["理解生日需求", "查詢附近服務", "確認時間與預算", "準備個人化建議"],
-        question: "生日是什麼時候？",
-        replies: ["就是今天！", "明天", "這週末", "下週"],
-        followupKey: "scenario-birthday",
-      },
-      "pet-care": {
-        userMsg: "🐾 寵物需要照護",
-        analysisSteps: ["理解寵物需求", "搜尋附近動物醫院", "確認評價與距離", "查詢空檔時間"],
-        question: "你的寵物是什麼動物？",
-        replies: [],
-        followupKey: "pet-animal",
-      },
-      "moving": {
-        userMsg: "📦 我要搬家",
-        analysisSteps: ["理解搬家需求", "搜尋搬家公司", "取得即時報價", "規劃搬家清單"],
-        question: "大概什麼時候要搬？",
-        replies: ["這週", "下週", "這個月內", "一個月後"],
-        followupKey: "scenario-moving",
-      },
-      "fitness": {
-        userMsg: "💪 我想開始健身",
-        analysisSteps: ["理解健身目標", "分析你的習慣", "搜尋附近場館", "規劃個人化課表"],
-        question: "你的主要目標是？",
-        replies: ["增肌減脂", "提升體能", "維持健康", "備賽 / 馬拉松"],
-        followupKey: "scenario-fitness",
-      },
-    };
-
-    const s = SCENARIOS[scenarioId];
-    if (!s) return;
-
-    appendMessage({ role: "user", type: "text", text: s.userMsg });
-
-    // 1. AI analysis card after short delay
-    setTimeout(() => {
-      appendMessage({ role: "ai", type: "ai-analysis", data: { steps: s.analysisSteps } });
-    }, 400);
-
-    // 2. Ask question after analysis animation completes
-    setTimeout(() => {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: s.question, quickReplies: s.replies.length > 0 ? s.replies : undefined });
-        setAwaitingFollowup(s.followupKey);
-      }, 800);
-    }, 2800);
-  }, []);
-
-  const processInput = useCallback((text: string) => {
-    const lower = text.toLowerCase();
-
-    // Business trip fill-in questions
-    if (awaitingFollowup === "business-country") {
-      setAwaitingFollowup(null);
-      tripMeta.current.country = text;
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: `${text}！預計去幾天？` });
-        setAwaitingFollowup("business-days");
-      }, 900);
-      return;
-    }
-    if (awaitingFollowup === "business-days") {
-      setAwaitingFollowup(null);
-      tripMeta.current.days = text;
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: `了解，${tripMeta.current.country} ${text} 天。\n\n機票和住宿安排好了嗎？`, quickReplies: ["都安排好了", "只有機票", "只有住宿", "都還沒有"] });
-        setAwaitingFollowup("scenario-business");
-      }, 900);
-      return;
-    }
-
-    // Scenario quick-start followups → jump straight to planning
-    if (awaitingFollowup === "scenario-business") {
-      setAwaitingFollowup(null);
-      const country = tripMeta.current.country || "東京";
-      const days = tripMeta.current.days || "2";
-      runPlanning(planningSteps, `正在建立${country}出差任務...`, () => {
-        appendMessage({ role: "ai", type: "mission-created", text: `已幫你建立「${country}商務出差」任務 🗂`, data: { ...tokyoMission, title: `${country}商務出差`, subtitle: `${country} · ${days} 天` } });
-        onContextChange("mission");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "機票與住宿已同步確認 ✓\n\n根據你的 #Traveler 標籤，已為你推薦以下方案：", quickReplies: ["看推薦方案", "直接查看任務"] });
-            setAwaitingFollowup("flight-status");
-          }, 1200);
-        }, 600);
-      });
-      return;
-    }
-    if (awaitingFollowup === "scenario-repair") {
-      if (text === "其他問題") {
-        setIsTyping(true);
-        setTimeout(() => {
-          setIsTyping(false);
-          appendMessage({ role: "ai", type: "text", text: "請描述一下是什麼問題？（例如：天花板漏水、冷氣不冷、窗戶損壞…）" });
-          setAwaitingFollowup("scenario-repair");
-        }, 700);
-        return;
-      }
-      setAwaitingFollowup(null);
-      runPlanning(homeRepairPlanningSteps, "搜尋附近合格師傅中...", () => {
-        appendMessage({ role: "ai", type: "home-repair-created", text: "已幫你建立「居家修繕」任務 🔧", data: homeRepairMission });
-        onContextChange("home-repair");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "「鑫盛水電」今天下午 14:00 有空檔，評分 4.9 ⭐，含零件費 NT$1,200。要直接確認預約嗎？", quickReplies: ["確認預約", "看其他師傅", "先自己嘗試"] });
-          }, 1200);
-        }, 600);
-      });
-      return;
-    }
-    if (awaitingFollowup === "scenario-birthday") {
-      setAwaitingFollowup(null);
-      runPlanning(birthdayPlanningSteps, "正在建立生日準備任務...", () => {
-        appendMessage({ role: "ai", type: "birthday-created", text: "已幫你建立「朋友生日準備」任務 🎂", data: birthdayMission });
-        onContextChange("birthday-mission");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "附近 7-ELEVEN 松仁門市今天 18:30 後可取蛋糕與禮物。要直接加入購物車嗎？", quickReplies: ["加入購物車", "先看其他選擇"] });
-          }, 1200);
-        }, 600);
-      });
-      return;
-    }
-    if (awaitingFollowup === "pet-animal") {
-      setAwaitingFollowup(null);
-      tripMeta.current = { ...tripMeta.current, country: text };
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: `${text}！牠幾歲了？` });
-        setAwaitingFollowup("pet-age");
-      }, 800);
-      return;
-    }
-    if (awaitingFollowup === "pet-age") {
-      setAwaitingFollowup(null);
-      const animal = tripMeta.current.country ?? "寵物";
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: `${animal} ${text}歲，了解！需要什麼服務？`, quickReplies: ["定期健檢", "緊急看診", "疫苗接種", "美容洗澡"] });
-        setAwaitingFollowup("scenario-pet");
-      }, 800);
-      return;
-    }
-
-    if (awaitingFollowup === "scenario-pet") {
-      setAwaitingFollowup(null);
-      runPlanning(petCarePlanningSteps, "搜尋附近動物醫院中...", () => {
-        appendMessage({ role: "ai", type: "pet-care-created", text: "已幫你建立「寵物看診」任務 🐾", data: petCareMission });
-        onContextChange("pet-care");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "「台北動物醫院」本週六早診有名額，距你家步行 8 分鐘 🐾。要同時幫你採購寵物用品嗎？", quickReplies: ["確認預約", "一起採購用品", "只預約就好"] });
-          }, 1200);
-        }, 600);
-      });
-      return;
-    }
-    if (awaitingFollowup === "scenario-moving") {
-      setAwaitingFollowup(null);
-      runPlanning(movingPlanningSteps, "正在取得搬家報價中...", () => {
-        appendMessage({ role: "ai", type: "moving-created", text: "已幫你建立「搬家準備」任務 📦", data: movingMission });
-        onContextChange("moving");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "已取得 3 家搬家公司報價，最低 NT$6,800 起。同時需要打包紙箱嗎？可以幫你一次採購。", quickReplies: ["確認最低報價", "採購打包用品", "先看比較表"] });
-          }, 1200);
-        }, 600);
-      });
-      return;
-    }
-    if (awaitingFollowup === "scenario-fitness") {
-      setAwaitingFollowup(null);
-      runPlanning(fitnessPlanningSteps, "正在規劃你的健身計畫...", () => {
-        appendMessage({ role: "ai", type: "fitness-created", text: "已幫你建立「健身計畫」任務 💪", data: fitnessMission });
-        onContextChange("fitness");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "「FitLife 信義店」評分 4.9 ⭐，月費 NT$1,200，距你最近。課表已規劃好，乳清蛋白庫存不足，要一起採購嗎？", quickReplies: ["加入健身房", "採購補給品", "先看課表"] });
-          }, 1200);
-        }, 600);
-      });
-      return;
-    }
-
-    if (awaitingFollowup === "transport-time") {
-      setAwaitingFollowup(null);
-      onTransportUpdate("06:00");
-      appendMessage({ role: "ai", type: "task-update", text: "已更新機場接送時間為 06:00 ✓", data: { icon: "🚕", change: "yoxi 接送時間 → 06:00" } });
-      return;
-    }
-    if (awaitingFollowup === "esim-choice") {
-      setAwaitingFollowup(null);
-      const cheap = text.includes("3GB") || text.includes("299");
-      appendMessage({ role: "ai", type: "task-update", text: cheap ? "已更換為 3GB 方案，節省 NT$100 ✓" : "已更換 eSIM 方案 ✓", data: { icon: "📶", change: cheap ? "eSIM → 3GB / NT$299" : "eSIM 方案已更換" } });
-      return;
-    }
-    if (awaitingFollowup === "flight-status") {
-      setAwaitingFollowup(null);
-      const hasFlight = lower.includes("安排") || lower.includes("好") || lower.includes("已");
-      setTimeout(() => {
-        appendMessage({ role: "ai", type: "text", text: hasFlight ? "好的！根據你的 #TimeSaver，已自動安排以下方案：" : "需要我幫你搜尋合適的航班嗎？", quickReplies: hasFlight ? ["看推薦方案", "看任務清單"] : ["幫我搜尋航班", "先跳過"] });
-        if (hasFlight) {
-          setTimeout(() => appendMessage({ role: "ai", type: "recommendation", data: recommendations }), 600);
-        }
-      }, 800);
-      return;
-    }
-
-    if (lower.includes("東京") && (lower.includes("出差") || lower.includes("商務"))) {
-      runPlanning(planningSteps, "正在建立你的東京出差任務...", () => {
-        appendMessage({ role: "ai", type: "mission-created", text: "已幫你建立「東京商務出差」任務 🗂", data: tokyoMission });
-        onContextChange("mission");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "機票與住宿目前安排好了嗎？", quickReplies: ["都安排好了", "只有機票", "只有住宿", "都還沒有"] });
-            setAwaitingFollowup("flight-status");
-          }, 1500);
-        }, 800);
-      });
-      return;
-    }
-
-    if (lower.includes("生日") || lower.includes("蛋糕")) {
-      runPlanning(birthdayPlanningSteps, "正在建立你的生日準備任務...", () => {
-        appendMessage({ role: "ai", type: "birthday-created", text: "已幫你建立「朋友生日準備」臨時任務 🎂", data: birthdayMission });
-        onContextChange("birthday-mission");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "附近 7-ELEVEN 松仁門市今天 18:30 後可取蛋糕與禮物。要直接加入購物車嗎？", quickReplies: ["加入購物車", "先看其他選擇"] });
-          }, 1400);
-        }, 700);
-      });
-      return;
-    }
-
-    if ((lower.includes("接送") || lower.includes("接機")) && (lower.includes("六點") || lower.includes("6點") || lower.includes("06:00") || lower.includes("早上"))) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        onTransportUpdate("06:00");
-        appendMessage({ role: "ai", type: "task-update", text: "已更新機場接送時間為 06:00，yoxi 已重新確認 ✓", data: { icon: "🚕", change: "接送時間 → 06:00" } });
-      }, 1000);
-      return;
-    }
-
-    if (lower.includes("esim") && (lower.includes("便宜") || lower.includes("換") || lower.includes("便"))) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: "找到以下替代方案，哪個更適合你？", quickReplies: ["📶 3GB / NT$299 省100元", "📶 10GB / NT$599 更大流量", "📶 無限流量 / NT$899"] });
-        setAwaitingFollowup("esim-choice");
-      }, 1100);
-      return;
-    }
-
-    if ((lower.includes("旅平險") || lower.includes("保險")) && (lower.includes("不要") || lower.includes("移除") || lower.includes("先不"))) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "task-update", text: "已從這次任務移除旅平險。需要時隨時可以重新加入 ✓", data: { icon: "🛡", change: "旅平險 → 已移除" } });
-      }, 900);
-      return;
-    }
-
-    if (lower.includes("看推薦") || lower.includes("推薦方案") || lower.includes("方案")) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        appendMessage({ role: "ai", type: "text", text: "根據你的 #TimeSaver 偏好，為你推薦以下三種出差方案：" });
-        setTimeout(() => appendMessage({ role: "ai", type: "recommendation", data: recommendations }), 400);
-      }, 1000);
-      return;
-    }
-
-    if (lower.includes("加入購物車") || lower.includes("購物車")) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        onProductAdd({ id: "cake", name: "生日蛋糕", detail: "6吋 草莓奶油", price: 780, qty: 1, icon: "🎂" });
-        onProductAdd({ id: "gift", name: "精品禮物組", detail: "保養品組合", price: 680, qty: 1, icon: "🎁" });
-        onContextChange("cart");
-        appendMessage({ role: "ai", type: "task-update", text: "已加入購物車：生日蛋糕 + 精品禮物組，可以直接結帳 ✓", data: { icon: "🛒", change: "2 件商品已加入購物車" } });
-      }, 900);
-      return;
-    }
-
-    if (lower.includes("商品") || (lower.includes("買") && !lower.includes("購物車")) || lower.includes("採購")) {
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        onContextChange("shopping");
-        appendMessage({ role: "ai", type: "products", text: "根據你的出差任務，推薦以下商品：", data: { reason: "符合 #TimeSaver 與 #FrequentPickup 偏好" } });
-      }, 900);
-      return;
-    }
-
-    // Home repair flow
-    if (lower.includes("修繕") || lower.includes("修理") || lower.includes("漏水") || lower.includes("水電") || lower.includes("師傅") || lower.includes("裝修") || lower.includes("壞掉") || lower.includes("馬桶") || lower.includes("水管")) {
-      runPlanning(homeRepairPlanningSteps, "正在搜尋附近合格師傅...", () => {
-        appendMessage({ role: "ai", type: "home-repair-created", text: "已幫你建立「居家修繕」任務 🔧", data: homeRepairMission });
-        onContextChange("home-repair");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "「鑫盛水電」今天下午 14:00 有空檔，評分 4.9，含零件費 NT$1,200。要直接確認預約嗎？", quickReplies: ["確認預約", "看其他師傅", "先買零件自己試"] });
-          }, 1400);
-        }, 600);
-      });
-      return;
-    }
-
-    // Pet care flow
-    if (lower.includes("寵物") || lower.includes("貓") || lower.includes("狗") || lower.includes("獸醫") || lower.includes("看診") || (lower.includes("預約") && lower.includes("醫院"))) {
-      runPlanning(petCarePlanningSteps, "正在搜尋附近動物醫院...", () => {
-        appendMessage({ role: "ai", type: "pet-care-created", text: "已幫你建立「寵物看診」任務 🐾", data: petCareMission });
-        onContextChange("pet-care");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "「台北動物醫院」本週六早診有名額，距你家步行 8 分鐘。要同時幫你採購寵物用品嗎？", quickReplies: ["確認預約", "一起採購用品", "只預約就好"] });
-          }, 1300);
-        }, 600);
-      });
-      return;
-    }
-
-    // Moving flow
-    if (lower.includes("搬家") || lower.includes("搬遷") || lower.includes("新家") || lower.includes("搬") && lower.includes("家")) {
-      runPlanning(movingPlanningSteps, "正在搜尋搬家公司報價...", () => {
-        appendMessage({ role: "ai", type: "moving-created", text: "已幫你建立「搬家準備」任務 📦", data: movingMission });
-        onContextChange("moving");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "已取得 3 家搬家公司報價：最低 NT$6,800。同時需要打包紙箱嗎？可以幫你一次採購。", quickReplies: ["確認最低報價", "採購打包用品", "先看比較表"] });
-          }, 1400);
-        }, 600);
-      });
-      return;
-    }
-
-    // Fitness flow
-    if (lower.includes("健身") || lower.includes("運動") || lower.includes("健身房") || lower.includes("訓練") || lower.includes("增肌") || lower.includes("減脂")) {
-      runPlanning(fitnessPlanningSteps, "正在規劃你的健身計畫...", () => {
-        appendMessage({ role: "ai", type: "fitness-created", text: "已幫你建立「健身計畫」任務 💪", data: fitnessMission });
-        onContextChange("fitness");
-        setTimeout(() => {
-          setIsTyping(true);
-          setTimeout(() => {
-            setIsTyping(false);
-            appendMessage({ role: "ai", type: "text", text: "「FitLife 信義店」評分 4.9，月費 NT$1,200。課表已規劃好，乳清蛋白庫存不足，要一起採購嗎？", quickReplies: ["加入健身房", "採購補給品", "先看課表"] });
-          }, 1300);
-        }, 600);
-      });
-      return;
-    }
-
-    // === Fallback: 呼叫後端 Agent API（真正的 Bedrock + Tool Use）===
+  /* 所有輸入一律交給 AI Agent 處理 */
+  const callAgent = useCallback((text: string) => {
     setIsTyping(true);
-    fetch("http://localhost:3000/api/chat/agent", {
+
+    fetch(AGENT_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: "u1", message: text }),
+      // agent: true 讓沒有 /agent 路徑的 Lambda（API Gateway 單一路徑 / Function URL）也能判斷；
+      // Express 版會忽略這個欄位。
+      body: JSON.stringify({
+        agent: true,
+        userId: USER_ID,
+        message: text,
+        history: agentHistory.current,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
         setIsTyping(false);
-        if (data.reply) {
-          appendMessage({ role: "ai", type: "text", text: data.reply });
-        } else {
-          appendMessage({ role: "ai", type: "text", text: data.error || "抱歉，發生錯誤" });
+
+        if (data.error) {
+          appendMessage({ role: "ai", type: "text", text: `${data.error}${data.detail ? `\n\n${data.detail}` : ""}` });
+          return;
         }
+
+        // 保存對話歷史，下一輪帶回後端維持上下文
+        if (data.history) {
+          agentHistory.current = data.history;
+        }
+
+        const parsed = data.reply ? parseReply(data.reply) : { text: "" };
+        const toolLabels: string[] = data.toolCalls ?? [];
+
+        const showReply = () => {
+          if (!parsed.text) return;
+          appendMessage({
+            role: "ai",
+            type: "text",
+            text: parsed.text,
+            quickReplies: parsed.quickReplies,
+          });
+        };
+
+        // 沒有呼叫任何工具 → 直接顯示回覆
+        if (toolLabels.length === 0) {
+          showReply();
+          return;
+        }
+
+        // 有工具呼叫 → 先跑分析動畫
+        const stepGap = data.mission ? 600 : 500;
+        const agentSteps: PlanStep[] = [
+          { text: "理解你的需求", delay: 0 },
+          ...toolLabels.map((label, i) => ({ text: label, delay: (i + 1) * stepGap })),
+          {
+            text: data.mission ? "整合方案中..." : "整理結果中...",
+            delay: (toolLabels.length + 1) * stepGap,
+            pending: true,
+          },
+        ];
+        const planningTitle = data.mission ? "AI 正在規劃中..." : "AI 正在查詢中...";
+
+        runPlanning(agentSteps, planningTitle, () => {
+          // 建立了行程包 → 顯示任務卡片
+          if (data.mission) {
+            const missionData = {
+              id: `agent-${Date.now()}`,
+              title: data.mission.title,
+              subtitle: data.mission.subtitle,
+              progress: data.mission.progress ?? 0,
+              image: pickMissionImage(data.mission.title),
+              aiSummary: parsed.text,
+              tasks: (data.mission.tasks ?? []).map((t: any) => ({
+                ...t,
+                action: "查看",
+                color: "#6246EA",
+              })),
+            };
+
+            appendMessage({
+              role: "ai",
+              type: "agent-mission-created",
+              text: `已幫你建立「${data.mission.title}」計畫 📋`,
+              data: missionData,
+            });
+            onContextChange("agent-mission");
+            onAgentMission?.(missionData);
+
+            setTimeout(showReply, 500);
+            return;
+          }
+
+          showReply();
+        });
       })
       .catch((err) => {
         setIsTyping(false);
         console.error("Agent API 錯誤:", err);
-        appendMessage({ role: "ai", type: "text", text: "連線失敗，請確認後端是否已啟動。" });
+        appendMessage({ role: "ai", type: "text", text: "連線失敗，請確認後端服務是否已啟動。" });
       });
-  }, [awaitingFollowup, onContextChange, onTransportUpdate, onProductAdd, runPlanning]);
+  }, [appendMessage, onContextChange, onAgentMission, runPlanning]);
 
-  const handleSend = (text?: string) => {
-    const msg = text || input.trim();
+  const handleSend = useCallback((text?: string) => {
+    const msg = (text ?? input).trim();
     if (!msg) return;
     setInput("");
     appendMessage({ role: "user", type: "text", text: msg });
-    setTimeout(() => processInput(msg), 300);
-  };
+    setTimeout(() => callAgent(msg), 250);
+  }, [input, appendMessage, callAgent]);
+
+  /* 情境卡片點選 → 送出對應的自然語言需求給 AI */
+  const handleScenarioStart = useCallback((scenarioId: string) => {
+    const prompt = SCENARIO_PROMPTS[scenarioId];
+    if (!prompt) return;
+    handleSend(prompt);
+  }, [handleSend]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", background: "white" }}>
@@ -741,56 +473,6 @@ function ServiceGrid({ onScenarioStart }: { onScenarioStart: (id: string) => voi
   );
 }
 
-/* AI analysis card — Step 5 from user flow */
-function AnalysisCard({ steps }: { steps: string[] }) {
-  const [visibleCount, setVisibleCount] = useState(0);
-  const [done, setDone] = useState(false);
-  useEffect(() => {
-    let i = 0;
-    const tick = () => {
-      i++;
-      setVisibleCount(i);
-      if (i < steps.length) setTimeout(tick, 480);
-      else setTimeout(() => setDone(true), 300);
-    };
-    const t = setTimeout(tick, 300);
-    return () => clearTimeout(t);
-  }, []);
-
-  return (
-    <div style={{ background: "linear-gradient(135deg, rgba(98,70,234,0.06), rgba(139,92,246,0.04))", border: "1px solid rgba(98,70,234,0.2)", borderRadius: "4px 18px 18px 18px", padding: "14px 18px", minWidth: 200 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-        <div className="spin-slow" style={{ width: 16, height: 16, borderRadius: "50%", border: "2px solid #6246EA", borderTopColor: "transparent", flexShrink: 0 }} />
-        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12, color: "#6246EA" }}>AI 正在分析你的需求...</span>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-        {steps.map((step, i) => {
-          const visible = i < visibleCount;
-          return (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, opacity: visible ? 1 : 0.15, transition: "opacity 0.4s ease" }}>
-              <div style={{
-                width: 16, height: 16, borderRadius: "50%", flexShrink: 0, transition: "all 0.3s",
-                background: visible ? "#6246EA" : "transparent",
-                border: visible ? "none" : "1.5px solid #D1D5DB",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                {visible && <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-              </div>
-              <span style={{ fontSize: 12, fontFamily: "var(--font-display)", fontWeight: visible ? 600 : 400, color: visible ? "#0F0A2E" : "#9CA3AF" }}>{step}</span>
-            </div>
-          );
-        })}
-      </div>
-      {done && (
-        <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid rgba(98,70,234,0.12)", display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontSize: 11 }}>✦</span>
-          <span style={{ fontSize: 11, color: "#6246EA", fontWeight: 600, fontFamily: "var(--font-display)" }}>分析完成，正在提問...</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanelToggle, isLast }: {
   msg: ChatMessage;
   onReply: (text: string) => void;
@@ -817,13 +499,8 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanel
       <div style={{ flex: 1, minWidth: 0 }}>
 
         {/* Service grid (welcome) */}
-        {(msg.type as string) === "service-grid" && (
+        {msg.type === "service-grid" && (
           <ServiceGrid onScenarioStart={onScenarioStart} />
-        )}
-
-        {/* AI analysis card */}
-        {msg.type === "ai-analysis" && (
-          <AnalysisCard steps={msg.data?.steps ?? []} />
         )}
 
         {/* Text message */}
@@ -833,59 +510,38 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanel
           </div>
         )}
 
-        {/* Mission created card — all mission types */}
-        {(msg.type === "mission-created" || msg.type === "birthday-created" || msg.type === "home-repair-created" || msg.type === "pet-care-created" || msg.type === "moving-created" || msg.type === "fitness-created") && (() => {
-          const heroImgMap: Partial<Record<string, string>> = {
-            "mission-created": UNSPLASH.tokyo,
-            "birthday-created": UNSPLASH.birthdayCake,
-            "home-repair-created": UNSPLASH.homeRepair,
-            "pet-care-created": UNSPLASH.petCare,
-            "moving-created": UNSPLASH.moving,
-            "fitness-created": UNSPLASH.fitness,
-          };
-          const viewMap: Partial<Record<string, ContextView>> = {
-            "mission-created": "mission",
-            "birthday-created": "birthday-mission",
-            "home-repair-created": "home-repair",
-            "pet-care-created": "pet-care",
-            "moving-created": "moving",
-            "fitness-created": "fitness",
-          };
-          const heroImg = heroImgMap[msg.type] ?? UNSPLASH.tokyo;
-          const targetView: ContextView = viewMap[msg.type] ?? "mission";
-          const isBirthday = msg.type === "birthday-created";
-          return (
-            <div>
-              {msg.text && <div style={{ fontSize: 14, color: "#0F0A2E", marginBottom: 10, lineHeight: 1.5 }}>{msg.text}</div>}
-              <div
-                onClick={() => { onContextChange(targetView); onPanelToggle(); }}
-                style={{ background: "white", borderRadius: 16, border: "1.5px solid #6246EA", cursor: "pointer", overflow: "hidden", marginBottom: 8, transition: "box-shadow 0.15s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(98,70,234,0.18)")}
-                onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
-              >
-                <div style={{ position: "relative", height: 96, overflow: "hidden" }}>
-                  <img src={heroImg} alt={msg.data?.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(15,10,46,0.7) 100%)", display: "flex", alignItems: "flex-end", padding: "10px 14px" }}>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "white", flex: 1 }}>{msg.data?.title}</div>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>查看詳情 →</div>
-                  </div>
+        {/* Mission created card (from AI agent) */}
+        {msg.type === "agent-mission-created" && (
+          <div>
+            {msg.text && <div style={{ fontSize: 14, color: "#0F0A2E", marginBottom: 10, lineHeight: 1.5 }}>{msg.text}</div>}
+            <div
+              onClick={() => { onContextChange("agent-mission"); onPanelToggle(); }}
+              style={{ background: "white", borderRadius: 16, border: "1.5px solid #6246EA", cursor: "pointer", overflow: "hidden", marginBottom: 8, transition: "box-shadow 0.15s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(98,70,234,0.18)")}
+              onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
+            >
+              <div style={{ position: "relative", height: 96, overflow: "hidden" }}>
+                <img src={msg.data?.image} alt={msg.data?.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(15,10,46,0.7) 100%)", display: "flex", alignItems: "flex-end", padding: "10px 14px" }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "white", flex: 1 }}>{msg.data?.title}</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>查看詳情 →</div>
                 </div>
-                <div style={{ padding: "10px 14px 12px" }}>
-                  <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 8 }}>{msg.data?.subtitle}</div>
-                  <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden", marginBottom: 8 }}>
-                    <div style={{ height: "100%", width: `${msg.data?.progress ?? 0}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", borderRadius: 2 }} />
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {(msg.data?.tasks ?? []).slice(0, 4).map((t: any) => (
-                      <span key={t.id} style={{ fontSize: 11, color: "#6B7280", background: "#F3F4F6", padding: "2px 8px", borderRadius: 20 }}>{t.icon} {t.title}</span>
-                    ))}
-                    {(msg.data?.tasks?.length ?? 0) > 4 && <span style={{ fontSize: 11, color: "#9CA3AF", padding: "2px 6px" }}>+{msg.data.tasks.length - 4}</span>}
-                  </div>
+              </div>
+              <div style={{ padding: "10px 14px 12px" }}>
+                <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 8 }}>{msg.data?.subtitle}</div>
+                <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden", marginBottom: 8 }}>
+                  <div style={{ height: "100%", width: `${msg.data?.progress ?? 0}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", borderRadius: 2 }} />
+                </div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {(msg.data?.tasks ?? []).slice(0, 4).map((t: any) => (
+                    <span key={t.id} style={{ fontSize: 11, color: "#6B7280", background: "#F3F4F6", padding: "2px 8px", borderRadius: 20 }}>{t.icon} {t.title}</span>
+                  ))}
+                  {(msg.data?.tasks?.length ?? 0) > 4 && <span style={{ fontSize: 11, color: "#9CA3AF", padding: "2px 6px" }}>+{msg.data.tasks.length - 4}</span>}
                 </div>
               </div>
             </div>
-          );
-        })()}
+          </div>
+        )}
 
         {/* Recommendation cards */}
         {msg.type === "recommendation" && (

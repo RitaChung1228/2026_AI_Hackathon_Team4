@@ -72,20 +72,32 @@ app.post("/api/chat/messages", async (req, res) => {
 
 /**
  * POST /api/chat/agent
- * Body: { userId: string, message: string, history?: array }
+ * Body: { userId: string, message: string, sessionId?: string, history?: array }
  * Agent Loop 版：Claude 自行決定呼叫工具，完成後回覆
+ * 不帶 history 時會自動從 DynamoDB ChatHistory 讀回該 session 的上下文
  */
 app.post("/api/chat/agent", async (req, res) => {
   try {
-    const { userId, message, history } = req.body;
+    const { userId, message, sessionId, history } = req.body;
 
     if (!message || typeof message !== "string") {
       res.status(400).json({ error: "message 欄位為必填且須為字串" });
       return;
     }
 
-    const result = await agentChat(userId || "anonymous", message, history || []);
-    res.json({ reply: result.reply, history: result.history });
+    const result = await agentChat(
+      userId || "anonymous",
+      message,
+      history || [],
+      typeof sessionId === "string" ? sessionId : undefined
+    );
+    res.json({
+      reply: result.reply,
+      history: result.history,
+      mission: result.mission,
+      toolCalls: result.toolCalls,
+      sessionId: result.sessionId,
+    });
   } catch (err: unknown) {
     console.error("Agent Loop 呼叫失敗:", err);
     const errorMessage = err instanceof Error ? err.message : "未知錯誤";

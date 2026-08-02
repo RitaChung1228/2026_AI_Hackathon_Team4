@@ -194,15 +194,35 @@ const { Items } = await ddb.send(new ScanCommand({
 | Key | 型別 | 說明 |
 |---|---|---|
 | **PK** `session_id` | String | 格式：`sess_<user_id>` |
+| **SK** `timestamp` | String (ISO) | 該筆快照的寫入時間 |
+
+因為 SK 是 `timestamp`，每輪對話都會**新增**一筆完整快照而非覆蓋，等於保留版本軌跡。
+讀取時取最新那筆即可。
 
 ### 屬性
 
 | 欄位 | 型別 | 說明 |
 |---|---|---|
 | `user_id` | String | 使用者 ID |
-| `dialog_history` | List\<Map\> | [{role: "user"/"assistant", content: "..."}] |
-| `context_intent` | String | 目前意圖（如 "business_trip_tokyo"） |
-| `timestamp` | String (ISO) | 最後更新時間 |
+| `dialog_history` | List\<Map\> | 給人看的純文字對話 [{role: "user"/"assistant", content: "..."}] |
+| `raw_history` | String | Bedrock content block 的 JSON 字串，含 toolUse / toolResult，用於續接對話 |
+| `context_intent` | String | 目前意圖（取最近一次 create_bundle 的標題） |
+
+### 查詢方式
+
+```typescript
+// 取某 session 最新的對話快照
+const { Items } = await ddb.send(new QueryCommand({
+  TableName: "ChatHistory",
+  KeyConditionExpression: "session_id = :sid",
+  ExpressionAttributeValues: { ":sid": "sess_usr_jamie_888" },
+  ScanIndexForward: false, // timestamp 由新到舊
+  Limit: 1
+}));
+```
+
+程式碼位置：`backend/src/lib/chatHistory.ts`（`loadChatHistory` / `saveChatHistory`），
+由 `agentChat()` 自動讀寫，不是 Bedrock tool。
 
 ---
 
@@ -216,6 +236,7 @@ const { Items } = await ddb.send(new ScanCommand({
 | `create_bundle` | 寫 | UserLists | PutCommand(SK=TASK#xxx) |
 | `create_order` | 寫 | UserLists | PutCommand(SK=ORDER#xxx) |
 | `get_weather` | — | 不查 DB | 外部 API / mock |
+| （非 tool）`agentChat` | 讀+寫 | ChatHistory | Query 取最新 + PutCommand 存快照 |
 
 ---
 

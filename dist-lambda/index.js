@@ -803,7 +803,7 @@ var init_poller = __esm({
     init_circularReplacer();
     init_sleep();
     init_waiter();
-    runPolling = async ({ minDelay, maxDelay, maxWaitTime, abortController, client: client3, abortSignal }, input, acceptorChecks) => {
+    runPolling = async ({ minDelay, maxDelay, maxWaitTime, abortController, client: client4, abortSignal }, input, acceptorChecks) => {
       const observedResponses = {};
       const [minDelayMs, maxDelayMs] = [minDelay * 1e3, maxDelay * 1e3];
       let currentAttempt = 0;
@@ -824,7 +824,7 @@ var init_poller = __esm({
           }
           await sleep(delayMs / 1e3);
         }
-        const { state: state2, reason } = await acceptorChecks(client3, input);
+        const { state: state2, reason } = await acceptorChecks(client4, input);
         if (reason) {
           const message = createMessageFromResponse(reason);
           observedResponses[message] |= 0;
@@ -835,12 +835,12 @@ var init_poller = __esm({
         }
         currentAttempt += 1;
         if (!didWarn403 && Date.now() >= warn403Time) {
-          checkWarn403(observedResponses, client3);
+          checkWarn403(observedResponses, client4);
           didWarn403 = true;
         }
       }
     };
-    checkWarn403 = (observedResponses = {}, client3) => {
+    checkWarn403 = (observedResponses = {}, client4) => {
       const orderedErrors = Object.keys(observedResponses);
       let maxCount = 0;
       let count403 = 0;
@@ -851,7 +851,7 @@ var init_poller = __esm({
           count403 += n3;
         }
       }
-      const clientLogger = client3?.config?.logger;
+      const clientLogger = client4?.config?.logger;
       const warningLogger = typeof clientLogger?.warn === "function" && !clientLogger.constructor?.name?.includes?.("NoOpLogger") ? clientLogger : console;
       if (count403 >= 3 || orderedErrors[orderedErrors.length - 1]?.startsWith("403:")) {
         warningLogger.warn(`@smithy/util-waiter WARN - 403 status code encountered during waiter polling.`);
@@ -11481,10 +11481,10 @@ function createPaginator(ClientCtor, CommandCtor, inputTokenName, outputTokenNam
 var makePagedClientRequest, get;
 var init_createPaginator = __esm({
   "node_modules/@smithy/core/dist-es/legacy-root-exports/pagination/createPaginator.js"() {
-    makePagedClientRequest = async (CommandCtor, client3, input, withCommand = (_) => _, ...args) => {
+    makePagedClientRequest = async (CommandCtor, client4, input, withCommand = (_) => _, ...args) => {
       let command5 = new CommandCtor(input);
       command5 = withCommand(command5) ?? command5;
-      return await client3.send(command5, ...args);
+      return await client4.send(command5, ...args);
     };
     get = (fromObject, path) => {
       let cursor2 = fromObject;
@@ -25702,7 +25702,7 @@ var require_dist_cjs14 = __commonJS({
         };
         const requestHandler = isH22(this.callerClientConfig?.requestHandler) ? void 0 : this.callerClientConfig?.requestHandler;
         const region = this.profileData.region ?? await this.callerClientConfig?.region?.() ?? process.env.AWS_REGION;
-        const client3 = new SigninClient2({
+        const client4 = new SigninClient2({
           credentials: {
             accessKeyId: "",
             secretAccessKey: ""
@@ -25713,7 +25713,7 @@ var require_dist_cjs14 = __commonJS({
           userAgentAppId,
           ...this.init?.clientConfig
         });
-        this.createDPoPInterceptor(client3.middlewareStack);
+        this.createDPoPInterceptor(client4.middlewareStack);
         const commandInput = {
           tokenInput: {
             clientId: token.clientId,
@@ -25722,7 +25722,7 @@ var require_dist_cjs14 = __commonJS({
           }
         };
         try {
-          const response = await client3.send(new CreateOAuth2TokenCommand2(commandInput));
+          const response = await client4.send(new CreateOAuth2TokenCommand2(commandInput));
           const { accessKeyId, secretAccessKey, sessionToken } = response.tokenOutput?.accessToken ?? {};
           const { refreshToken, expiresIn } = response.tokenOutput ?? {};
           if (!accessKeyId || !secretAccessKey || !sessionToken || !refreshToken) {
@@ -29803,7 +29803,7 @@ var require_dist_cjs21 = __commonJS({
       extensions.forEach((extension) => extension.configure(extensionConfiguration));
       return Object.assign(runtimeConfig, resolveAwsRegionExtensionConfiguration2(extensionConfiguration), resolveDefaultRuntimeConfig2(extensionConfiguration), resolveHttpHandlerRuntimeConfig2(extensionConfiguration), resolveHttpAuthRuntimeConfig5(extensionConfiguration));
     };
-    var BedrockRuntimeClient2 = class extends Client2 {
+    var BedrockRuntimeClient3 = class extends Client2 {
       config;
       constructor(...[configuration]) {
         const _config_0 = getRuntimeConfig9(configuration || {});
@@ -29852,7 +29852,7 @@ var require_dist_cjs21 = __commonJS({
     ];
     var ApplyGuardrailCommand = class extends command5(_ep05, _mw05, "ApplyGuardrail", ApplyGuardrail$) {
     };
-    var ConverseCommand = class extends command5(_ep05, _mw05, "Converse", Converse$) {
+    var ConverseCommand2 = class extends command5(_ep05, _mw05, "Converse", Converse$) {
     };
     var ConverseStreamCommand = class extends command5(_ep05, _mw05, "ConverseStream", ConverseStream$) {
     };
@@ -29872,10 +29872,10 @@ var require_dist_cjs21 = __commonJS({
     };
     var StartAsyncInvokeCommand = class extends command5(_ep05, _mw05, "StartAsyncInvoke", StartAsyncInvoke$) {
     };
-    var paginateListAsyncInvokes = createPaginator2(BedrockRuntimeClient2, ListAsyncInvokesCommand, "nextToken", "nextToken", "maxResults");
+    var paginateListAsyncInvokes = createPaginator2(BedrockRuntimeClient3, ListAsyncInvokesCommand, "nextToken", "nextToken", "maxResults");
     var commands5 = {
       ApplyGuardrailCommand,
-      ConverseCommand,
+      ConverseCommand: ConverseCommand2,
       ConverseStreamCommand,
       CountTokensCommand,
       GetAsyncInvokeCommand,
@@ -29889,7 +29889,7 @@ var require_dist_cjs21 = __commonJS({
     var paginators = {
       paginateListAsyncInvokes
     };
-    var BedrockRuntime = class extends BedrockRuntimeClient2 {
+    var BedrockRuntime = class extends BedrockRuntimeClient3 {
     };
     createAggregatedClient2(commands5, BedrockRuntime, { paginators });
     var AsyncInvokeStatus = {
@@ -30200,7 +30200,7 @@ var require_dist_cjs21 = __commonJS({
     exports2.AudioSource$ = AudioSource$;
     exports2.AutoToolChoice$ = AutoToolChoice$;
     exports2.BedrockRuntime = BedrockRuntime;
-    exports2.BedrockRuntimeClient = BedrockRuntimeClient2;
+    exports2.BedrockRuntimeClient = BedrockRuntimeClient3;
     exports2.BedrockRuntimeServiceException = BedrockRuntimeServiceException;
     exports2.BedrockRuntimeServiceException$ = BedrockRuntimeServiceException$;
     exports2.BidirectionalInputPayloadPart$ = BidirectionalInputPayloadPart$;
@@ -30227,7 +30227,7 @@ var require_dist_cjs21 = __commonJS({
     exports2.ContentBlockStopEvent$ = ContentBlockStopEvent$;
     exports2.ConversationRole = ConversationRole;
     exports2.Converse$ = Converse$;
-    exports2.ConverseCommand = ConverseCommand;
+    exports2.ConverseCommand = ConverseCommand2;
     exports2.ConverseMetrics$ = ConverseMetrics$;
     exports2.ConverseOutput$ = ConverseOutput$;
     exports2.ConverseRequest$ = ConverseRequest$;
@@ -36746,7 +36746,7 @@ var require_dist_cjs26 = __commonJS({
     };
     var RestoreTableToPointInTimeCommand = class extends command5(_ep10, _mw05, "RestoreTableToPointInTime", RestoreTableToPointInTime$) {
     };
-    var ScanCommand = class extends command5(_ep2, _mw05, "Scan", Scan$) {
+    var ScanCommand3 = class extends command5(_ep2, _mw05, "Scan", Scan$) {
     };
     var TagResourceCommand = class extends command5(_ep5, _mw05, "TagResource", TagResource$) {
     };
@@ -36779,11 +36779,11 @@ var require_dist_cjs26 = __commonJS({
     var paginateListImports = createPaginator2(DynamoDBClient2, ListImportsCommand, "NextToken", "NextToken", "PageSize");
     var paginateListTables = createPaginator2(DynamoDBClient2, ListTablesCommand, "ExclusiveStartTableName", "LastEvaluatedTableName", "Limit");
     var paginateQuery = createPaginator2(DynamoDBClient2, QueryCommand2, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
-    var paginateScan = createPaginator2(DynamoDBClient2, ScanCommand, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
-    var checkState$5 = async (client3, input) => {
+    var paginateScan = createPaginator2(DynamoDBClient2, ScanCommand3, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
+    var checkState$5 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeContributorInsightsCommand(input));
+        let result = await client4.send(new DescribeContributorInsightsCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36817,10 +36817,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$5);
       return checkExceptions2(result);
     };
-    var checkState$4 = async (client3, input) => {
+    var checkState$4 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeExportCommand(input));
+        let result = await client4.send(new DescribeExportCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36854,10 +36854,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$4);
       return checkExceptions2(result);
     };
-    var checkState$3 = async (client3, input) => {
+    var checkState$3 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeImportCommand(input));
+        let result = await client4.send(new DescribeImportCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36900,10 +36900,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$3);
       return checkExceptions2(result);
     };
-    var checkState$2 = async (client3, input) => {
+    var checkState$2 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeKinesisStreamingDestinationCommand(input));
+        let result = await client4.send(new DescribeKinesisStreamingDestinationCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36946,10 +36946,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$2);
       return checkExceptions2(result);
     };
-    var checkState$1 = async (client3, input) => {
+    var checkState$1 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeTableCommand(input));
+        let result = await client4.send(new DescribeTableCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36977,10 +36977,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$1);
       return checkExceptions2(result);
     };
-    var checkState = async (client3, input) => {
+    var checkState = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeTableCommand(input));
+        let result = await client4.send(new DescribeTableCommand(input));
         reason = result;
       } catch (exception) {
         reason = exception;
@@ -37043,7 +37043,7 @@ var require_dist_cjs26 = __commonJS({
       QueryCommand: QueryCommand2,
       RestoreTableFromBackupCommand,
       RestoreTableToPointInTimeCommand,
-      ScanCommand,
+      ScanCommand: ScanCommand3,
       TagResourceCommand,
       TransactGetItemsCommand,
       TransactWriteItemsCommand,
@@ -37684,7 +37684,7 @@ var require_dist_cjs26 = __commonJS({
     exports2.SSEType = SSEType;
     exports2.ScalarAttributeType = ScalarAttributeType;
     exports2.Scan$ = Scan$;
-    exports2.ScanCommand = ScanCommand;
+    exports2.ScanCommand = ScanCommand3;
     exports2.ScanInput$ = ScanInput$;
     exports2.ScanOutput$ = ScanOutput$;
     exports2.Select = Select;
@@ -38131,7 +38131,7 @@ var require_dist_cjs27 = __commonJS({
         return async () => handler2(this.clientCommand);
       }
     };
-    var GetCommand = class extends DynamoDBDocumentClientCommand {
+    var GetCommand2 = class extends DynamoDBDocumentClientCommand {
       input;
       inputKeyNodes = {
         Key: ALL_VALUES
@@ -38154,7 +38154,7 @@ var require_dist_cjs27 = __commonJS({
         return async () => handler2(this.clientCommand);
       }
     };
-    var PutCommand = class extends DynamoDBDocumentClientCommand {
+    var PutCommand4 = class extends DynamoDBDocumentClientCommand {
       input;
       inputKeyNodes = {
         Item: ALL_VALUES,
@@ -38224,7 +38224,7 @@ var require_dist_cjs27 = __commonJS({
         return async () => handler2(this.clientCommand);
       }
     };
-    var ScanCommand = class extends DynamoDBDocumentClientCommand {
+    var ScanCommand3 = class extends DynamoDBDocumentClientCommand {
       input;
       inputKeyNodes = {
         ScanFilter: {
@@ -38377,26 +38377,26 @@ var require_dist_cjs27 = __commonJS({
     };
     var DynamoDBDocumentClient2 = class _DynamoDBDocumentClient extends Client2 {
       config;
-      constructor(client3, translateConfig) {
-        super(client3.config);
-        this.config = client3.config;
+      constructor(client4, translateConfig) {
+        super(client4.config);
+        this.config = client4.config;
         this.config.translateConfig = translateConfig;
-        this.middlewareStack = client3.middlewareStack;
+        this.middlewareStack = client4.middlewareStack;
         if (this.config?.cacheMiddleware) {
           throw new Error("@aws-sdk/lib-dynamodb - cacheMiddleware=true is not compatible with the DynamoDBDocumentClient. This option must be set to false.");
         }
       }
-      static from(client3, translateConfig) {
-        return new _DynamoDBDocumentClient(client3, translateConfig);
+      static from(client4, translateConfig) {
+        return new _DynamoDBDocumentClient(client4, translateConfig);
       }
       destroy() {
       }
     };
     var paginateQuery = createPaginator2(DynamoDBDocumentClient2, QueryCommand2, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
-    var paginateScan = createPaginator2(DynamoDBDocumentClient2, ScanCommand, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
+    var paginateScan = createPaginator2(DynamoDBDocumentClient2, ScanCommand3, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
     var DynamoDBDocument = class _DynamoDBDocument extends DynamoDBDocumentClient2 {
-      static from(client3, translateConfig) {
-        return new _DynamoDBDocument(client3, translateConfig);
+      static from(client4, translateConfig) {
+        return new _DynamoDBDocument(client4, translateConfig);
       }
       batchExecuteStatement(args, optionsOrCb, cb) {
         const command5 = new BatchExecuteStatementCommand(args);
@@ -38477,7 +38477,7 @@ var require_dist_cjs27 = __commonJS({
         }
       }
       get(args, optionsOrCb, cb) {
-        const command5 = new GetCommand(args);
+        const command5 = new GetCommand2(args);
         if (typeof optionsOrCb === "function") {
           this.send(command5, optionsOrCb);
         } else if (typeof cb === "function") {
@@ -38490,7 +38490,7 @@ var require_dist_cjs27 = __commonJS({
         }
       }
       put(args, optionsOrCb, cb) {
-        const command5 = new PutCommand(args);
+        const command5 = new PutCommand4(args);
         if (typeof optionsOrCb === "function") {
           this.send(command5, optionsOrCb);
         } else if (typeof cb === "function") {
@@ -38516,7 +38516,7 @@ var require_dist_cjs27 = __commonJS({
         }
       }
       scan(args, optionsOrCb, cb) {
-        const command5 = new ScanCommand(args);
+        const command5 = new ScanCommand3(args);
         if (typeof optionsOrCb === "function") {
           this.send(command5, optionsOrCb);
         } else if (typeof cb === "function") {
@@ -38577,10 +38577,10 @@ var require_dist_cjs27 = __commonJS({
     exports2.DynamoDBDocumentClientCommand = DynamoDBDocumentClientCommand;
     exports2.ExecuteStatementCommand = ExecuteStatementCommand;
     exports2.ExecuteTransactionCommand = ExecuteTransactionCommand;
-    exports2.GetCommand = GetCommand;
-    exports2.PutCommand = PutCommand;
+    exports2.GetCommand = GetCommand2;
+    exports2.PutCommand = PutCommand4;
     exports2.QueryCommand = QueryCommand2;
-    exports2.ScanCommand = ScanCommand;
+    exports2.ScanCommand = ScanCommand3;
     exports2.TransactGetCommand = TransactGetCommand;
     exports2.TransactWriteCommand = TransactWriteCommand;
     exports2.UpdateCommand = UpdateCommand;
@@ -39005,7 +39005,7 @@ var import_client_bedrock_runtime = __toESM(require_dist_cjs21(), 1);
 var client = new import_client_bedrock_runtime.BedrockRuntimeClient({
   region: process.env.AWS_REGION || "us-east-1"
 });
-async function invokeBedrockClaude(messages, systemPrompt, maxTokens = 1024, tools2) {
+async function invokeBedrockClaude(messages, systemPrompt, maxTokens = 1024, tools) {
   const modelId = process.env.BEDROCK_MODEL_ID || "anthropic.claude-3-sonnet-20240229-v1:0";
   const payload2 = {
     anthropic_version: "bedrock-2023-05-31",
@@ -39015,8 +39015,8 @@ async function invokeBedrockClaude(messages, systemPrompt, maxTokens = 1024, too
   if (systemPrompt) {
     payload2.system = systemPrompt;
   }
-  if (tools2 && tools2.length > 0) {
-    payload2.tools = tools2;
+  if (tools && tools.length > 0) {
+    payload2.tools = tools;
   }
   const command5 = new import_client_bedrock_runtime.InvokeModelCommand({
     modelId,
@@ -39038,7 +39038,10 @@ async function chat(userMessage, systemPrompt) {
   return response.content[0]?.text ?? "";
 }
 
-// backend/src/tools.ts
+// backend/src/agent.ts
+var import_client_bedrock_runtime2 = __toESM(require_dist_cjs21(), 1);
+
+// backend/src/tools/searchProduct.ts
 var import_lib_dynamodb2 = __toESM(require_dist_cjs27(), 1);
 
 // node_modules/dotenv/config.js
@@ -39052,108 +39055,906 @@ var import_lib_dynamodb2 = __toESM(require_dist_cjs27(), 1);
   );
 })();
 
-// db/scripts/dynamo.ts
+// backend/src/lib/dynamo.ts
 var import_client_dynamodb = __toESM(require_dist_cjs26(), 1);
 var import_lib_dynamodb = __toESM(require_dist_cjs27(), 1);
 var client2 = new import_client_dynamodb.DynamoDBClient({
-  region: process.env.AWS_REGION || "us-east-1"
+  region: process.env.AWS_REGION || "us-west-2"
 });
 var ddb = import_lib_dynamodb.DynamoDBDocumentClient.from(client2);
 
-// backend/src/tools.ts
-var tools = [
+// backend/src/tools/searchProduct.ts
+var TABLE_NAME = process.env.DYNAMO_SERVICES_TABLE ?? "ServicesCatalog";
+async function searchProduct(input) {
+  const { Items } = await ddb.send(
+    new import_lib_dynamodb2.ScanCommand({
+      TableName: TABLE_NAME,
+      FilterExpression: "#cat = :cat",
+      ExpressionAttributeNames: { "#cat": "category" },
+      ExpressionAttributeValues: { ":cat": "product" }
+    })
+  );
+  let results = (Items ?? []).map((item) => ({
+    id: item.service_id,
+    name: item.service_name,
+    price: item.price ?? 0,
+    description: item.description ?? "",
+    category: item.type ?? "retail"
+  }));
+  if (input.keyword) {
+    const kw = input.keyword.toLowerCase();
+    results = results.filter(
+      (p3) => p3.name.toLowerCase().includes(kw) || p3.description.toLowerCase().includes(kw)
+    );
+  }
+  if (input.category) {
+    const cat = input.category.toLowerCase();
+    results = results.filter((p3) => p3.category.toLowerCase().includes(cat));
+  }
+  if (input.limit) {
+    results = results.slice(0, input.limit);
+  }
+  return { products: results };
+}
+
+// backend/src/tools/searchService.ts
+var import_lib_dynamodb3 = __toESM(require_dist_cjs27(), 1);
+var TABLE_NAME2 = process.env.DYNAMO_SERVICES_TABLE ?? "ServicesCatalog";
+async function searchService(input) {
+  let filterExpr = "#cat <> :cat";
+  const exprNames = { "#cat": "category" };
+  const exprValues = { ":cat": "product" };
+  if (input.type !== void 0) {
+    filterExpr += " AND #tp = :tp";
+    exprNames["#tp"] = "type";
+    exprValues[":tp"] = String(input.type);
+  }
+  const { Items } = await ddb.send(
+    new import_lib_dynamodb3.ScanCommand({
+      TableName: TABLE_NAME2,
+      FilterExpression: filterExpr,
+      ExpressionAttributeNames: exprNames,
+      ExpressionAttributeValues: exprValues
+    })
+  );
+  let results = (Items ?? []).map((item) => ({
+    id: item.service_id,
+    vendorId: item.vendor_id,
+    vendorName: item.vendor_name ?? "",
+    name: item.service_name ?? "",
+    type: Number(item.type) || 0,
+    description: item.description ?? ""
+  }));
+  if (input.keyword) {
+    const kw = input.keyword.toLowerCase();
+    results = results.filter(
+      (s2) => s2.name.toLowerCase().includes(kw) || s2.description.toLowerCase().includes(kw) || s2.vendorName.toLowerCase().includes(kw)
+    );
+  }
+  return { services: results };
+}
+
+// backend/src/tools/getUserProfile.ts
+var import_lib_dynamodb4 = __toESM(require_dist_cjs27(), 1);
+var TABLE_NAME3 = process.env.DYNAMO_USER_PROFILE_TABLE ?? "UserProfile";
+async function getUserProfile(input) {
+  const { Item } = await ddb.send(
+    new import_lib_dynamodb4.GetCommand({
+      TableName: TABLE_NAME3,
+      Key: { user_id: input.userId }
+    })
+  );
+  if (!Item) {
+    return {
+      profile: {
+        userId: input.userId,
+        hashtags: [],
+        preferences: { decisionStyle: "\u672A\u8A2D\u5B9A", lifestyle: "\u672A\u8A2D\u5B9A", habits: [] }
+      }
+    };
+  }
+  return {
+    profile: {
+      userId: Item.user_id,
+      hashtags: Item.tags ?? [],
+      preferences: {
+        decisionStyle: Item.preferences?.priority ?? "\u672A\u8A2D\u5B9A",
+        lifestyle: Item.role_title ?? "\u672A\u8A2D\u5B9A",
+        habits: Item.tags?.filter((t) => t.startsWith("#")) ?? []
+      }
+    }
+  };
+}
+
+// backend/src/tools/createBundle.ts
+var import_lib_dynamodb5 = __toESM(require_dist_cjs27(), 1);
+var TABLE_NAME4 = process.env.DYNAMO_USER_LISTS_TABLE ?? "UserLists";
+async function createBundle(input) {
+  const bundleId = `bnd-${Date.now()}`;
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const bundle = {
+    bundleId,
+    userId: input.userId,
+    title: input.title,
+    steps: input.steps.map((step, i5) => ({
+      stepId: `step-${i5 + 1}`,
+      description: step.description,
+      serviceId: step.serviceId,
+      productId: step.productId,
+      completed: false
+    })),
+    status: "draft",
+    createdAt: now
+  };
+  await ddb.send(
+    new import_lib_dynamodb5.PutCommand({
+      TableName: TABLE_NAME4,
+      Item: {
+        user_id: input.userId,
+        list_type_id: `TASK#${bundleId}`,
+        type: "scenario_package",
+        title: input.title,
+        status: "draft",
+        progress_percent: 0,
+        is_saved_as_template: false,
+        modules: input.steps.map((step, i5) => ({
+          module_name: step.description,
+          status: "pending",
+          detail: step.serviceId ?? step.productId ?? "",
+          step_id: `step-${i5 + 1}`
+        })),
+        created_at: now,
+        updated_at: now
+      }
+    })
+  );
+  return { bundle };
+}
+
+// backend/src/tools/createOrder.ts
+var import_lib_dynamodb6 = __toESM(require_dist_cjs27(), 1);
+var TABLE_NAME5 = process.env.DYNAMO_USER_LISTS_TABLE ?? "UserLists";
+async function createOrder(input) {
+  const orderId = `ord-${Date.now()}`;
+  const now = (/* @__PURE__ */ new Date()).toISOString();
+  const totalPrice = input.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const order = {
+    orderId,
+    userId: input.userId,
+    items: input.items,
+    totalPrice,
+    status: "draft",
+    remark: input.remark,
+    createdAt: now
+  };
+  await ddb.send(
+    new import_lib_dynamodb6.PutCommand({
+      TableName: TABLE_NAME5,
+      Item: {
+        user_id: input.userId,
+        list_type_id: `ORDER#${orderId}`,
+        type: "order_record",
+        order_no: orderId,
+        order_type: "05",
+        // 商品訂單
+        order_status: "01",
+        // 待確認
+        order_items: input.items,
+        final_amount: totalPrice,
+        remark: input.remark ?? "",
+        order_time: now,
+        updated_at: now
+      }
+    })
+  );
+  return { order };
+}
+
+// backend/src/tools/getWeather.ts
+var CITY_COORDS = {
+  // 台灣
+  \u53F0\u5317: { lat: 25.033, lon: 121.565 },
+  \u65B0\u5317: { lat: 25.012, lon: 121.465 },
+  \u6843\u5712: { lat: 24.994, lon: 121.301 },
+  \u53F0\u4E2D: { lat: 24.148, lon: 120.674 },
+  \u53F0\u5357: { lat: 22.999, lon: 120.227 },
+  \u9AD8\u96C4: { lat: 22.627, lon: 120.301 },
+  \u65B0\u7AF9: { lat: 24.804, lon: 120.972 },
+  \u57FA\u9686: { lat: 25.128, lon: 121.739 },
+  \u5609\u7FA9: { lat: 23.48, lon: 120.449 },
+  \u82B1\u84EE: { lat: 23.992, lon: 121.601 },
+  \u5B9C\u862D: { lat: 24.757, lon: 121.753 },
+  \u5C4F\u6771: { lat: 22.669, lon: 120.486 },
+  \u5F70\u5316: { lat: 24.081, lon: 120.538 },
+  \u5357\u6295: { lat: 23.749, lon: 120.688 },
+  \u96F2\u6797: { lat: 23.709, lon: 120.432 },
+  \u82D7\u6817: { lat: 24.56, lon: 120.821 },
+  \u53F0\u6771: { lat: 22.756, lon: 121.144 },
+  \u6F8E\u6E56: { lat: 23.571, lon: 119.579 },
+  // 國際
+  \u6771\u4EAC: { lat: 35.682, lon: 139.759 },
+  \u5927\u962A: { lat: 34.694, lon: 135.502 },
+  \u9996\u723E: { lat: 37.566, lon: 126.978 },
+  \u65B0\u52A0\u5761: { lat: 1.352, lon: 103.82 },
+  \u9999\u6E2F: { lat: 22.302, lon: 114.177 },
+  \u4E0A\u6D77: { lat: 31.23, lon: 121.474 },
+  \u5317\u4EAC: { lat: 39.904, lon: 116.407 },
+  \u7D10\u7D04: { lat: 40.713, lon: -74.006 },
+  \u502B\u6566: { lat: 51.507, lon: -0.128 },
+  \u5DF4\u9ECE: { lat: 48.857, lon: 2.352 }
+};
+function weatherCodeToCondition(code) {
+  if (code === 0) return "\u6674\u5929";
+  if (code <= 3) return "\u591A\u96F2";
+  if (code <= 48) return "\u9727";
+  if (code <= 57) return "\u6BDB\u6BDB\u96E8";
+  if (code <= 67) return "\u96E8\u5929";
+  if (code <= 77) return "\u96EA";
+  if (code <= 82) return "\u9663\u96E8";
+  if (code <= 86) return "\u96EA\u9663";
+  if (code >= 95) return "\u96F7\u96E8";
+  return "\u591A\u96F2";
+}
+function getSuggestion(condition, rainProb, temp) {
+  const tips = [];
+  if (rainProb >= 60) tips.push("\u964D\u96E8\u6A5F\u7387\u9AD8\uFF0C\u5EFA\u8B70\u651C\u5E36\u96E8\u5177");
+  else if (rainProb >= 30) tips.push("\u6709\u6A5F\u6703\u4E0B\u96E8\uFF0C\u53EF\u5E36\u628A\u5098\u5099\u7528");
+  if (temp >= 35) tips.push("\u9AD8\u6EAB\u708E\u71B1\uFF0C\u6CE8\u610F\u9632\u66EC\u88DC\u6C34");
+  else if (temp >= 30) tips.push("\u5929\u6C23\u504F\u71B1\uFF0C\u5EFA\u8B70\u7A7F\u8457\u8F15\u4FBF");
+  else if (temp <= 10) tips.push("\u5929\u6C23\u5BD2\u51B7\uFF0C\u8A18\u5F97\u7A7F\u5916\u5957\u4FDD\u6696");
+  if (condition === "\u96F7\u96E8") tips.push("\u6709\u96F7\u96E8\uFF0C\u76E1\u91CF\u907F\u514D\u6236\u5916\u6D3B\u52D5");
+  if (tips.length === 0) tips.push("\u5929\u6C23\u9069\u5B9C\u5916\u51FA\uFF0C\u795D\u4F60\u6109\u5FEB");
+  return tips.join("\uFF1B");
+}
+async function getWeather(input) {
+  const city = input.city.trim();
+  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  const date2 = input.date ?? today;
+  const coords = CITY_COORDS[city];
+  if (!coords) {
+    return {
+      city,
+      date: date2,
+      temperature: 0,
+      condition: "\u672A\u77E5",
+      rainProbability: 0,
+      suggestion: `\u62B1\u6B49\uFF0C\u76EE\u524D\u4E0D\u652F\u63F4\u300C${city}\u300D\u7684\u5929\u6C23\u67E5\u8A62\u3002\u652F\u63F4\u7684\u57CE\u5E02\uFF1A${Object.keys(CITY_COORDS).join("\u3001")}`
+    };
+  }
+  try {
+    const url = new URL("https://api.open-meteo.com/v1/forecast");
+    url.searchParams.set("latitude", String(coords.lat));
+    url.searchParams.set("longitude", String(coords.lon));
+    url.searchParams.set("daily", "temperature_2m_max,temperature_2m_min,precipitation_probability_max,weather_code");
+    url.searchParams.set("timezone", "Asia/Taipei");
+    url.searchParams.set("start_date", date2);
+    url.searchParams.set("end_date", date2);
+    const res = await fetch(url.toString());
+    if (!res.ok) {
+      throw new Error(`Open-Meteo API \u56DE\u50B3 ${res.status}`);
+    }
+    const data = await res.json();
+    const maxTemp = data.daily.temperature_2m_max[0];
+    const minTemp = data.daily.temperature_2m_min[0];
+    const avgTemp = Math.round((maxTemp + minTemp) / 2);
+    const rainProb = data.daily.precipitation_probability_max[0] ?? 0;
+    const weatherCode = data.daily.weather_code[0] ?? 0;
+    const condition = weatherCodeToCondition(weatherCode);
+    const suggestion = getSuggestion(condition, rainProb, maxTemp);
+    return {
+      city,
+      date: date2,
+      temperature: avgTemp,
+      condition,
+      rainProbability: rainProb,
+      suggestion
+    };
+  } catch (err2) {
+    console.error("[getWeather] API \u547C\u53EB\u5931\u6557:", err2);
+    return {
+      city,
+      date: date2,
+      temperature: 28,
+      condition: "\u591A\u96F2",
+      rainProbability: 50,
+      suggestion: "\u5929\u6C23\u8CC7\u6599\u66AB\u6642\u7121\u6CD5\u53D6\u5F97\uFF0C\u5EFA\u8B70\u51FA\u9580\u524D\u78BA\u8A8D\u4E00\u4E0B\u5929\u6C23"
+    };
+  }
+}
+
+// backend/src/tools/index.ts
+async function executeTool(toolName, input) {
+  switch (toolName) {
+    case "search_product":
+      return await searchProduct(input);
+    case "search_service":
+      return await searchService(input);
+    case "get_user_profile":
+      return await getUserProfile(input);
+    case "create_bundle":
+      return await createBundle(input);
+    case "create_order":
+      return await createOrder(input);
+    case "get_weather":
+      return await getWeather(input);
+    default:
+      throw new Error(`\u672A\u77E5\u7684\u5DE5\u5177: ${toolName}`);
+  }
+}
+var toolDefinitions = [
   {
-    name: "search_vendor",
-    description: "\u4F9D\u670D\u52D9\u985E\u578B\uFF08\u8207\u9078\u586B\u95DC\u9375\u5B57\uFF09\u67E5\u8A62\u670D\u52D9\u5546\u8207\u670D\u52D9\u9805\u76EE",
-    input_schema: {
-      type: "object",
-      properties: {
-        type: {
-          type: "string",
-          description: "\u670D\u52D9\u985E\u578B\u4EE3\u78BC\uFF1A1\u6E05\u6F54/2\u5BB6\u96FB\u6E05\u6D17/3\u5BC4\u4EF6/6\u8A02\u4F4D/9\u5916\u9001/10\u6C34\u96FB\u4FEE\u7E55/11\u8CFC\u7269"
-        },
-        keyword: { type: "string", description: "\u670D\u52D9\u5546\u6216\u670D\u52D9\u540D\u7A31\u95DC\u9375\u5B57\uFF08\u9078\u586B\uFF09" }
-      },
-      required: ["type"]
-    },
-    async execute(input) {
-      const { Items } = await ddb.send(
-        new import_lib_dynamodb2.QueryCommand({
-          TableName: process.env.DYNAMO_VENDOR_TABLE ?? "service_vendor",
-          KeyConditionExpression: "#type = :type",
-          ExpressionAttributeNames: { "#type": "type" },
-          ExpressionAttributeValues: { ":type": input.type },
-          Limit: 10
-        })
-      );
-      const keyword = typeof input.keyword === "string" ? input.keyword.toLowerCase() : void 0;
-      const items = Items ?? [];
-      return keyword ? items.filter(
-        (item) => item.service_name?.toLowerCase().includes(keyword) || item.vendor_name?.toLowerCase().includes(keyword)
-      ) : items;
+    toolSpec: {
+      name: "search_product",
+      description: "\u641C\u5C0B\u96F6\u552E\u5546\u54C1\u3002\u6839\u64DA\u95DC\u9375\u5B57\u6216\u5206\u985E\u5C0B\u627E\u53EF\u8CFC\u8CB7\u7684\u5546\u54C1\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            keyword: { type: "string", description: "\u641C\u5C0B\u95DC\u9375\u5B57" },
+            category: { type: "string", description: "\u5546\u54C1\u5206\u985E\uFF08\u98F2\u54C1\u3001\u98DF\u54C1\u3001\u4FDD\u5065\u3001\u751F\u6D3B\u7528\u54C1\uFF09" },
+            limit: { type: "number", description: "\u56DE\u50B3\u6578\u91CF\u4E0A\u9650" }
+          },
+          required: ["keyword"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "search_service",
+      description: "\u641C\u5C0B\u670D\u52D9\u9805\u76EE\u3002\u6839\u64DA\u985E\u578B\u6216\u95DC\u9375\u5B57\u5C0B\u627E\u53EF\u9810\u7D04\u7684\u670D\u52D9\uFF08\u6E05\u6F54\u3001\u4EA4\u901A\u3001\u5916\u9001\u3001\u8A02\u4F4D\u7B49\uFF09\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            type: {
+              type: "number",
+              description: "\u670D\u52D9\u985E\u578B\uFF1A1=\u6E05\u6F54, 2=\u5BB6\u96FB\u6E05\u6D17, 3=\u4EA4\u901A\u5BC4\u4EF6, 6=\u8A02\u4F4D, 9=\u5916\u9001, 10=\u6C34\u96FB\u4FEE\u7E55, 11=\u8CFC\u7269"
+            },
+            keyword: { type: "string", description: "\u641C\u5C0B\u95DC\u9375\u5B57" }
+          }
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "get_user_profile",
+      description: "\u53D6\u5F97\u4F7F\u7528\u8005\u7684\u504F\u597D\u8A2D\u5B9A\u8207 hashtag \u6A19\u7C64\uFF0C\u7528\u4F86\u500B\u4EBA\u5316\u63A8\u85A6\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            userId: { type: "string", description: "\u4F7F\u7528\u8005 ID" }
+          },
+          required: ["userId"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "create_bundle",
+      description: "\u5EFA\u7ACB\u884C\u7A0B\u5305\u8349\u7A3F\u3002\u5C07\u591A\u500B\u670D\u52D9\u548C\u5546\u54C1\u6253\u5305\u6210\u4E00\u500B\u884C\u7A0B\u8A08\u756B\uFF0C\u5305\u542B\u6B65\u9A5F\u6E05\u55AE\u3002\u9700\u4F7F\u7528\u8005\u78BA\u8A8D\u5F8C\u624D\u6B63\u5F0F\u751F\u6548\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            userId: { type: "string", description: "\u4F7F\u7528\u8005 ID" },
+            title: { type: "string", description: "\u884C\u7A0B\u5305\u6A19\u984C" },
+            steps: {
+              type: "array",
+              description: "\u884C\u7A0B\u6B65\u9A5F\u5217\u8868",
+              items: {
+                type: "object",
+                properties: {
+                  description: { type: "string", description: "\u6B65\u9A5F\u63CF\u8FF0" },
+                  serviceId: { type: "string", description: "\u95DC\u806F\u7684\u670D\u52D9 ID" },
+                  productId: { type: "string", description: "\u95DC\u806F\u7684\u5546\u54C1 ID" }
+                },
+                required: ["description"]
+              }
+            }
+          },
+          required: ["userId", "title", "steps"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "create_order",
+      description: "\u5EFA\u7ACB\u8A02\u55AE\u8349\u7A3F\u3002\u5C07\u5546\u54C1\u6216\u670D\u52D9\u52A0\u5165\u8A02\u55AE\uFF0C\u9700\u4F7F\u7528\u8005\u78BA\u8A8D\u5F8C\u624D\u6B63\u5F0F\u6210\u7ACB\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            userId: { type: "string", description: "\u4F7F\u7528\u8005 ID" },
+            items: {
+              type: "array",
+              description: "\u8A02\u55AE\u9805\u76EE",
+              items: {
+                type: "object",
+                properties: {
+                  productId: { type: "string", description: "\u5546\u54C1 ID" },
+                  serviceId: { type: "string", description: "\u670D\u52D9 ID" },
+                  name: { type: "string", description: "\u9805\u76EE\u540D\u7A31" },
+                  quantity: { type: "number", description: "\u6578\u91CF" },
+                  price: { type: "number", description: "\u55AE\u50F9" }
+                },
+                required: ["name", "quantity", "price"]
+              }
+            },
+            remark: { type: "string", description: "\u5099\u8A3B" }
+          },
+          required: ["userId", "items"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "get_weather",
+      description: "\u67E5\u8A62\u6307\u5B9A\u57CE\u5E02\u7684\u5929\u6C23\u8CC7\u8A0A\uFF0C\u7528\u65BC\u60C5\u5883\u611F\u77E5\u63A8\u85A6\uFF08\u5982\u4E0B\u96E8\u63A8\u85A6\u96E8\u5177\u3001\u53EB\u8ECA\uFF09\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            city: { type: "string", description: "\u57CE\u5E02\u540D\u7A31" },
+            date: { type: "string", description: "\u65E5\u671F (YYYY-MM-DD)\uFF0C\u7701\u7565\u5247\u70BA\u4ECA\u5929" }
+          },
+          required: ["city"]
+        }
+      }
     }
   }
 ];
-function getToolDefinitions() {
-  return tools.map(({ name, description, input_schema }) => ({
-    name,
-    description,
-    input_schema
-  }));
-}
-async function runTool(name, input) {
-  const tool = tools.find((t) => t.name === name);
-  if (!tool) throw new Error(`\u672A\u77E5\u5DE5\u5177: ${name}`);
-  return tool.execute(input);
-}
 
-// backend/src/agent.ts
-var MAX_STEPS = 5;
-async function runAgentLoop(messages, systemPrompt) {
-  const history = [...messages];
-  const tools2 = getToolDefinitions();
-  for (let step = 0; step < MAX_STEPS; step++) {
-    const response = await invokeBedrockClaude(history, systemPrompt, 1024, tools2);
-    if (response.stop_reason !== "tool_use") {
-      return response.content.find((c5) => c5.type === "text")?.text ?? "";
+// backend/src/lib/chatHistory.ts
+var import_lib_dynamodb7 = __toESM(require_dist_cjs27(), 1);
+var TABLE_NAME6 = process.env.DYNAMO_CHAT_HISTORY_TABLE ?? "ChatHistory";
+var MAX_RAW_HISTORY_BYTES = 300 * 1024;
+function buildSessionId(userId) {
+  return `sess_${userId}`;
+}
+function toDialogTurns(messages) {
+  const turns = [];
+  for (const msg of messages) {
+    let text = "";
+    if (typeof msg.content === "string") {
+      text = msg.content;
+    } else if (Array.isArray(msg.content)) {
+      text = msg.content.map(
+        (block) => block && typeof block === "object" && typeof block.text === "string" ? block.text : ""
+      ).filter(Boolean).join("\n");
     }
-    history.push({ role: "assistant", content: response.content });
-    const toolUses = response.content.filter((c5) => c5.type === "tool_use");
-    const toolResults = await Promise.all(
-      toolUses.map(async (call) => {
-        try {
-          const result = await runTool(call.name, call.input ?? {});
-          return {
-            type: "tool_result",
-            tool_use_id: call.id,
-            content: JSON.stringify(result)
-          };
-        } catch (err2) {
-          return {
-            type: "tool_result",
-            tool_use_id: call.id,
-            content: `error: ${err2 instanceof Error ? err2.message : "\u672A\u77E5\u932F\u8AA4"}`
-          };
+    text = text.trim();
+    if (text) {
+      turns.push({ role: msg.role, content: text });
+    }
+  }
+  return turns;
+}
+async function loadChatHistory(sessionId) {
+  try {
+    const { Items } = await ddb.send(
+      new import_lib_dynamodb7.QueryCommand({
+        TableName: TABLE_NAME6,
+        KeyConditionExpression: "session_id = :sid",
+        ExpressionAttributeValues: { ":sid": sessionId },
+        ScanIndexForward: false,
+        // timestamp 由大到小 → 最新的在前面
+        Limit: 1
+      })
+    );
+    const Item = Items?.[0];
+    if (!Item) return null;
+    let rawHistory = [];
+    if (typeof Item.raw_history === "string") {
+      try {
+        rawHistory = JSON.parse(Item.raw_history);
+      } catch {
+        console.error(`[chatHistory] raw_history \u89E3\u6790\u5931\u6557\uFF0Csession=${sessionId}`);
+      }
+    }
+    const dialogHistory = Item.dialog_history ?? [];
+    if (rawHistory.length === 0 && dialogHistory.length > 0) {
+      rawHistory = dialogHistory.map((turn) => ({
+        role: turn.role,
+        content: [{ text: turn.content }]
+      }));
+    }
+    return {
+      sessionId,
+      userId: Item.user_id ?? "",
+      dialogHistory,
+      rawHistory,
+      contextIntent: Item.context_intent,
+      timestamp: Item.timestamp
+    };
+  } catch (err2) {
+    const detail = err2 instanceof Error ? err2.message : "\u672A\u77E5\u932F\u8AA4";
+    console.error(`[chatHistory] \u8B80\u53D6\u5931\u6557 session=${sessionId}:`, detail);
+    return null;
+  }
+}
+async function saveChatHistory(input) {
+  const { sessionId, userId, messages, contextIntent } = input;
+  try {
+    const dialogHistory = toDialogTurns(messages);
+    let rawHistory = JSON.stringify(messages);
+    if (Buffer.byteLength(rawHistory, "utf8") > MAX_RAW_HISTORY_BYTES) {
+      console.warn(
+        `[chatHistory] raw_history \u904E\u5927\uFF08${Buffer.byteLength(rawHistory, "utf8")} bytes\uFF09\uFF0C\u53EA\u4FDD\u7559\u7D14\u6587\u5B57\u5C0D\u8A71`
+      );
+      rawHistory = void 0;
+    }
+    await ddb.send(
+      new import_lib_dynamodb7.PutCommand({
+        TableName: TABLE_NAME6,
+        Item: {
+          session_id: sessionId,
+          user_id: userId,
+          dialog_history: dialogHistory,
+          ...rawHistory ? { raw_history: rawHistory } : {},
+          ...contextIntent ? { context_intent: contextIntent } : {},
+          timestamp: (/* @__PURE__ */ new Date()).toISOString()
         }
       })
     );
-    history.push({ role: "user", content: toolResults });
+  } catch (err2) {
+    const detail = err2 instanceof Error ? err2.message : "\u672A\u77E5\u932F\u8AA4";
+    console.error(`[chatHistory] \u5BEB\u5165\u5931\u6557 session=${sessionId}:`, detail);
   }
-  throw new Error(`Agent Loop \u8D85\u904E ${MAX_STEPS} \u6B65\u4ECD\u672A\u5F97\u5230\u6700\u7D42\u56DE\u8986`);
+}
+
+// backend/src/agent.ts
+var client3 = new import_client_bedrock_runtime2.BedrockRuntimeClient({
+  region: process.env.AWS_REGION || "us-west-2"
+});
+var MODEL_ID = process.env.BEDROCK_MODEL_ID || "us.anthropic.claude-sonnet-4-20250514-v1:0";
+var MAX_STEPS = 10;
+var MAX_TOKENS = 2048;
+var MAX_HISTORY_MESSAGES = 24;
+var MAX_TOOL_RESULT_CHARS = 4e3;
+var SYSTEM_PROMPT = `\u4F60\u662F UNI Flow \u667A\u6167\u96F6\u552E\u7BA1\u5BB6\uFF0C\u4E00\u500B\u57FA\u65BC AI \u7684\u667A\u6167\u793E\u5340\u8207\u96F6\u552E\u670D\u52D9\u52A9\u624B\u3002
+
+## \u4F60\u7684\u89D2\u8272
+- \u7406\u89E3\u4F7F\u7528\u8005\u7684\u751F\u6D3B\u9700\u6C42\uFF08\u98DF\u8863\u4F4F\u884C\u80B2\u6A02\uFF09
+- \u6839\u64DA\u4F7F\u7528\u8005\u504F\u597D\u63A8\u85A6\u9069\u5408\u7684\u670D\u52D9\u548C\u5546\u54C1
+- \u5C07\u8907\u96DC\u9700\u6C42\u62C6\u89E3\u70BA\u5177\u9AD4\u6B65\u9A5F
+- \u5354\u52A9\u6253\u5305\u884C\u7A0B\u3001\u4E0B\u55AE\u5546\u54C1\u3001\u9810\u7D04\u670D\u52D9
+
+## \u53EF\u7528\u5DE5\u5177\u8207\u4F7F\u7528\u6642\u6A5F
+
+\u4F60\u6709\u4EE5\u4E0B\u5DE5\u5177\u53EF\u4EE5\u547C\u53EB\uFF0C\u8ACB\u6839\u64DA\u4F7F\u7528\u8005\u9700\u6C42\u4E3B\u52D5\u9078\u64C7\u5408\u9069\u7684\u5DE5\u5177\uFF1A
+
+1. get_user_profile - \u53D6\u5F97\u4F7F\u7528\u8005\u504F\u597D\u8207\u6A19\u7C64
+   \u4F55\u6642\u7528\uFF1A\u5C0D\u8A71\u958B\u59CB\u6642\u3001\u9700\u8981\u500B\u4EBA\u5316\u63A8\u85A6\u6642
+   \u8F38\u5165\uFF1AuserId
+
+2. search_product - \u641C\u5C0B\u53EF\u8CFC\u8CB7\u7684\u96F6\u552E\u5546\u54C1
+   \u4F55\u6642\u7528\uFF1A\u4F7F\u7528\u8005\u60F3\u8CB7\u6771\u897F\u3001\u9700\u8981\u5546\u54C1\u63A8\u85A6\u6642
+   \u8F38\u5165\uFF1Akeyword\uFF08\u5FC5\u586B\uFF09\u3001category\uFF08\u98F2\u54C1/\u98DF\u54C1/\u4FDD\u5065/\u751F\u6D3B\u7528\u54C1\uFF09\u3001limit
+
+3. search_service - \u641C\u5C0B\u53EF\u9810\u7D04\u7684\u670D\u52D9
+   \u4F55\u6642\u7528\uFF1A\u4F7F\u7528\u8005\u9700\u8981\u751F\u6D3B\u670D\u52D9\uFF08\u6E05\u6F54\u3001\u4FEE\u7E55\u3001\u5916\u9001\u3001\u4EA4\u901A\u3001\u8A02\u4F4D\u7B49\uFF09
+   \u8F38\u5165\uFF1Atype\uFF081=\u6E05\u6F54, 2=\u5BB6\u96FB\u6E05\u6D17, 3=\u4EA4\u901A\u5BC4\u4EF6, 6=\u8A02\u4F4D, 9=\u5916\u9001, 10=\u6C34\u96FB\u4FEE\u7E55, 11=\u8CFC\u7269\uFF09\u3001keyword
+
+4. get_weather - \u67E5\u8A62\u5929\u6C23
+   \u4F55\u6642\u7528\uFF1A\u4F7F\u7528\u8005\u554F\u5929\u6C23\u3001\u6216\u9700\u8981\u6839\u64DA\u5929\u6C23\u63A8\u85A6\uFF08\u4E0B\u96E8\u63A8\u85A6\u53EB\u8ECA/\u96E8\u5177\uFF09
+   \u8F38\u5165\uFF1Acity\uFF08\u5FC5\u586B\uFF09\u3001date\uFF08YYYY-MM-DD\uFF0C\u7701\u7565\u70BA\u4ECA\u5929\uFF09
+
+5. create_bundle - \u5EFA\u7ACB\u884C\u7A0B\u5305\uFF08\u4EFB\u52D9\u8A08\u756B\uFF09
+   \u4F55\u6642\u7528\uFF1A\u4F7F\u7528\u8005\u6709\u8907\u5408\u9700\u6C42\uFF0C\u4E14\u5DF2\u7D93\u91D0\u6E05\u9700\u6C42\u7D30\u7BC0\u5F8C
+   \u8F38\u5165\uFF1AuserId\u3001title\u3001steps[]
+   \u91CD\u8981\uFF1A\u5148\u554F\u554F\u984C\u78BA\u8A8D\u9700\u6C42\uFF0C\u6536\u5230\u56DE\u7B54\u5F8C\u624D\u547C\u53EB\u6B64\u5DE5\u5177
+   \u91CD\u8981\uFF1A\u4EFB\u4F55\u4E00\u500B step \u53EA\u8981\u6D89\u53CA\u300C\u53BB\u54EA\u5BB6\u5E97\u300D\u300C\u8CB7\u4EC0\u9EBC\u5546\u54C1\u300D\u300C\u7528\u4EC0\u9EBC\u670D\u52D9\u300D\uFF0C\u4E00\u5B9A\u8981\u5148\u547C\u53EB
+   search_service \u6216 search_product \u62FF\u5230\u771F\u5BE6\u7D50\u679C\uFF0C\u4E26\u628A\u8A72\u7D50\u679C\u7684 id \u586B\u9032\u8A72 step \u7684
+   serviceId \u6216 productId\u2014\u2014\u4E0D\u80FD\u53EA\u5BEB\u6587\u5B57\u63CF\u8FF0\u3001\u4E0D\u5E36 id\u3002\u53EA\u6709\u8DDF\u5177\u9AD4\u5E97\u5BB6/\u5546\u54C1/\u670D\u52D9\u7121\u95DC\u7684
+   \u6B65\u9A5F\uFF08\u4F8B\u5982\u300C\u56DE\u5BB6\u5F8C\u52A0\u71B1\u4EAB\u7528\u300D\uFF09\u624D\u53EF\u4EE5\u4E0D\u5E36 id\u3002
+
+6. create_order - \u5EFA\u7ACB\u8A02\u55AE\u8349\u7A3F
+   \u4F55\u6642\u7528\uFF1A\u4F7F\u7528\u8005\u78BA\u8A8D\u8981\u8CFC\u8CB7\u5546\u54C1\u6216\u9810\u7D04\u670D\u52D9\u6642
+   \u8F38\u5165\uFF1AuserId\u3001items[]\uFF08\u6BCF\u9805\u9700 name, quantity, price\uFF09\u3001remark
+   \u91CD\u8981\uFF1A\u5EFA\u7ACB\u524D\u5148\u5411\u4F7F\u7528\u8005\u78BA\u8A8D\u54C1\u9805\u8207\u50F9\u683C
+
+## \u6838\u5FC3\u884C\u70BA\uFF1A\u4E3B\u52D5\u898F\u5283\u884C\u7A0B
+
+\u4F60\u6700\u91CD\u8981\u7684\u80FD\u529B\u662F\u300C\u4E3B\u52D5\u5E6B\u4F7F\u7528\u8005\u898F\u5283\u300D\u3002\u6D41\u7A0B\u5982\u4E0B\uFF1A
+
+\u7B2C\u4E00\u6B65\uFF1A\u5148\u547C\u53EB get_user_profile \u53D6\u5F97\u4F7F\u7528\u8005\u6A19\u7C64\u8207\u504F\u597D
+\u7B2C\u4E8C\u6B65\uFF1A\u6839\u64DA\u4F7F\u7528\u8005\u9700\u6C42\uFF0C\u4E00\u6B21\u554F\u4E00\u500B\u554F\u984C\u91D0\u6E05\u9700\u6C42\uFF08\u6700\u591A\u554F 3 \u984C\uFF0C\u6BCF\u984C\u9644\u4E0A\u5EFA\u8B70\u9078\u9805\uFF09
+\u7B2C\u4E09\u6B65\uFF1A\u6BCF\u6B21\u6536\u5230\u56DE\u7B54\u5F8C\uFF0C\u6C7A\u5B9A\u662F\u5426\u9700\u8981\u518D\u554F\u4E0B\u4E00\u984C\uFF0C\u6216\u5DF2\u6709\u8DB3\u5920\u8CC7\u8A0A\u53EF\u4EE5\u958B\u59CB\u898F\u5283
+\u7B2C\u56DB\u6B65\uFF1A\u8CC7\u8A0A\u8DB3\u5920\u5F8C\uFF0C\u641C\u5C0B\u76F8\u95DC\u5546\u54C1\u548C\u670D\u52D9
+\u7B2C\u4E94\u6B65\uFF1A\u547C\u53EB create_bundle \u5EFA\u7ACB\u884C\u7A0B\u8A08\u756B
+\u7B2C\u516D\u6B65\uFF1A\u7C21\u77ED\u544A\u77E5\u4F7F\u7528\u8005\u5DF2\u5EFA\u7ACB\u8A08\u756B
+
+\u63D0\u554F\u683C\u5F0F\uFF08\u91CD\u8981\uFF09\uFF1A
+\u6BCF\u6B21\u63D0\u554F\u6642\uFF0C\u5728\u56DE\u8986\u6700\u5F8C\u4E00\u884C\u7528\u4EE5\u4E0B\u683C\u5F0F\u9644\u4E0A\u5EFA\u8B70\u9078\u9805\uFF1A
+[\u9078\u9805: \u9078\u9805A | \u9078\u9805B | \u9078\u9805C | \u9078\u9805D]
+
+\u7BC4\u4F8B\uFF1A
+\u4F7F\u7528\u8005\u8AAA\u300C\u6211\u660E\u5929\u8981\u53BB\u53F0\u4E2D\u73A9\u300D
+\u2192 \u5148\u53D6\u5F97 profile
+\u2192 \u7B2C\u4E00\u500B\u554F\u984C\uFF1A
+  \u300C\u5927\u6982\u5E7E\u500B\u4EBA\u4E00\u8D77\u53BB\u5440\uFF1F\u300D
+  [\u9078\u9805: 1 \u500B\u4EBA | 2 \u500B\u4EBA | 3~5 \u4EBA | 5 \u4EBA\u4EE5\u4E0A]
+
+\u4F7F\u7528\u8005\u56DE\u7B54\u5F8C
+\u2192 \u7B2C\u4E8C\u500B\u554F\u984C\uFF1A
+  \u300C\u60F3\u5B89\u6392\u4EC0\u9EBC\u985E\u578B\u7684\u6D3B\u52D5\uFF1F\u300D
+  [\u9078\u9805: \u5403\u7F8E\u98DF | \u901B\u666F\u9EDE | \u8CFC\u7269 | \u90FD\u4F86\u4E00\u9EDE]
+
+\u4F7F\u7528\u8005\u56DE\u7B54\u5F8C
+\u2192 \u8CC7\u8A0A\u5920\u4E86\uFF0C\u76F4\u63A5\u641C\u5C0B+\u5EFA\u7ACB\u884C\u7A0B\uFF08\u4E0D\u7528\u518D\u554F\u7B2C\u4E09\u984C\uFF09
+
+\u4F7F\u7528\u8005\u8AAA\u300C\u5BB6\u88E1\u6C34\u7BA1\u6F0F\u6C34\u300D
+\u2192 \u5148\u53D6\u5F97 profile
+\u2192 \u7B2C\u4E00\u500B\u554F\u984C\uFF1A
+  \u300C\u662F\u54EA\u88E1\u6F0F\u6C34\uFF1F\u300D
+  [\u9078\u9805: \u6D74\u5BA4 | \u5EDA\u623F | \u967D\u53F0 | \u5176\u4ED6\u5730\u65B9]
+
+\u4F7F\u7528\u8005\u56DE\u7B54\u5F8C
+\u2192 \u7B2C\u4E8C\u500B\u554F\u984C\uFF1A
+  \u300C\u6F0F\u5F97\u56B4\u91CD\u55CE\uFF1F\u300D
+  [\u9078\u9805: \u6EF4\u6EF4\u7B54\u7B54\u800C\u5DF2 | \u4E00\u76F4\u5728\u6D41 | \u5DF2\u7D93\u6DF9\u6C34\u4E86]
+
+\u91CD\u8981\u898F\u5247\uFF1A
+\u2192 \u4E00\u5B9A\u8981\u5148 get_user_profile\uFF0C\u5C07\u4F7F\u7528\u8005\u6A19\u7C64\u7D0D\u5165\u8003\u91CF
+\u2192 \u4E00\u6B21\u53EA\u554F\u4E00\u500B\u554F\u984C\uFF0C\u7B49\u4F7F\u7528\u8005\u56DE\u7B54\u5F8C\u518D\u554F\u4E0B\u4E00\u500B
+\u2192 \u6BCF\u500B\u554F\u984C\u90FD\u8981\u9644\u4E0A [\u9078\u9805: ...] \u683C\u5F0F\u7684\u5EFA\u8B70\u7B54\u6848\uFF083~4 \u500B\u9078\u9805\uFF09
+\u2192 \u5982\u679C\u4F7F\u7528\u8005\u6A19\u7C64\u662F #BudgetFirst\uFF0C\u554F\u984C\u4E2D\u52A0\u5165\u9810\u7B97\u76F8\u95DC\u9078\u9805
+\u2192 \u6700\u591A\u554F 3 \u984C\uFF0C\u8D85\u904E\u5C31\u76F4\u63A5\u7528\u5DF2\u6709\u8CC7\u8A0A\u898F\u5283
+\u2192 \u5982\u679C\u4F7F\u7528\u8005\u4E00\u958B\u59CB\u5C31\u7D66\u4E86\u8DB3\u5920\u8CC7\u8A0A\uFF0C\u53EF\u4EE5\u8DF3\u904E\u63D0\u554F\u76F4\u63A5\u898F\u5283
+\u2192 \u9078\u9805\u8981\u5177\u9AD4\u3001\u53E3\u8A9E\u5316\uFF0C\u8B93\u4F7F\u7528\u8005\u5BB9\u6613\u9078\u64C7
+
+## \u5DE5\u5177\u642D\u914D\u7B56\u7565
+
+\u500B\u4EBA\u5316\u63A8\u85A6\u6D41\u7A0B\uFF1A\u5148 get_user_profile \u2192 \u518D\u6839\u64DA\u6A19\u7C64\u8ABF\u6574\u63A8\u85A6\u65B9\u5411
+\u8907\u5408\u9700\u6C42\u6D41\u7A0B\uFF1Aget_user_profile \u2192 \u554F 1~3 \u500B\u554F\u984C \u2192 \u4F7F\u7528\u8005\u56DE\u7B54\u5F8C \u2192 search_product + search_service \u2192 create_bundle
+\u8CFC\u7269\u6D41\u7A0B\uFF1Asearch_product \u2192 \u5C55\u793A\u7D50\u679C \u2192 \u4F7F\u7528\u8005\u78BA\u8A8D \u2192 create_order
+\u5929\u6C23\u9023\u52D5\u63A8\u85A6\uFF1Aget_weather \u2192 \u5982\u679C\u4E0B\u96E8 \u2192 search_service(type=3) \u63A8\u85A6\u53EB\u8ECA \u6216 search_product(keyword="\u96E8\u5098")
+
+\u6A19\u7C64\u5F71\u97FF\u6C7A\u7B56\u7684\u7BC4\u4F8B\uFF1A
+\u2192 #TimeSaver\uFF1A\u5C11\u554F\u554F\u984C\u3001\u63A8\u85A6\u6700\u5FEB\u901F\u7684\u9078\u9805
+\u2192 #BudgetFirst\uFF1A\u512A\u5148\u63A8\u85A6\u4F4E\u50F9\u65B9\u6848
+\u2192 #Foodie\uFF1A\u51FA\u904A\u884C\u7A0B\u591A\u5B89\u6392\u9910\u5EF3\u7F8E\u98DF
+\u2192 #Traveler\uFF1A\u51FA\u5DEE\u884C\u7A0B\u81EA\u52D5\u8003\u616E eSIM\u3001\u8F49\u63A5\u982D\u7B49
+\u2192 #FrequentPickup\uFF1A\u512A\u5148\u63A8\u85A6\u9580\u5E02\u53D6\u8CA8\u65B9\u5F0F
+
+## \u56DE\u8986\u683C\u5F0F\uFF08\u91CD\u8981\uFF09
+- \u7D14\u6587\u5B57\u56DE\u8986\uFF0C\u7981\u6B62\u4F7F\u7528\u4EFB\u4F55 Markdown \u8A9E\u6CD5
+- \u4E0D\u8981\u7528\u7C97\u9AD4\u6A19\u8A18\u3001\u659C\u9AD4\u6A19\u8A18\u3001\u6A19\u984C\u7B26\u865F\u3001\u7A0B\u5F0F\u78BC\u5340\u584A
+- \u4E0D\u8981\u7528 - \u6216 * \u958B\u982D\u7684\u5217\u8868\u7B26\u865F\uFF0C\u6539\u7528\u7BAD\u982D\u7B26\u865F\u6216\u76F4\u63A5\u63DB\u884C
+- \u53EF\u4EE5\u7528 emoji \u8868\u9054\u8A9E\u610F\uFF0C\u4F46\u4E0D\u8981\u904E\u5EA6\u4F7F\u7528
+- \u63DB\u884C\u5206\u6BB5\u5373\u53EF\uFF0C\u4E0D\u9700\u8981\u7279\u6B8A\u683C\u5F0F\u6A19\u8A18
+
+## \u56DE\u8986\u898F\u5247
+- \u56DE\u8986\u4F7F\u7528\u7E41\u9AD4\u4E2D\u6587
+- \u4FDD\u6301\u7C21\u6F54\u89AA\u5207\u7684\u8A9E\u6C23\uFF0C\u50CF\u670B\u53CB\u822C\u5C0D\u8A71
+- \u5982\u679C\u9700\u8981\u66F4\u591A\u8CC7\u8A0A\uFF0C\u4E3B\u52D5\u8A62\u554F\u4F7F\u7528\u8005
+- \u5C55\u793A\u641C\u5C0B\u7D50\u679C\u6642\uFF0C\u7528\u7C21\u6F54\u6587\u5B57\u5217\u51FA\uFF08\u54C1\u540D\u3001\u50F9\u683C\u3001\u63CF\u8FF0\uFF09\uFF0C\u6BCF\u9805\u4E00\u884C
+- \u5982\u679C\u5DE5\u5177\u56DE\u50B3\u7A7A\u7D50\u679C\uFF0C\u8AA0\u5BE6\u544A\u77E5\u4E26\u5EFA\u8B70\u5176\u4ED6\u9078\u64C7`;
+var TOOL_STEP_LABELS = {
+  get_user_profile: "\u8B80\u53D6\u4F60\u7684\u504F\u597D",
+  search_product: "\u641C\u5C0B\u63A8\u85A6\u5546\u54C1",
+  search_service: "\u641C\u5C0B\u76F8\u95DC\u670D\u52D9",
+  get_weather: "\u67E5\u8A62\u5929\u6C23\u72C0\u6CC1",
+  create_bundle: "\u5EFA\u7ACB\u884C\u7A0B\u8A08\u756B",
+  create_order: "\u5EFA\u7ACB\u8A02\u55AE\u8349\u7A3F"
+};
+async function agentChat(userId, userMessage, conversationHistory = [], sessionId) {
+  const sid = sessionId ?? buildSessionId(userId);
+  let priorMessages = conversationHistory;
+  let priorIntent;
+  if (priorMessages.length === 0) {
+    const stored = await loadChatHistory(sid);
+    if (stored) {
+      priorMessages = stored.rawHistory;
+      priorIntent = stored.contextIntent;
+      console.log(`[Agent] \u8F09\u5165 session ${sid} \u6B77\u53F2 ${priorMessages.length} \u5247`);
+    }
+  }
+  const messages = [
+    ...trimHistory(priorMessages),
+    { role: "user", content: [{ text: userMessage }] }
+  ];
+  const toolCalls = [];
+  const buildResult = async (reply) => {
+    const mission = extractMission(toolCalls);
+    await saveChatHistory({
+      sessionId: sid,
+      userId,
+      messages,
+      contextIntent: mission?.title ?? priorIntent
+    });
+    return {
+      reply,
+      history: messages,
+      mission,
+      toolCalls: toolCalls.map((tc) => TOOL_STEP_LABELS[tc.name] ?? tc.name),
+      sessionId: sid
+    };
+  };
+  for (let step = 0; step < MAX_STEPS; step++) {
+    const command5 = new import_client_bedrock_runtime2.ConverseCommand({
+      modelId: MODEL_ID,
+      system: [{ text: SYSTEM_PROMPT + `
+
+\u76EE\u524D\u4F7F\u7528\u8005 ID: ${userId}` }],
+      messages,
+      inferenceConfig: {
+        maxTokens: MAX_TOKENS,
+        temperature: 0.7
+      },
+      toolConfig: {
+        tools: toolDefinitions
+      }
+    });
+    const response = await client3.send(command5);
+    const stopReason = response.stopReason;
+    const outputMessage = response.output?.message;
+    if (!outputMessage) {
+      throw new Error("Bedrock \u6C92\u6709\u56DE\u50B3\u8A0A\u606F");
+    }
+    messages.push({ role: "assistant", content: outputMessage.content });
+    if (stopReason === "tool_use") {
+      const toolUseBlocks = outputMessage.content?.filter(
+        (block) => block.toolUse
+      ) ?? [];
+      const toolResults = [];
+      for (const block of toolUseBlocks) {
+        const toolUse = block.toolUse;
+        const toolUseId = toolUse.toolUseId;
+        const name = toolUse.name;
+        const input = toolUse.input;
+        console.log(`[Agent] \u4F7F\u7528\u5DE5\u5177: ${name}`, JSON.stringify(input));
+        try {
+          const result = await executeTool(name, input);
+          toolCalls.push({ name, input, result });
+          toolResults.push({
+            toolResult: {
+              toolUseId,
+              content: [capToolResult(result)]
+            }
+          });
+        } catch (err2) {
+          const errorMsg = err2 instanceof Error ? err2.message : "\u5DE5\u5177\u57F7\u884C\u5931\u6557";
+          console.error(`[Agent] \u5DE5\u5177\u932F\u8AA4: ${name}`, errorMsg);
+          toolCalls.push({ name, input, result: { error: errorMsg } });
+          toolResults.push({
+            toolResult: {
+              toolUseId,
+              content: [{ text: `\u5DE5\u5177\u57F7\u884C\u5931\u6557: ${errorMsg}` }],
+              status: "error"
+            }
+          });
+        }
+      }
+      messages.push({ role: "user", content: toolResults });
+      continue;
+    }
+    if (stopReason === "max_tokens") {
+      console.warn("[Agent] \u56DE\u8986\u88AB max_tokens \u622A\u65B7");
+    }
+    return await buildResult(extractText(outputMessage.content));
+  }
+  console.warn(`[Agent] \u5DF2\u9054 MAX_STEPS (${MAX_STEPS})\uFF0C\u5F37\u5236\u7D50\u675F`);
+  return await buildResult("\u62B1\u6B49\uFF0C\u6211\u8655\u7406\u9019\u500B\u8ACB\u6C42\u82B1\u4E86\u592A\u9577\u6642\u9593\u3002\u53EF\u4EE5\u7C21\u5316\u4F60\u7684\u9700\u6C42\u518D\u8A66\u4E00\u6B21\u55CE\uFF1F");
+}
+function extractText(content) {
+  if (!content) return "";
+  return content.filter((block) => typeof block?.text === "string").map((block) => block.text.trim()).filter(Boolean).join("\n\n");
+}
+function extractMission(toolCalls) {
+  const bundleCalls = toolCalls.filter((tc) => tc.name === "create_bundle");
+  const latest = bundleCalls[bundleCalls.length - 1];
+  const bundle = latest?.result?.bundle;
+  if (!bundle?.steps) return void 0;
+  const serviceById = /* @__PURE__ */ new Map();
+  const productById = /* @__PURE__ */ new Map();
+  for (const tc of toolCalls) {
+    if (tc.name === "search_service") {
+      for (const s2 of tc.result?.services ?? []) serviceById.set(s2.id, s2);
+    }
+    if (tc.name === "search_product") {
+      for (const p3 of tc.result?.products ?? []) productById.set(p3.id, p3);
+    }
+  }
+  return {
+    title: bundle.title,
+    subtitle: `${bundle.steps.length} \u500B\u6B65\u9A5F`,
+    progress: 0,
+    tasks: bundle.steps.map((s2, i5) => {
+      const service = s2.serviceId ? serviceById.get(s2.serviceId) : void 0;
+      const product = s2.productId ? productById.get(s2.productId) : void 0;
+      const detail = service ? `${service.vendorName || service.name} \xB7 ${service.name}` : product ? `${product.name} \xB7 NT$${product.price}` : s2.serviceId ? `\u670D\u52D9: ${s2.serviceId}` : s2.productId ? `\u5546\u54C1: ${s2.productId}` : "\u5F85\u8655\u7406";
+      return {
+        id: s2.stepId ?? `step-${i5 + 1}`,
+        icon: getStepIcon(s2.description),
+        title: s2.description,
+        status: "pending",
+        detail
+      };
+    })
+  };
+}
+function capToolResult(result) {
+  const serialized = JSON.stringify(result);
+  if (serialized && serialized.length > MAX_TOOL_RESULT_CHARS) {
+    return {
+      text: `${serialized.slice(0, MAX_TOOL_RESULT_CHARS)}
+
+(\u7D50\u679C\u904E\u9577\u5DF2\u622A\u65B7\uFF0C\u5982\u9700\u5B8C\u6574\u8CC7\u6599\u8ACB\u7E2E\u5C0F\u67E5\u8A62\u7BC4\u570D)`
+    };
+  }
+  return { json: result };
+}
+function trimHistory(history) {
+  if (history.length <= MAX_HISTORY_MESSAGES) return history;
+  for (let i5 = history.length - MAX_HISTORY_MESSAGES; i5 < history.length; i5++) {
+    const msg = history[i5];
+    const isPlainUserMessage = msg.role === "user" && Array.isArray(msg.content) && msg.content.some((block) => typeof block?.text === "string");
+    if (isPlainUserMessage) {
+      console.log(`[Agent] \u6B77\u53F2\u4FEE\u526A: ${history.length} \u2192 ${history.length - i5} \u5247`);
+      return history.slice(i5);
+    }
+  }
+  return history;
+}
+function getStepIcon(description) {
+  const lower = description.toLowerCase();
+  if (lower.includes("\u4EA4\u901A") || lower.includes("\u8ECA") || lower.includes("\u63A5\u9001")) return "\u{1F695}";
+  if (lower.includes("\u5929\u6C23") || lower.includes("\u96E8")) return "\u{1F327}";
+  if (lower.includes("\u4F4F\u5BBF") || lower.includes("\u98EF\u5E97") || lower.includes("\u65C5\u9928")) return "\u{1F3E8}";
+  if (lower.includes("\u9910") || lower.includes("\u5403") || lower.includes("\u98DF")) return "\u{1F37D}";
+  if (lower.includes("\u8CFC\u7269") || lower.includes("\u8CB7") || lower.includes("\u5546\u54C1") || lower.includes("\u63A1\u8CFC")) return "\u{1F6D2}";
+  if (lower.includes("\u9810\u7D04") || lower.includes("\u9810\u8A02")) return "\u{1F4C5}";
+  if (lower.includes("\u6E05\u6F54") || lower.includes("\u6253\u6383")) return "\u{1F9F9}";
+  if (lower.includes("\u4FEE\u7E55") || lower.includes("\u6C34\u96FB") || lower.includes("\u4FEE\u7406")) return "\u{1F527}";
+  if (lower.includes("\u86CB\u7CD5") || lower.includes("\u751F\u65E5")) return "\u{1F382}";
+  if (lower.includes("\u79AE\u7269")) return "\u{1F381}";
+  if (lower.includes("\u642C\u5BB6") || lower.includes("\u6253\u5305")) return "\u{1F4E6}";
+  if (lower.includes("\u5065\u8EAB") || lower.includes("\u904B\u52D5")) return "\u{1F4AA}";
+  if (lower.includes("\u5BF5\u7269") || lower.includes("\u91AB\u9662")) return "\u{1F43E}";
+  if (lower.includes("\u63D0\u9192") || lower.includes("\u901A\u77E5")) return "\u23F0";
+  if (lower.includes("\u4FDD\u96AA")) return "\u{1F6E1}";
+  return "\u{1F4CB}";
 }
 
 // backend/src/lambda.ts
 async function handler(event) {
+  const method = event.requestContext?.http?.method ?? "POST";
+  if (method === "OPTIONS") {
+    return { statusCode: 204, headers: corsHeaders(), body: "" };
+  }
   try {
     const body = JSON.parse(event.body || "{}");
     const isAgent = event.rawPath?.endsWith("/agent") || body.agent === true;
+    if (isAgent) {
+      const lastMsg = Array.isArray(body.messages) ? body.messages[body.messages.length - 1] : void 0;
+      const userMessage = typeof body.message === "string" ? body.message : typeof lastMsg?.content === "string" ? lastMsg.content : "";
+      if (!userMessage) {
+        return json(400, { error: "message \u6B04\u4F4D\u70BA\u5FC5\u586B\u4E14\u9808\u70BA\u5B57\u4E32" });
+      }
+      const result = await agentChat(
+        body.userId || "anonymous",
+        userMessage,
+        Array.isArray(body.history) ? body.history : [],
+        typeof body.sessionId === "string" ? body.sessionId : void 0
+      );
+      return json(200, {
+        reply: result.reply,
+        history: result.history,
+        mission: result.mission,
+        toolCalls: result.toolCalls,
+        sessionId: result.sessionId
+      });
+    }
     if (Array.isArray(body.messages)) {
       if (body.messages.length === 0) {
         return json(400, { error: "messages \u6B04\u4F4D\u70BA\u5FC5\u586B\u4E14\u9808\u70BA\u975E\u7A7A\u9663\u5217" });
-      }
-      if (isAgent) {
-        const reply = await runAgentLoop(body.messages, body.systemPrompt);
-        return json(200, { reply });
       }
       const response = await invokeBedrockClaude(
         body.messages,
@@ -39177,10 +39978,17 @@ async function handler(event) {
     return json(500, { error: "AI \u56DE\u8986\u5931\u6557", detail });
   }
 }
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST,OPTIONS"
+  };
+}
 function json(statusCode, body) {
   return {
     statusCode,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...corsHeaders() },
     body: JSON.stringify(body)
   };
 }

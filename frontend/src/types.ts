@@ -68,7 +68,8 @@ export type ContextView =
   | "birthday-complete"
   | "profile"
   | "missions"
-  | "packs";
+  | "packs"
+  | "agent-mission";
 
 export type MessageType =
   | "text"
@@ -80,6 +81,7 @@ export type MessageType =
   | "pet-care-created"
   | "moving-created"
   | "fitness-created"
+  | "agent-mission-created"
   | "recommendation"
   | "products"
   | "task-update"

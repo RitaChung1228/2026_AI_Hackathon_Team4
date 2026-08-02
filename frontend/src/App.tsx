@@ -23,6 +23,7 @@ export default function App() {
   const [panelOpen, setPanelOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(defaultCart);
   const [transportTime, setTransportTime] = useState<string | undefined>(undefined);
+  const [agentMission, setAgentMission] = useState<any>(null);
 
   const handleOnboardingComplete = (tags: string[]) => {
     setUserTags(tags);
@@ -141,6 +142,7 @@ export default function App() {
             contextView={contextView}
             panelOpen={panelOpen}
             isMobile={true}
+            onAgentMission={setAgentMission}
           />
 
           {panelOpen && contextView !== "idle" && (
@@ -174,6 +176,7 @@ export default function App() {
                     onSaveComplete={handleSaveComplete}
                     onDismissComplete={() => { setContextView("idle"); setPanelOpen(false); }}
                     onProductAdd={handleProductAdd}
+                    agentMission={agentMission}
                   />
                 </div>
               </div>
@@ -235,6 +238,7 @@ function viewLabel(view: ContextView): string {
     profile: "👤 個人檔案",
     missions: "◈ 我的任務",
     packs: "⊞ 情境包",
+    "agent-mission": "📋 AI 規劃任務",
   };
   return labels[view] ?? "詳情";
 }
