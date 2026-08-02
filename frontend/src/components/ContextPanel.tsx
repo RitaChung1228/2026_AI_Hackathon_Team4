@@ -3,7 +3,7 @@ import {
   tokyoMission, birthdayMission, homeRepairMission, petCareMission,
   movingMission, fitnessMission,
   products, homeRepairProducts, petProducts,
-  cartItems as defaultCart, recommendations, scenarioPacks, UNSPLASH,
+  recommendations, scenarioPacks, UNSPLASH,
 } from "../data";
 import type { ContextView, CartItem, Mission, Task } from "../types";
 
@@ -51,7 +51,6 @@ export default function ContextPanel({
   const [taskStates, setTaskStates] = useState<Record<string, string>>({});
   const [useOpenPoint, setUseOpenPoint] = useState(true);
   const [useCoupon, setUseCoupon] = useState(true);
-  const [addedProducts, setAddedProducts] = useState<string[]>(["esim"]);
   const [confirmingCheckout, setConfirmingCheckout] = useState(false);
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   const [cakeSize, setCakeSize] = useState<string | null>(null);
@@ -160,14 +159,17 @@ export default function ContextPanel({
     nutrition: [],
   };
 
+  /* 「已加入」狀態直接由購物車推導，移除商品後標記會同步還原 */
+  const addedProducts = cartItems.map((i) => i.id);
+
   const addProduct = (p: (typeof products)[0]) => {
     if (addedProducts.includes(p.id)) return;
-    setAddedProducts((prev) => [...prev, p.id]);
     onProductAdd({ id: p.id, name: p.name, detail: p.detail, price: p.price, qty: 1, icon: p.icon });
   };
 
   const subtotal = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-  const total = subtotal - (useOpenPoint ? 120 : 0) - (useCoupon ? 60 : 0);
+  const discount = subtotal > 0 ? (useOpenPoint ? 120 : 0) + (useCoupon ? 60 : 0) : 0;
+  const total = Math.max(0, subtotal - discount);
 
   /* ── IDLE ── */
   if (view === "idle") {
@@ -332,7 +334,6 @@ export default function ContextPanel({
                                         <button
                                           onClick={() => {
                                             if (inCart) return;
-                                            setAddedProducts((prev) => [...prev, rec.id]);
                                             onProductAdd({ id: rec.id, name: rec.name, detail: rec.detail, price: rec.price, qty: 1, icon: rec.icon });
                                           }}
                                           style={{
@@ -654,7 +655,6 @@ export default function ContextPanel({
                                   <button
                                     onClick={() => {
                                       if (inCart) return;
-                                      setAddedProducts((prev) => [...prev, rec.id]);
                                       onProductAdd({ id: rec.id, name: rec.name, detail: rec.detail, price: rec.price, qty: 1, icon: rec.icon });
                                     }}
                                     style={{
@@ -843,6 +843,28 @@ export default function ContextPanel({
 
   /* ── CART ── */
   if (view === "cart") {
+    /* 空購物車 */
+    if (cartItems.length === 0) {
+      return (
+        <div className="panel-enter" style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ padding: "14px 14px 10px", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "#0F0A2E" }}>購物車</div>
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 32px", textAlign: "center" }}>
+            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#EDE9FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, marginBottom: 14 }}>
+              🛒
+            </div>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", marginBottom: 6 }}>
+              購物車是空的
+            </div>
+            <p style={{ fontSize: 13, color: "#6B7280", lineHeight: 1.6, margin: 0 }}>
+              跟 UNI AI 說說你想準備什麼，<br />推薦的商品會出現在這裡。
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="panel-enter" style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" }}>
         <div style={{ padding: "14px 14px 10px", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>

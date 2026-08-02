@@ -1,410 +1,245 @@
-import { useState } from "react";
-import { mockUser, scenarioPacks, todayCards, aiSuggestions } from "../data";
+import { mockUser } from "../data";
+import { daysUntil, formatDateLabel, relativeDayLabel } from "../dateUtils";
+import { featuredRecos, recosForCart, tripSections, type RecoItem } from "../recommendations";
+import type { AuthUser, CartItem, ScheduledTrip } from "../types";
 
 interface HomeProps {
-  onInputSubmit: (text: string) => void;
-  onScenarioPack: (packId: string) => void;
-  userTags?: string[];
-  savedPackIds?: string[];
+  user?: AuthUser | null;
+  trips?: ScheduledTrip[];
+  cartItems?: CartItem[];
+  onProductAdd?: (item: CartItem) => void;
+  onScenarioPack?: (packId: string) => void;
+  onOpenCart?: () => void;
 }
 
-const TAG_TO_PACKS: Record<string, string[]> = {
-  "#商務出差": ["business-trip"],
-  "#旅行常客": ["business-trip"],
-  "#出差中": ["business-trip"],
-  "#旅行中": ["business-trip"],
-  "#毛孩生活": ["pet-care"],
-  "#健身日常": ["fitness"],
-  "#家庭生活": ["home-repair", "moving"],
-  "#週末出遊": ["fitness"],
-  "#生日將近": ["birthday"],
-  "#聚餐準備": ["birthday"],
-};
+export default function Home({ user, trips = [], cartItems = [], onProductAdd, onScenarioPack, onOpenCart }: HomeProps) {
+  const cartIds = cartItems.map((i) => i.id);
+  const displayName = user?.name ?? mockUser.name;
+  const displayAvatar = user?.avatar ?? mockUser.avatar;
 
-export default function Home({ onInputSubmit, onScenarioPack, userTags = [], savedPackIds = [] }: HomeProps) {
-  const [inputValue, setInputValue] = useState("");
-  const [dismissedSuggestions, setDismissedSuggestions] = useState<number[]>([]);
+  const sortedTrips = [...trips].sort((a, b) => daysUntil(a.date) - daysUntil(b.date));
+  const sections = tripSections(sortedTrips, cartIds);
+  const cartRecos = recosForCart(cartItems);
+  const featured = featuredRecos(cartIds);
+  const hasContext = sections.length > 0 || cartRecos.length > 0;
 
-  const examplePrompts = [
-    "下週三要去東京出差兩天。",
-    "今晚朋友生日。",
-    "下班順路幫我取貨。",
-    "週末要去露營。",
-  ];
-
-  const handleSubmit = () => {
-    if (inputValue.trim()) {
-      onInputSubmit(inputValue.trim());
-    }
+  const addToCart = (r: RecoItem) => {
+    onProductAdd?.({ id: r.id, name: r.name, detail: r.detail, price: r.price, qty: 1, icon: r.icon });
   };
 
-  const handleExample = (prompt: string) => {
-    setInputValue(prompt);
-    setTimeout(() => onInputSubmit(prompt), 150);
-  };
-
-  return (
-    <div
-      style={{
-        height: "100%",
-        overflowY: "auto",
-        background: "#F8F9FC",
-        paddingBottom: 80,
-      }}
-      className="scrollbar-hide"
-    >
-      {/* Header */}
+  const renderCard = (r: RecoItem, because?: string) => {
+    const inCart = cartIds.includes(r.id);
+    return (
       <div
+        key={r.id}
         style={{
           background: "white",
-          padding: "56px 20px 20px",
-          borderBottom: "1px solid #F3F4F6",
+          borderRadius: 16,
+          overflow: "hidden",
+          border: "1px solid #F3F4F6",
+          boxShadow: "0 1px 4px rgba(15,10,46,0.05)",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        {/* 圖片 / 服務磁磚 */}
+        <div style={{ position: "relative", height: 96, flexShrink: 0, background: r.tint ?? "#F3F4F6" }}>
+          {r.image ? (
+            <img src={r.image} alt={r.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          ) : (
             <div
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: 10,
-                background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                width: "100%",
+                height: "100%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                fontSize: 34,
+                background: `linear-gradient(135deg, ${r.tint ?? "#EDE9FF"}, white)`,
               }}
             >
-              <span style={{ color: "white", fontWeight: 800, fontSize: 13, fontFamily: "var(--font-display)" }}>U</span>
+              {r.icon}
             </div>
+          )}
+          {r.tag && (
             <span
               style={{
+                position: "absolute",
+                top: 8,
+                left: 8,
+                fontSize: 10,
+                fontWeight: 700,
+                color: "white",
+                background: "rgba(15,10,46,0.65)",
+                padding: "3px 7px",
+                borderRadius: 20,
                 fontFamily: "var(--font-display)",
-                fontWeight: 800,
-                fontSize: 17,
-                color: "#0F0A2E",
-                letterSpacing: "-0.3px",
+                backdropFilter: "blur(4px)",
               }}
             >
+              {r.tag}
+            </span>
+          )}
+          <span
+            style={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              fontSize: 10,
+              fontWeight: 700,
+              color: r.kind === "service" ? "#6246EA" : "#16A34A",
+              background: "rgba(255,255,255,0.92)",
+              padding: "3px 7px",
+              borderRadius: 20,
+              fontFamily: "var(--font-display)",
+            }}
+          >
+            {r.kind === "service" ? "服務" : "商品"}
+          </span>
+        </div>
+
+        {/* 內容 */}
+        <div style={{ padding: "10px 11px 11px", display: "flex", flexDirection: "column", flex: 1 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#0F0A2E", lineHeight: 1.3 }}>
+            {r.name}
+          </div>
+          <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 3, lineHeight: 1.4 }}>{r.detail}</div>
+          <div style={{ fontSize: 10, color: "#6B7280", marginTop: 4 }}>🏬 {r.vendor}</div>
+
+          {because && (
+            <div style={{ fontSize: 10, color: "#6246EA", marginTop: 6, lineHeight: 1.4, fontWeight: 600 }}>
+              ✦ 常與「{because}」一起準備
+            </div>
+          )}
+
+          <div style={{ flex: 1, minHeight: 8 }} />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "#0F0A2E" }}>
+              NT${r.price.toLocaleString()}
+            </span>
+            <button
+              onClick={() => !inCart && addToCart(r)}
+              style={{
+                padding: "6px 12px",
+                borderRadius: 20,
+                border: inCart ? "1.5px solid #16A34A" : "none",
+                background: inCart ? "white" : "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                color: inCart ? "#16A34A" : "white",
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: inCart ? "default" : "pointer",
+                fontFamily: "var(--font-display)",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              {inCart ? "✓ 已加入" : "＋ 加入"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const sectionTitle = (title: string, sub: string, action?: { label: string; onClick: () => void }) => (
+    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 12, gap: 10 }}>
+      <div style={{ minWidth: 0 }}>
+        <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", margin: 0 }}>
+          {title}
+        </h3>
+        <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 3 }}>{sub}</div>
+      </div>
+      {action && (
+        <button
+          onClick={action.onClick}
+          style={{ fontSize: 12, color: "#6246EA", background: "none", border: "none", cursor: "pointer", fontWeight: 600, fontFamily: "var(--font-display)", whiteSpace: "nowrap", flexShrink: 0, padding: 0 }}
+        >
+          {action.label}
+        </button>
+      )}
+    </div>
+  );
+
+  const grid = (children: React.ReactNode) => (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>{children}</div>
+  );
+
+  return (
+    <div style={{ height: "100%", overflowY: "auto", background: "#F8F9FC", paddingBottom: 90 }} className="scrollbar-hide">
+      {/* Header */}
+      <div style={{ background: "white", padding: "56px 20px 18px", borderBottom: "1px solid #F3F4F6" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 10, background: "linear-gradient(135deg, #6246EA, #8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "white", fontWeight: 800, fontSize: 13, fontFamily: "var(--font-display)" }}>U</span>
+            </div>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 17, color: "#0F0A2E", letterSpacing: "-0.3px" }}>
               UNI Flow
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <button
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "#F3F4F6",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 16,
-                position: "relative",
-              }}
-            >
-              🔔
-              <span
-                style={{
-                  position: "absolute",
-                  top: 4,
-                  right: 4,
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  background: "#6246EA",
-                  border: "2px solid white",
-                }}
-              />
-            </button>
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: 13,
-              }}
-            >
-              {mockUser.avatar}
+            {cartItems.length > 0 && (
+              <button
+                onClick={onOpenCart}
+                style={{ width: 36, height: 36, borderRadius: "50%", background: "#F3F4F6", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, position: "relative" }}
+              >
+                🛒
+                <span style={{ position: "absolute", top: -2, right: -2, minWidth: 16, height: 16, padding: "0 4px", borderRadius: 8, background: "#EA580C", color: "white", fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid white", fontFamily: "var(--font-display)" }}>
+                  {cartItems.length}
+                </span>
+              </button>
+            )}
+            <div style={{ width: 36, height: 36, borderRadius: "50%", background: "linear-gradient(135deg, #6246EA, #8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13 }}>
+              {displayAvatar}
             </div>
           </div>
         </div>
 
-        <div style={{ marginBottom: 4 }}>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 800,
-              fontSize: 24,
-              color: "#0F0A2E",
-              margin: 0,
-              marginBottom: 4,
-              letterSpacing: "-0.5px",
-            }}
-          >
-            Hi {mockUser.name} 👋
-          </h2>
-        </div>
+        <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 24, color: "#0F0A2E", margin: 0, marginBottom: 6, letterSpacing: "-0.5px" }}>
+          Hi {displayName} 👋
+        </h2>
+        <p style={{ fontSize: 13, color: "#6B7280", margin: 0, lineHeight: 1.5 }}>
+          {hasContext
+            ? "根據你的行程與購物車，為你挑選了這些商品與服務"
+            : "先建立一個行程，我就能依你的計畫推薦商品與服務"}
+        </p>
       </div>
 
-      <div style={{ padding: "20px 20px 0" }}>
-        {/* Dynamic Tags */}
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <h3
-              style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: 15,
-                color: "#0F0A2E",
-                margin: 0,
-              }}
-            >
-              你的標籤
-            </h3>
-            <button style={{ fontSize: 13, color: "#6246EA", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
-              編輯
-            </button>
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {(userTags.length > 0 ? userTags : mockUser.tags).map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  padding: "5px 12px",
-                  borderRadius: 20,
-                  background: "#EDE9FF",
-                  color: "#6246EA",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  fontFamily: "var(--font-display)",
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
+      <div style={{ padding: "20px" }}>
+        {/* 依行程包推薦 */}
+        {sections.map(({ trip, items }) => {
+          const diff = daysUntil(trip.date);
+          return (
+            <div key={trip.id} style={{ marginBottom: 26 }}>
+              {sectionTitle(
+                `${trip.icon} ${trip.name}｜為你準備`,
+                `${formatDateLabel(trip.date)} · ${diff >= 0 ? relativeDayLabel(trip.date) : `已過 ${-diff} 天`}`,
+                onScenarioPack ? { label: "查看行程 →", onClick: () => onScenarioPack(trip.packId) } : undefined
+              )}
+              {grid(items.map((r) => renderCard(r)))}
+            </div>
+          );
+        })}
 
-        {/* Today Cards */}
-        <div style={{ marginBottom: 24 }}>
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 700,
-              fontSize: 15,
-              color: "#0F0A2E",
-              margin: 0,
-              marginBottom: 12,
-            }}
-          >
-            今日重點
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {todayCards.map((card, i) => {
-              const isWarning = card.type === "warning";
-              return (
-                <div
-                  key={i}
-                  style={{
-                    background: "white",
-                    borderRadius: 14,
-                    padding: "12px 14px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    boxShadow: "0 1px 3px rgba(15,10,46,0.05)",
-                    border: `1px solid ${isWarning ? "#FED7AA" : "#F3F4F6"}`,
-                  }}
-                >
-                  <span style={{ fontSize: 22, flexShrink: 0 }}>{card.icon}</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: "#0F0A2E", fontFamily: "var(--font-display)" }}>
-                      {card.text}
-                    </div>
-                    <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{card.sub}</div>
-                  </div>
-                  {isWarning && (
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: "#EA580C",
-                        background: "#FFF7ED",
-                        padding: "3px 8px",
-                        borderRadius: 20,
-                      }}
-                    >
-                      即將到期
-                    </span>
-                  )}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                    <path d="M9 18l6-6-6-6" stroke="#D1D5DB" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </div>
-              );
-            })}
+        {/* 依購物車搭配推薦 */}
+        {cartRecos.length > 0 && (
+          <div style={{ marginBottom: 26 }}>
+            {sectionTitle(
+              "🛒 購物車搭配推薦",
+              `你的購物車有 ${cartItems.length} 件，這些常一起被準備`,
+              onOpenCart ? { label: "看購物車 →", onClick: onOpenCart } : undefined
+            )}
+            {grid(cartRecos.map(({ item, because }) => renderCard(item, because)))}
           </div>
-        </div>
+        )}
 
-        {/* Scenario Packs */}
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <h3
-              style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: 15,
-                color: "#0F0A2E",
-                margin: 0,
-              }}
-            >
-              {userTags.length > 0 ? "為你推薦" : "我的情境包"}
-            </h3>
-            <button style={{ fontSize: 13, color: "#6246EA", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
-              全部
-            </button>
+        {/* 沒有行程也沒有購物車 → 精選 */}
+        {!hasContext && (
+          <div style={{ marginBottom: 26 }}>
+            {sectionTitle("✦ 熱門商品與服務", "建立行程後，這裡會換成專屬於你的推薦")}
+            {grid(featured.map((r) => renderCard(r)))}
           </div>
-          <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, marginLeft: -20, paddingLeft: 20, paddingRight: 20 }} className="scrollbar-hide">
-            {(userTags.length > 0
-              ? [...scenarioPacks].sort((a, b) => {
-                  const recIds = new Set(userTags.flatMap((t) => TAG_TO_PACKS[t] ?? []));
-                  const aRec = recIds.has(a.id) ? 0 : 1;
-                  const bRec = recIds.has(b.id) ? 0 : 1;
-                  return aRec - bRec;
-                })
-              : scenarioPacks
-            ).map((pack) => {
-                const recIds = new Set(userTags.flatMap((t) => TAG_TO_PACKS[t] ?? []));
-                const isRec = recIds.has(pack.id);
-                const isSaved = savedPackIds.includes(pack.id);
-                return (
-                  <button
-                    key={pack.id}
-                    onClick={() => onScenarioPack(pack.id)}
-                    style={{
-                      flexShrink: 0,
-                      width: 120,
-                      padding: "14px 12px",
-                      borderRadius: 16,
-                      border: isRec ? `1.5px solid ${pack.color}40` : "none",
-                      background: "white",
-                      cursor: "pointer",
-                      boxShadow: isRec ? `0 4px 16px ${pack.color}20` : "0 1px 3px rgba(15,10,46,0.06)",
-                      textAlign: "left",
-                      position: "relative",
-                    }}
-                  >
-                    {isRec && (
-                      <div style={{ position: "absolute", top: -6, right: -6, background: pack.color, color: "white", fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 10, fontFamily: "var(--font-display)" }}>
-                        推薦
-                      </div>
-                    )}
-                    {isSaved && (
-                      <div style={{ position: "absolute", top: -6, left: -6, fontSize: 14 }}>🔖</div>
-                    )}
-                    <div style={{ width: 40, height: 40, borderRadius: 12, background: pack.bgColor, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, marginBottom: 10 }}>
-                      {pack.icon}
-                    </div>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#0F0A2E", lineHeight: 1.3 }}>
-                      {pack.name}
-                    </div>
-                  </button>
-                );
-              })}
-            <button
-              style={{
-                flexShrink: 0,
-                width: 120,
-                padding: "14px 12px",
-                borderRadius: 16,
-                border: "2px dashed #E5E7EB",
-                background: "transparent",
-                cursor: "pointer",
-                textAlign: "left",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                color: "#9CA3AF",
-              }}
-            >
-              <span style={{ fontSize: 24 }}>＋</span>
-              <span style={{ fontSize: 12, fontFamily: "var(--font-display)", fontWeight: 600 }}>建立新的</span>
-            </button>
-          </div>
-        </div>
-
-        {/* AI Suggestions */}
-        <div style={{ marginBottom: 24 }}>
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 700,
-              fontSize: 15,
-              color: "#0F0A2E",
-              margin: 0,
-              marginBottom: 12,
-            }}
-          >
-            AI 建議
-          </h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {aiSuggestions
-              .filter((_, i) => !dismissedSuggestions.includes(i))
-              .map((s, idx) => {
-                const origIdx = aiSuggestions.indexOf(s);
-                return (
-                  <div
-                    key={origIdx}
-                    style={{
-                      background: "linear-gradient(135deg, rgba(98,70,234,0.06), rgba(139,92,246,0.04))",
-                      border: "1px solid rgba(98,70,234,0.15)",
-                      borderRadius: 16,
-                      padding: "14px",
-                    }}
-                  >
-                    <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                      <span style={{ fontSize: 20, flexShrink: 0 }}>{s.icon}</span>
-                      <p style={{ fontSize: 13, color: "#0F0A2E", margin: 0, lineHeight: 1.5, flex: 1 }}>
-                        {s.text}
-                      </p>
-                    </div>
-                    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                      {s.actions.map((a, ai) => (
-                        <button
-                          key={ai}
-                          onClick={() => setDismissedSuggestions((prev) => [...prev, origIdx])}
-                          style={{
-                            padding: "7px 16px",
-                            borderRadius: 20,
-                            border: ai === 0 ? "none" : "1px solid #E5E7EB",
-                            background: ai === 0 ? "#6246EA" : "white",
-                            color: ai === 0 ? "white" : "#6B7280",
-                            fontSize: 13,
-                            fontWeight: ai === 0 ? 600 : 400,
-                            cursor: "pointer",
-                            fontFamily: "var(--font-display)",
-                          }}
-                        >
-                          {a}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

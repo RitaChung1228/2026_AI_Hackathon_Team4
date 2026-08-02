@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { scenarioPacks } from "../data";
+import { formatDateLabel, isoInDays, relativeDayLabel, todayISO } from "../dateUtils";
 
 interface ScenarioPackDetailProps {
   packId: string;
-  onUse: () => void;
+  onUse: (date: string) => void;
   onBack: () => void;
   onSave?: (packId: string) => void;
   isSaved?: boolean;
+  /* 此情境包已排定的日期（回到頁面時帶回顯示） */
+  scheduledDate?: string;
 }
 
 const PACK_STEPS: Record<string, { icon: string; title: string; detail: string }[]> = {
@@ -57,9 +60,10 @@ const PACK_STEPS: Record<string, { icon: string; title: string; detail: string }
   ],
 };
 
-export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSaved = false }: ScenarioPackDetailProps) {
+export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSaved = false, scheduledDate }: ScenarioPackDetailProps) {
   const pack = scenarioPacks.find((p) => p.id === packId) || scenarioPacks[0];
   const [modules, setModules] = useState(pack.modules);
+  const [date, setDate] = useState(scheduledDate ?? todayISO());
   const [showSteps, setShowSteps] = useState(false);
   const [visibleSteps, setVisibleSteps] = useState(0);
   const [checkedSteps, setCheckedSteps] = useState<number[]>([]);
@@ -143,6 +147,68 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 120px" }} className="scrollbar-hide">
+
+        {/* 行程日期 */}
+        <div style={{ background: "white", borderRadius: 16, padding: "14px", marginBottom: 16, border: `1px solid ${pack.color}30` }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", margin: 0 }}>
+              📅 行程日期
+            </h3>
+            <span style={{ fontSize: 12, color: pack.color, fontWeight: 700, fontFamily: "var(--font-display)" }}>
+              {relativeDayLabel(date)}
+            </span>
+          </div>
+          <input
+            type="date"
+            value={date}
+            min={todayISO()}
+            onChange={(e) => e.target.value && setDate(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "11px 12px",
+              borderRadius: 12,
+              border: "1.5px solid #E5E7EB",
+              background: "#F8F9FC",
+              fontSize: 14,
+              fontFamily: "var(--font-body)",
+              color: "#0F0A2E",
+              outline: "none",
+            }}
+          />
+          <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
+            {[
+              { label: "今天", offset: 0 },
+              { label: "明天", offset: 1 },
+              { label: "3 天後", offset: 3 },
+              { label: "下週", offset: 7 },
+            ].map((q) => {
+              const iso = isoInDays(q.offset);
+              const active = date === iso;
+              return (
+                <button
+                  key={q.label}
+                  onClick={() => setDate(iso)}
+                  style={{
+                    padding: "5px 12px",
+                    borderRadius: 20,
+                    border: `1.5px solid ${active ? pack.color : "#E5E7EB"}`,
+                    background: active ? `${pack.color}15` : "white",
+                    color: active ? pack.color : "#6B7280",
+                    fontSize: 12,
+                    fontWeight: active ? 700 : 500,
+                    cursor: "pointer",
+                    fontFamily: "var(--font-display)",
+                  }}
+                >
+                  {q.label}
+                </button>
+              );
+            })}
+          </div>
+          <p style={{ fontSize: 12, color: "#9CA3AF", margin: "10px 0 0", lineHeight: 1.5 }}>
+            {formatDateLabel(date)} · 建立後會依日期在首頁「今日重點」提醒你
+          </p>
+        </div>
 
         {/* AI Planning CTA */}
         {!showSteps && (
@@ -282,7 +348,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
       {/* CTA */}
       <div style={{ position: "absolute", bottom: 88, left: 20, right: 20 }}>
         <button
-          onClick={onUse}
+          onClick={() => onUse(date)}
           style={{
             width: "100%", padding: "16px", borderRadius: 16, border: "none",
             background: `linear-gradient(135deg, ${pack.color}, ${pack.color}CC)`,
@@ -290,7 +356,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
             cursor: "pointer", boxShadow: `0 8px 24px ${pack.color}40`,
           }}
         >
-          使用此情境包 →
+          {relativeDayLabel(date)}使用此情境包 →
         </button>
       </div>
     </div>

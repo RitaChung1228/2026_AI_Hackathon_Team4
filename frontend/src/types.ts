@@ -18,6 +18,26 @@ export interface Mission {
   tasks: Task[];
 }
 
+export interface AuthUser {
+  name: string;
+  email: string;
+  avatar: string;
+  isGuest: boolean;
+}
+
+/* 從情境包建立的行程，date 為 YYYY-MM-DD（本地日曆日） */
+export interface ScheduledTrip {
+  id: string;
+  packId: string;
+  name: string;
+  icon: string;
+  color: string;
+  bgColor: string;
+  date: string;
+  /* 完成度 0~100，結帳完成後為 100 */
+  progress: number;
+}
+
 export interface CartItem {
   id: string;
   name: string;

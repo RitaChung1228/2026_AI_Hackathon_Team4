@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { ChatMessage, ContextView, CartItem, MessageType } from "../types";
 import {
   tokyoMission, birthdayMission, homeRepairMission, petCareMission, movingMission, fitnessMission,
   planningSteps, birthdayPlanningSteps, homeRepairPlanningSteps, petCarePlanningSteps, movingPlanningSteps, fitnessPlanningSteps,
   recommendations, UNSPLASH,
 } from "../data";
+import { formatDateLabel, parseDateInput, relativeDayLabel } from "../dateUtils";
 
 interface ChatPanelProps {
   onContextChange: (view: ContextView) => void;
@@ -12,6 +14,8 @@ interface ChatPanelProps {
   onProductAdd: (item: CartItem) => void;
   onPanelToggle: () => void;
   onMenuOpen: () => void;
+  /* 對話中完成一個服務流程 → 通知外層新增到「我的任務」，date 為 ISO 日期 */
+  onMissionCreate?: (packId: string, date?: string) => void;
   cartItems: CartItem[];
   contextView: ContextView;
   panelOpen: boolean;
@@ -32,6 +36,72 @@ interface ServiceTrayItem {
   color: string;
 }
 
+/* 日期詢問的快選項與輸入提示 */
+const DATE_REPLIES = ["今天", "明天", "這週末", "下週"];
+const DATE_HINT = "8/15";
+
+interface ScenarioConfig {
+  userMsg: string;
+  /* 第一步的日期問句，各服務用詞不同 */
+  dateQuestion: string;
+  analysisSteps: string[];
+  question: string;
+  replies: string[];
+  followupKey: string;
+}
+
+/* 情境包 id 對應 data.ts 的 scenarioPacks */
+const SCENARIOS: Record<string, ScenarioConfig> = {
+  "business-trip": {
+    userMsg: "✈️ 我想規劃商務出差",
+    dateQuestion: "這趟出差的出發日期是哪天？",
+    analysisSteps: ["理解你的需求", "套用動態標籤 #Traveler", "分析出差偏好", "搜尋最佳方案"],
+    question: "你要去哪個國家/城市？",
+    replies: [],
+    followupKey: "business-country",
+  },
+  "home-repair": {
+    userMsg: "🔧 我家需要修繕",
+    dateQuestion: "希望師傅哪天到場？",
+    analysisSteps: ["理解修繕需求", "定位你的位置", "搜尋附近師傅", "比對評價與報價"],
+    question: "哪裡出問題了？",
+    replies: ["浴室水管漏水", "廁所馬桶不通", "電氣插座故障", "其他問題"],
+    followupKey: "scenario-repair",
+  },
+  birthday: {
+    userMsg: "🎂 準備朋友生日",
+    dateQuestion: "生日是哪一天？",
+    analysisSteps: ["理解生日需求", "查詢附近服務", "確認時間與預算", "準備個人化建議"],
+    question: "想準備什麼？",
+    replies: ["蛋糕 + 禮物", "只要蛋糕", "只要禮物", "還在想"],
+    followupKey: "scenario-birthday",
+  },
+  "pet-care": {
+    userMsg: "🐾 寵物需要照護",
+    dateQuestion: "希望哪天帶去看診？",
+    analysisSteps: ["理解寵物需求", "搜尋附近動物醫院", "確認評價與距離", "查詢空檔時間"],
+    question: "你的寵物是什麼動物？",
+    replies: [],
+    followupKey: "pet-animal",
+  },
+  moving: {
+    userMsg: "📦 我要搬家",
+    dateQuestion: "預計哪天搬家？",
+    analysisSteps: ["理解搬家需求", "搜尋搬家公司", "取得即時報價", "規劃搬家清單"],
+    question: "搬家規模大概是？",
+    replies: ["1 房", "2-3 房", "整層住家", "只有幾箱"],
+    followupKey: "scenario-moving",
+  },
+  fitness: {
+    userMsg: "💪 我想開始健身",
+    dateQuestion: "打算哪天開始？",
+    analysisSteps: ["理解健身目標", "分析你的習慣", "搜尋附近場館", "規劃個人化課表"],
+    question: "你的主要目標是？",
+    replies: ["增肌減脂", "提升體能", "維持健康", "備賽 / 馬拉松"],
+    followupKey: "scenario-fitness",
+  },
+};
+
 const WELCOME_MESSAGES: ChatMessage[] = [
   {
     id: "w1",
@@ -50,7 +120,7 @@ const WELCOME_MESSAGES: ChatMessage[] = [
 
 export default function ChatPanel({
   onContextChange, onTransportUpdate, onProductAdd,
-  onPanelToggle, onMenuOpen,
+  onPanelToggle, onMenuOpen, onMissionCreate,
   cartItems, contextView, panelOpen, isMobile,
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(WELCOME_MESSAGES);
@@ -62,12 +132,25 @@ export default function ChatPanel({
   const [currentPlanningSteps, setCurrentPlanningSteps] = useState(planningSteps);
   const [currentPlanningTitle, setCurrentPlanningTitle] = useState("");
   const [awaitingFollowup, setAwaitingFollowup] = useState<string | null>(null);
+  const [inputFocused, setInputFocused] = useState(false);
   const tripMeta = useRef<{ country?: string; days?: string }>({});
+  /* 目前進行中的情境包，以及使用者選定的使用/行程日期（ISO） */
+  const pendingScenario = useRef<string | null>(null);
+  const scenarioDate = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, planningActive]);
+
+  /* Auto-grow the composer textarea to fit content */
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 96)}px`;
+  }, [input]);
 
   /* Derive tray items from current state */
   const trayItems: ServiceTrayItem[] = [];
@@ -100,6 +183,43 @@ export default function ChatPanel({
     setMessages((prev) => [...prev, { ...msg, id: mkId(), ts: Date.now() }]);
   };
 
+  /**
+   * 服務流程完成 → 送出任務卡片、開啟對應服務面板，
+   * 並同步把該情境包新增到「我的任務」。
+   * packId 需對應 data.ts 的 scenarioPacks id。
+   */
+  const createMission = useCallback((opts: {
+    type: MessageType;
+    text: string;
+    data: any;
+    view: ContextView;
+    packId: string;
+    /* 情境包流程問到的行程日期；自由輸入觸發時為 null */
+    date?: string | null;
+  }) => {
+    /* 有選定日期就寫進任務卡片的小字 */
+    const date = opts.date ?? null;
+    const data = date
+      ? { ...opts.data, subtitle: `${formatDateLabel(date)}・${opts.data?.subtitle ?? ""}`.replace(/・$/, "") }
+      : opts.data;
+
+    appendMessage({ role: "ai", type: opts.type, text: opts.text, data });
+    onContextChange(opts.view);
+    onMissionCreate?.(opts.packId, date ?? undefined);
+
+    /* 讓使用者知道任務清單已同步 */
+    setTimeout(() => {
+      appendMessage({
+        role: "ai",
+        type: "task-update",
+        text: date
+          ? `行程日期：${formatDateLabel(date)}（${relativeDayLabel(date)}），可到下方「任務」分頁查看進度。`
+          : "可以到下方「任務」分頁隨時查看進度。",
+        data: { icon: "◈", change: "已新增到「我的任務」" },
+      });
+    }, 500);
+  }, [onContextChange, onMissionCreate]);
+
   const runPlanning = useCallback((steps: typeof planningSteps, title: string, onDone: () => void) => {
     setPlanningActive(true);
     setCurrentPlanningSteps(steps);
@@ -120,64 +240,42 @@ export default function ChatPanel({
     }, totalTime);
   }, []);
 
-  /* Scenario card clicked → guided flow */
+  /**
+   * 情境包卡片點擊 → 第一步一律先問使用/行程日期，
+   * 取得日期後才進入 AI 分析與情境細節提問。
+   */
   const handleScenarioStart = useCallback((scenarioId: string) => {
-    const SCENARIOS: Record<string, { userMsg: string; analysisSteps: string[]; question: string; replies: string[]; followupKey: string }> = {
-      "business-trip": {
-        userMsg: "✈️ 我想規劃商務出差",
-        analysisSteps: ["理解你的需求", "套用動態標籤 #Traveler", "分析出差偏好", "搜尋最佳方案"],
-        question: "好的！先問你幾個問題～\n\n你要去哪個國家/城市？",
-        replies: [],
-        followupKey: "business-country",
-      },
-      "home-repair": {
-        userMsg: "🔧 我家需要修繕",
-        analysisSteps: ["理解修繕需求", "定位你的位置", "搜尋附近師傅", "比對評價與報價"],
-        question: "哪裡出問題了？",
-        replies: ["浴室水管漏水", "廁所馬桶不通", "電氣插座故障", "其他問題"],
-        followupKey: "scenario-repair",
-      },
-      "birthday": {
-        userMsg: "🎂 準備朋友生日",
-        analysisSteps: ["理解生日需求", "查詢附近服務", "確認時間與預算", "準備個人化建議"],
-        question: "生日是什麼時候？",
-        replies: ["就是今天！", "明天", "這週末", "下週"],
-        followupKey: "scenario-birthday",
-      },
-      "pet-care": {
-        userMsg: "🐾 寵物需要照護",
-        analysisSteps: ["理解寵物需求", "搜尋附近動物醫院", "確認評價與距離", "查詢空檔時間"],
-        question: "你的寵物是什麼動物？",
-        replies: [],
-        followupKey: "pet-animal",
-      },
-      "moving": {
-        userMsg: "📦 我要搬家",
-        analysisSteps: ["理解搬家需求", "搜尋搬家公司", "取得即時報價", "規劃搬家清單"],
-        question: "大概什麼時候要搬？",
-        replies: ["這週", "下週", "這個月內", "一個月後"],
-        followupKey: "scenario-moving",
-      },
-      "fitness": {
-        userMsg: "💪 我想開始健身",
-        analysisSteps: ["理解健身目標", "分析你的習慣", "搜尋附近場館", "規劃個人化課表"],
-        question: "你的主要目標是？",
-        replies: ["增肌減脂", "提升體能", "維持健康", "備賽 / 馬拉松"],
-        followupKey: "scenario-fitness",
-      },
-    };
-
     const s = SCENARIOS[scenarioId];
     if (!s) return;
 
+    pendingScenario.current = scenarioId;
+    scenarioDate.current = null;
     appendMessage({ role: "user", type: "text", text: s.userMsg });
 
-    // 1. AI analysis card after short delay
+    setTimeout(() => {
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        appendMessage({
+          role: "ai",
+          type: "text",
+          text: `好的！${s.dateQuestion}\n\n也可以直接輸入日期，例如 ${DATE_HINT}。`,
+          quickReplies: DATE_REPLIES,
+        });
+        setAwaitingFollowup("scenario-date");
+      }, 700);
+    }, 400);
+  }, []);
+
+  /* 日期確認後：AI 分析卡 → 情境細節提問 */
+  const runScenarioIntro = useCallback((scenarioId: string) => {
+    const s = SCENARIOS[scenarioId];
+    if (!s) return;
+
     setTimeout(() => {
       appendMessage({ role: "ai", type: "ai-analysis", data: { steps: s.analysisSteps } });
-    }, 400);
+    }, 300);
 
-    // 2. Ask question after analysis animation completes
     setTimeout(() => {
       setIsTyping(true);
       setTimeout(() => {
@@ -185,11 +283,41 @@ export default function ChatPanel({
         appendMessage({ role: "ai", type: "text", text: s.question, quickReplies: s.replies.length > 0 ? s.replies : undefined });
         setAwaitingFollowup(s.followupKey);
       }, 800);
-    }, 2800);
+    }, 2700);
   }, []);
 
   const processInput = useCallback((text: string) => {
     const lower = text.toLowerCase();
+
+    /* 情境包第一步：使用/行程日期 */
+    if (awaitingFollowup === "scenario-date") {
+      const iso = parseDateInput(text);
+      if (!iso) {
+        setIsTyping(true);
+        setTimeout(() => {
+          setIsTyping(false);
+          appendMessage({
+            role: "ai",
+            type: "text",
+            text: `這個日期我看不太懂 🤔 可以再說一次嗎？\n\n例如「${DATE_HINT}」、「明天」、「這週末」。`,
+            quickReplies: DATE_REPLIES,
+          });
+          setAwaitingFollowup("scenario-date");
+        }, 700);
+        return;
+      }
+
+      setAwaitingFollowup(null);
+      scenarioDate.current = iso;
+      const scenarioId = pendingScenario.current;
+      appendMessage({
+        role: "ai",
+        type: "task-update",
+        data: { icon: "📅", change: `行程日期：${formatDateLabel(iso)}（${relativeDayLabel(iso)}）` },
+      });
+      if (scenarioId) runScenarioIntro(scenarioId);
+      return;
+    }
 
     // Business trip fill-in questions
     if (awaitingFollowup === "business-country") {
@@ -221,8 +349,14 @@ export default function ChatPanel({
       const country = tripMeta.current.country || "東京";
       const days = tripMeta.current.days || "2";
       runPlanning(planningSteps, `正在建立${country}出差任務...`, () => {
-        appendMessage({ role: "ai", type: "mission-created", text: `已幫你建立「${country}商務出差」任務 🗂`, data: { ...tokyoMission, title: `${country}商務出差`, subtitle: `${country} · ${days} 天` } });
-        onContextChange("mission");
+        createMission({
+          type: "mission-created",
+          text: `已幫你建立「${country}商務出差」任務 🗂`,
+          data: { ...tokyoMission, title: `${country}商務出差`, subtitle: `${country} · ${days} 天` },
+          view: "mission",
+          packId: "business-trip",
+          date: scenarioDate.current,
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -246,8 +380,14 @@ export default function ChatPanel({
       }
       setAwaitingFollowup(null);
       runPlanning(homeRepairPlanningSteps, "搜尋附近合格師傅中...", () => {
-        appendMessage({ role: "ai", type: "home-repair-created", text: "已幫你建立「居家修繕」任務 🔧", data: homeRepairMission });
-        onContextChange("home-repair");
+        createMission({
+          type: "home-repair-created",
+          text: "已幫你建立「居家修繕」任務 🔧",
+          data: homeRepairMission,
+          view: "home-repair",
+          packId: "home-repair",
+          date: scenarioDate.current,
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -261,8 +401,14 @@ export default function ChatPanel({
     if (awaitingFollowup === "scenario-birthday") {
       setAwaitingFollowup(null);
       runPlanning(birthdayPlanningSteps, "正在建立生日準備任務...", () => {
-        appendMessage({ role: "ai", type: "birthday-created", text: "已幫你建立「朋友生日準備」任務 🎂", data: birthdayMission });
-        onContextChange("birthday-mission");
+        createMission({
+          type: "birthday-created",
+          text: "已幫你建立「朋友生日準備」任務 🎂",
+          data: birthdayMission,
+          view: "birthday-mission",
+          packId: "birthday",
+          date: scenarioDate.current,
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -299,8 +445,14 @@ export default function ChatPanel({
     if (awaitingFollowup === "scenario-pet") {
       setAwaitingFollowup(null);
       runPlanning(petCarePlanningSteps, "搜尋附近動物醫院中...", () => {
-        appendMessage({ role: "ai", type: "pet-care-created", text: "已幫你建立「寵物看診」任務 🐾", data: petCareMission });
-        onContextChange("pet-care");
+        createMission({
+          type: "pet-care-created",
+          text: "已幫你建立「寵物看診」任務 🐾",
+          data: petCareMission,
+          view: "pet-care",
+          packId: "pet-care",
+          date: scenarioDate.current,
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -314,8 +466,14 @@ export default function ChatPanel({
     if (awaitingFollowup === "scenario-moving") {
       setAwaitingFollowup(null);
       runPlanning(movingPlanningSteps, "正在取得搬家報價中...", () => {
-        appendMessage({ role: "ai", type: "moving-created", text: "已幫你建立「搬家準備」任務 📦", data: movingMission });
-        onContextChange("moving");
+        createMission({
+          type: "moving-created",
+          text: "已幫你建立「搬家準備」任務 📦",
+          data: movingMission,
+          view: "moving",
+          packId: "moving",
+          date: scenarioDate.current,
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -329,8 +487,14 @@ export default function ChatPanel({
     if (awaitingFollowup === "scenario-fitness") {
       setAwaitingFollowup(null);
       runPlanning(fitnessPlanningSteps, "正在規劃你的健身計畫...", () => {
-        appendMessage({ role: "ai", type: "fitness-created", text: "已幫你建立「健身計畫」任務 💪", data: fitnessMission });
-        onContextChange("fitness");
+        createMission({
+          type: "fitness-created",
+          text: "已幫你建立「健身計畫」任務 💪",
+          data: fitnessMission,
+          view: "fitness",
+          packId: "fitness",
+          date: scenarioDate.current,
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -368,8 +532,13 @@ export default function ChatPanel({
 
     if (lower.includes("東京") && (lower.includes("出差") || lower.includes("商務"))) {
       runPlanning(planningSteps, "正在建立你的東京出差任務...", () => {
-        appendMessage({ role: "ai", type: "mission-created", text: "已幫你建立「東京商務出差」任務 🗂", data: tokyoMission });
-        onContextChange("mission");
+        createMission({
+          type: "mission-created",
+          text: "已幫你建立「東京商務出差」任務 🗂",
+          data: tokyoMission,
+          view: "mission",
+          packId: "business-trip",
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -384,8 +553,13 @@ export default function ChatPanel({
 
     if (lower.includes("生日") || lower.includes("蛋糕")) {
       runPlanning(birthdayPlanningSteps, "正在建立你的生日準備任務...", () => {
-        appendMessage({ role: "ai", type: "birthday-created", text: "已幫你建立「朋友生日準備」臨時任務 🎂", data: birthdayMission });
-        onContextChange("birthday-mission");
+        createMission({
+          type: "birthday-created",
+          text: "已幫你建立「朋友生日準備」臨時任務 🎂",
+          data: birthdayMission,
+          view: "birthday-mission",
+          packId: "birthday",
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -461,8 +635,13 @@ export default function ChatPanel({
     // Home repair flow
     if (lower.includes("修繕") || lower.includes("修理") || lower.includes("漏水") || lower.includes("水電") || lower.includes("師傅") || lower.includes("裝修") || lower.includes("壞掉") || lower.includes("馬桶") || lower.includes("水管")) {
       runPlanning(homeRepairPlanningSteps, "正在搜尋附近合格師傅...", () => {
-        appendMessage({ role: "ai", type: "home-repair-created", text: "已幫你建立「居家修繕」任務 🔧", data: homeRepairMission });
-        onContextChange("home-repair");
+        createMission({
+          type: "home-repair-created",
+          text: "已幫你建立「居家修繕」任務 🔧",
+          data: homeRepairMission,
+          view: "home-repair",
+          packId: "home-repair",
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -477,8 +656,13 @@ export default function ChatPanel({
     // Pet care flow
     if (lower.includes("寵物") || lower.includes("貓") || lower.includes("狗") || lower.includes("獸醫") || lower.includes("看診") || (lower.includes("預約") && lower.includes("醫院"))) {
       runPlanning(petCarePlanningSteps, "正在搜尋附近動物醫院...", () => {
-        appendMessage({ role: "ai", type: "pet-care-created", text: "已幫你建立「寵物看診」任務 🐾", data: petCareMission });
-        onContextChange("pet-care");
+        createMission({
+          type: "pet-care-created",
+          text: "已幫你建立「寵物看診」任務 🐾",
+          data: petCareMission,
+          view: "pet-care",
+          packId: "pet-care",
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -493,8 +677,13 @@ export default function ChatPanel({
     // Moving flow
     if (lower.includes("搬家") || lower.includes("搬遷") || lower.includes("新家") || lower.includes("搬") && lower.includes("家")) {
       runPlanning(movingPlanningSteps, "正在搜尋搬家公司報價...", () => {
-        appendMessage({ role: "ai", type: "moving-created", text: "已幫你建立「搬家準備」任務 📦", data: movingMission });
-        onContextChange("moving");
+        createMission({
+          type: "moving-created",
+          text: "已幫你建立「搬家準備」任務 📦",
+          data: movingMission,
+          view: "moving",
+          packId: "moving",
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -509,8 +698,13 @@ export default function ChatPanel({
     // Fitness flow
     if (lower.includes("健身") || lower.includes("運動") || lower.includes("健身房") || lower.includes("訓練") || lower.includes("增肌") || lower.includes("減脂")) {
       runPlanning(fitnessPlanningSteps, "正在規劃你的健身計畫...", () => {
-        appendMessage({ role: "ai", type: "fitness-created", text: "已幫你建立「健身計畫」任務 💪", data: fitnessMission });
-        onContextChange("fitness");
+        createMission({
+          type: "fitness-created",
+          text: "已幫你建立「健身計畫」任務 💪",
+          data: fitnessMission,
+          view: "fitness",
+          packId: "fitness",
+        });
         setTimeout(() => {
           setIsTyping(true);
           setTimeout(() => {
@@ -527,7 +721,7 @@ export default function ChatPanel({
       setIsTyping(false);
       appendMessage({ role: "ai", type: "text", text: "收到！你可以告訴我更具體的需求，例如出差目的地、時間，或是想完成什麼事，我來幫你規劃。", quickReplies: ["下週三去東京出差兩天", "今晚朋友生日", "幫我查看任務進度"] });
     }, 1100);
-  }, [awaitingFollowup, onContextChange, onTransportUpdate, onProductAdd, runPlanning]);
+  }, [awaitingFollowup, onContextChange, onTransportUpdate, onProductAdd, runPlanning, createMission, runScenarioIntro]);
 
   const handleSend = (text?: string) => {
     const msg = text || input.trim();
@@ -535,6 +729,14 @@ export default function ChatPanel({
     setInput("");
     appendMessage({ role: "user", type: "text", text: msg });
     setTimeout(() => processInput(msg), 300);
+  };
+
+  /* Enter = send, Shift+Enter = newline */
+  const handleInputKeyDown = (e: ReactKeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   return (
@@ -661,6 +863,82 @@ export default function ChatPanel({
           ))}
         </div>
       )}
+
+      {/* Composer — bottom input bar */}
+      <div
+        style={{
+          flexShrink: 0,
+          borderTop: "1px solid #F3F4F6",
+          background: "white",
+          padding: "10px 14px 12px",
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 8,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "flex-end",
+            background: "#F3F4F6",
+            borderRadius: 22,
+            border: `1.5px solid ${inputFocused ? "#6246EA" : "transparent"}`,
+            padding: "8px 14px",
+            transition: "border-color 0.15s",
+          }}
+        >
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onFocus={() => setInputFocused(true)}
+            onBlur={() => setInputFocused(false)}
+            onKeyDown={handleInputKeyDown}
+            rows={1}
+            placeholder={awaitingFollowup ? "輸入你的回答…" : "告訴我你想做什麼…"}
+            aria-label="輸入訊息"
+            style={{
+              flex: 1,
+              border: "none",
+              outline: "none",
+              background: "transparent",
+              resize: "none",
+              maxHeight: 96,
+              fontSize: 14,
+              lineHeight: 1.5,
+              fontFamily: "var(--font-body)",
+              color: "#0F0A2E",
+            }}
+            className="scrollbar-hide"
+          />
+        </div>
+        <button
+          onClick={() => handleSend()}
+          disabled={!input.trim()}
+          aria-label="送出訊息"
+          title="送出"
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            border: "none",
+            flexShrink: 0,
+            cursor: input.trim() ? "pointer" : "default",
+            background: input.trim() ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB",
+            color: input.trim() ? "white" : "#9CA3AF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: input.trim() ? "0 4px 14px rgba(98,70,234,0.32)" : "none",
+            transition: "all 0.15s",
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M4 12h15M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
 
     </div>
   );
