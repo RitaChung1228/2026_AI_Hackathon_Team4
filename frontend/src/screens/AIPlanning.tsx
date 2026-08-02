@@ -53,7 +53,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
             position: "absolute",
             inset: -16,
             borderRadius: "50%",
-            background: "rgba(98,70,234,0.12)",
+            background: "rgba(76,110,145,0.12)",
           }}
         />
         <div
@@ -62,7 +62,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
             position: "absolute",
             inset: -8,
             borderRadius: "50%",
-            background: "rgba(98,70,234,0.2)",
+            background: "rgba(76,110,145,0.2)",
             animationDelay: "0.5s",
           }}
         />
@@ -71,12 +71,12 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
             width: 80,
             height: 80,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
-            boxShadow: "0 8px 32px rgba(98,70,234,0.4)",
+            boxShadow: "0 8px 32px rgba(76,110,145,0.4)",
           }}
         >
           <svg
@@ -99,7 +99,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
           fontFamily: "var(--font-display)",
           fontWeight: 800,
           fontSize: 20,
-          color: "#0F0A2E",
+          color: "#16232E",
           textAlign: "center",
           margin: 0,
           marginBottom: 8,
@@ -114,7 +114,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
         style={{
           width: "100%",
           height: 4,
-          background: "#F3F4F6",
+          background: "#F1F5F9",
           borderRadius: 2,
           marginBottom: 32,
           overflow: "hidden",
@@ -123,7 +123,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
         <div
           style={{
             height: "100%",
-            background: "linear-gradient(90deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(90deg, #4C6E91, #6E92B4)",
             borderRadius: 2,
             width: `${progress}%`,
             transition: "width 0.5s ease",
@@ -154,8 +154,8 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
                   width: 24,
                   height: 24,
                   borderRadius: "50%",
-                  background: isDone ? "#6246EA" : isPending ? "transparent" : "#E5E7EB",
-                  border: isPending ? "2px solid #6246EA" : "none",
+                  background: isDone ? "#4C6E91" : isPending ? "transparent" : "#E2E8F0",
+                  border: isPending ? "2px solid #4C6E91" : "none",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -174,7 +174,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
                       width: 8,
                       height: 8,
                       borderRadius: "50%",
-                      background: "#6246EA",
+                      background: "#4C6E91",
                     }}
                     className="animate-pulse-ring"
                   />
@@ -185,7 +185,7 @@ export default function AIPlanning({ steps, title, onComplete }: AIPlanningProps
                   fontFamily: "var(--font-display)",
                   fontWeight: isDone ? 600 : 500,
                   fontSize: 15,
-                  color: isDone ? "#0F0A2E" : isPending ? "#6246EA" : "#6B7280",
+                  color: isDone ? "#16232E" : isPending ? "#4C6E91" : "#64748B",
                 }}
               >
                 {step.text}

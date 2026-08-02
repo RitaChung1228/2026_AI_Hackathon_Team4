@@ -8,13 +8,10 @@ interface ChatPanelProps {
   onTransportUpdate: (time: string) => void;
   onProductAdd: (item: CartItem) => void;
   onPanelToggle: () => void;
-  onMenuOpen: () => void;
   /* AI 建立計畫後 → 通知外層新增到「我的任務」 */
   onMissionCreate?: (packId: string, date?: string) => void;
   cartItems: CartItem[];
   contextView: ContextView;
-  panelOpen: boolean;
-  isMobile: boolean;
   onAgentMission?: (mission: any) => void;
   /* AI 規劃卡片上的快速操作文字，設定後自動當成使用者訊息送出 */
   quickPrompt?: string | null;
@@ -79,7 +76,7 @@ export const WELCOME_MESSAGES: ChatMessage[] = [
     id: "w1",
     role: "ai",
     type: "text",
-    text: "Hi Jamie 👋 我是 UNI AI，你的一站式智慧管家。\n\n告訴我你想做什麼，我來搞定。",
+    text: "Hi Jamie 👋 我是 Lifepack AI，你的一站式智慧管家。\n\n告訴我你想做什麼，我來搞定。",
     ts: Date.now(),
   },
   {
@@ -121,8 +118,8 @@ function parseReply(reply: string): { text: string; quickReplies?: string[] } {
 }
 
 export default function ChatPanel({
-  onContextChange, onPanelToggle, onMenuOpen, onMissionCreate,
-  cartItems, contextView, panelOpen, isMobile, onAgentMission,
+  onContextChange, onMissionCreate,
+  cartItems, contextView, onAgentMission,
   quickPrompt, onQuickPromptConsumed,
   messages, setMessages, agentHistory,
 }: ChatPanelProps) {
@@ -154,7 +151,7 @@ export default function ChatPanel({
   /* Derive tray items from current state */
   const trayItems: ServiceTrayItem[] = [];
   if (contextView === "agent-mission") {
-    trayItems.push({ id: "agent-mission", icon: "📋", label: "AI 計畫", view: "agent-mission", progress: 10, color: "#6246EA" });
+    trayItems.push({ id: "agent-mission", icon: "📋", label: "AI 計畫", view: "agent-mission", progress: 10, color: "#4C6E91" });
   }
   if (cartItems.length > 0) {
     trayItems.push({ id: "cart", icon: "🛒", label: "購物車", view: "cart", badge: String(cartItems.length), color: "#EA580C" });
@@ -266,7 +263,7 @@ export default function ChatPanel({
               tasks: (data.mission.tasks ?? []).map((t: any) => ({
                 ...t,
                 action: "查看",
-                color: "#6246EA",
+                color: "#4C6E91",
               })),
             };
 
@@ -333,40 +330,8 @@ export default function ChatPanel({
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", background: "white" }}>
 
-      {/* Top bar */}
-      <div style={{ height: 56, borderBottom: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", flexShrink: 0, background: "white" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          {isMobile && (
-            <button onClick={onMenuOpen} style={{ width: 34, height: 34, borderRadius: 9, background: "#F3F4F6", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="#0F0A2E" strokeWidth="2.5" strokeLinecap="round" /></svg>
-            </button>
-          )}
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22C55E", boxShadow: "0 0 0 3px rgba(34,197,94,0.2)", flexShrink: 0 }} />
-          <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "#0F0A2E" }}>UNI AI</span>
-          <span style={{ fontSize: 12, color: "#9CA3AF" }}>· 一站式智慧管家</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {["#TimeSaver", "#Traveler"].map((tag) => (
-            <span key={tag} style={{ fontSize: 11, fontWeight: 600, color: "#6246EA", background: "#EDE9FF", padding: "3px 9px", borderRadius: 20, fontFamily: "var(--font-display)" }}>{tag}</span>
-          ))}
-          {/* Panel toggle button */}
-          {contextView !== "idle" && (
-            <button
-              onClick={onPanelToggle}
-              style={{ marginLeft: 4, width: 34, height: 34, borderRadius: 9, border: "none", background: panelOpen ? "#EDE9FF" : "#F3F4F6", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: panelOpen ? "#6246EA" : "#9CA3AF", transition: "all 0.15s", flexShrink: 0 }}
-              title="開啟服務面板"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="2" fill="none" />
-                <path d="M15 3v18" stroke="currentColor" strokeWidth="2" />
-              </svg>
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "24px 20px 8px" }} className="scrollbar-hide">
+      <div style={{ flex: 1, overflowY: "auto", padding: "64px 20px 8px" }} className="scrollbar-hide">
         {messages.map((msg, idx) => (
           <MessageBubble
             key={msg.id}
@@ -384,13 +349,13 @@ export default function ChatPanel({
             <div style={{ display: "flex", gap: 10 }}>
               <AIAvatar />
               <div style={{ flex: 1, maxWidth: 520 }}>
-                <div style={{ background: "#F8F9FC", borderRadius: "4px 18px 18px 18px", padding: "16px 18px", border: "1px solid #E5E7EB" }}>
+                <div style={{ background: "#F5F7FA", borderRadius: "4px 18px 18px 18px", padding: "16px 18px", border: "1px solid #E2E8F0" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                    <div className="spin-slow" style={{ width: 20, height: 20, borderRadius: "50%", border: "2.5px solid #6246EA", borderTopColor: "transparent" }} />
-                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#6246EA" }}>{currentPlanningTitle}</span>
+                    <div className="spin-slow" style={{ width: 20, height: 20, borderRadius: "50%", border: "2.5px solid #4C6E91", borderTopColor: "transparent" }} />
+                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#4C6E91" }}>{currentPlanningTitle}</span>
                   </div>
-                  <div style={{ height: 4, background: "#E5E7EB", borderRadius: 2, overflow: "hidden", marginBottom: 14 }}>
-                    <div style={{ height: "100%", width: `${planningProgress}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", transition: "width 0.5s ease", borderRadius: 2 }} />
+                  <div style={{ height: 4, background: "#E2E8F0", borderRadius: 2, overflow: "hidden", marginBottom: 14 }}>
+                    <div style={{ height: "100%", width: `${planningProgress}%`, background: "linear-gradient(90deg, #4C6E91, #6E92B4)", transition: "width 0.5s ease", borderRadius: 2 }} />
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {currentPlanningSteps.map((step, i) => {
@@ -399,10 +364,10 @@ export default function ChatPanel({
                       const isDone = visible && !step.pending;
                       return (
                         <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, opacity: visible ? 1 : 0.2, transition: "opacity 0.4s ease" }}>
-                          <div style={{ width: 18, height: 18, borderRadius: "50%", background: isDone ? "#6246EA" : "transparent", border: isPending ? "2px solid #6246EA" : isDone ? "none" : "2px solid #D1D5DB", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
+                          <div style={{ width: 18, height: 18, borderRadius: "50%", background: isDone ? "#4C6E91" : "transparent", border: isPending ? "2px solid #4C6E91" : isDone ? "none" : "2px solid #CBD5E1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s" }}>
                             {isDone && <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M3 7L6 10L11 5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                           </div>
-                          <span style={{ fontSize: 13, fontFamily: "var(--font-display)", fontWeight: isDone ? 600 : 500, color: isPending ? "#6246EA" : isDone ? "#0F0A2E" : "#6B7280" }}>{step.text}</span>
+                          <span style={{ fontSize: 13, fontFamily: "var(--font-display)", fontWeight: isDone ? 600 : 500, color: isPending ? "#4C6E91" : isDone ? "#16232E" : "#64748B" }}>{step.text}</span>
                         </div>
                       );
                     })}
@@ -417,9 +382,9 @@ export default function ChatPanel({
           <div className="msg-ai" style={{ marginBottom: 16 }}>
             <div style={{ display: "flex", gap: 10 }}>
               <AIAvatar />
-              <div style={{ background: "#F8F9FC", borderRadius: "4px 18px 18px 18px", padding: "14px 18px", display: "flex", gap: 4, alignItems: "center", border: "1px solid #E5E7EB" }}>
+              <div style={{ background: "#F5F7FA", borderRadius: "4px 18px 18px 18px", padding: "14px 18px", display: "flex", gap: 4, alignItems: "center", border: "1px solid #E2E8F0" }}>
                 {[0, 1, 2].map((d) => (
-                  <div key={d} style={{ width: 6, height: 6, borderRadius: "50%", background: "#6246EA", animation: `typing 1.2s ease ${d * 0.18}s infinite` }} />
+                  <div key={d} style={{ width: 6, height: 6, borderRadius: "50%", background: "#4C6E91", animation: `typing 1.2s ease ${d * 0.18}s infinite` }} />
                 ))}
               </div>
             </div>
@@ -431,8 +396,8 @@ export default function ChatPanel({
 
       {/* Active services tray */}
       {trayItems.length > 0 && (
-        <div style={{ padding: "8px 16px", borderTop: "1px solid #F8F9FC", display: "flex", gap: 8, overflowX: "auto", flexShrink: 0 }} className="scrollbar-hide">
-          <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 600, flexShrink: 0, alignSelf: "center", fontFamily: "var(--font-display)" }}>進行中</span>
+        <div style={{ padding: "8px 16px", borderTop: "1px solid #F5F7FA", display: "flex", gap: 8, overflowX: "auto", flexShrink: 0 }} className="scrollbar-hide">
+          <span style={{ fontSize: 11, color: "#94A3B8", fontWeight: 600, flexShrink: 0, alignSelf: "center", fontFamily: "var(--font-display)" }}>進行中</span>
           {trayItems.map((item) => (
             <button
               key={item.id}
@@ -458,7 +423,7 @@ export default function ChatPanel({
       <div
         style={{
           flexShrink: 0,
-          borderTop: "1px solid #F3F4F6",
+          borderTop: "1px solid #F1F5F9",
           background: "white",
           padding: "10px 14px 12px",
           display: "flex",
@@ -471,9 +436,9 @@ export default function ChatPanel({
             flex: 1,
             display: "flex",
             alignItems: "flex-end",
-            background: "#F3F4F6",
+            background: "#F1F5F9",
             borderRadius: 22,
-            border: `1.5px solid ${inputFocused ? "#6246EA" : "transparent"}`,
+            border: `1.5px solid ${inputFocused ? "#4C6E91" : "transparent"}`,
             padding: "8px 14px",
             transition: "border-color 0.15s",
           }}
@@ -498,7 +463,7 @@ export default function ChatPanel({
               fontSize: 14,
               lineHeight: 1.5,
               fontFamily: "var(--font-body)",
-              color: "#0F0A2E",
+              color: "#16232E",
             }}
             className="scrollbar-hide"
           />
@@ -515,12 +480,12 @@ export default function ChatPanel({
             border: "none",
             flexShrink: 0,
             cursor: input.trim() ? "pointer" : "default",
-            background: input.trim() ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB",
-            color: input.trim() ? "white" : "#9CA3AF",
+            background: input.trim() ? "linear-gradient(135deg, #4C6E91, #6E92B4)" : "#E2E8F0",
+            color: input.trim() ? "white" : "#94A3B8",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: input.trim() ? "0 4px 14px rgba(98,70,234,0.32)" : "none",
+            boxShadow: input.trim() ? "0 4px 14px rgba(76,110,145,0.32)" : "none",
             transition: "all 0.15s",
           }}
         >
@@ -536,19 +501,19 @@ export default function ChatPanel({
 
 function AIAvatar() {
   return (
-    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #6246EA, #8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 13, color: "white", marginTop: 2 }}>✦</div>
+    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg, #4C6E91, #6E92B4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 13, color: "white", marginTop: 2 }}>✦</div>
   );
 }
 
 /* Service category grid — shown as welcome AI message */
 function ServiceGrid({ onScenarioStart }: { onScenarioStart: (id: string) => void }) {
   const services = [
-    { id: "business-trip", icon: "💼", label: "商務出差", img: UNSPLASH.tokyo, color: "#6246EA" },
+    { id: "business-trip", icon: "💼", label: "商務出差", img: UNSPLASH.tokyo, color: "#4C6E91" },
     { id: "home-repair",   icon: "🔧", label: "居家修繕", img: UNSPLASH.homeRepair, color: "#EA580C" },
     { id: "birthday",      icon: "🎂", label: "朋友生日", img: UNSPLASH.birthdayCake, color: "#DB2777" },
     { id: "pet-care",      icon: "🐾", label: "寵物照護", img: UNSPLASH.petCare, color: "#16A34A" },
     { id: "moving",        icon: "📦", label: "搬家準備", img: UNSPLASH.moving, color: "#0EA5E9" },
-    { id: "fitness",       icon: "💪", label: "健身計畫", img: UNSPLASH.fitness, color: "#7C3AED" },
+    { id: "fitness",       icon: "💪", label: "健身計畫", img: UNSPLASH.fitness, color: "#3B5876" },
   ];
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginTop: 10 }}>
@@ -556,7 +521,7 @@ function ServiceGrid({ onScenarioStart }: { onScenarioStart: (id: string) => voi
         <button
           key={s.id}
           onClick={() => onScenarioStart(s.id)}
-          style={{ borderRadius: 12, overflow: "hidden", border: "none", padding: 0, cursor: "pointer", position: "relative", height: 76, background: "#F3F4F6" }}
+          style={{ borderRadius: 12, overflow: "hidden", border: "none", padding: 0, cursor: "pointer", position: "relative", height: 76, background: "#F1F5F9" }}
         >
           <img src={s.img} alt={s.label} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${s.color}D0 0%, ${s.color}80 100%)`, display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-end", padding: "8px 12px", gap: 1 }}>
@@ -581,7 +546,7 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
   if (isUser) {
     return (
       <div className="msg-enter" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
-        <div style={{ maxWidth: "72%", background: "linear-gradient(135deg, #6246EA, #7C3AED)", color: "white", padding: "11px 16px", borderRadius: "18px 18px 4px 18px", fontSize: 14, lineHeight: 1.5, fontFamily: "var(--font-body)", boxShadow: "0 4px 16px rgba(98,70,234,0.25)" }}>
+        <div style={{ maxWidth: "72%", background: "linear-gradient(135deg, #4C6E91, #3B5876)", color: "white", padding: "11px 16px", borderRadius: "18px 18px 4px 18px", fontSize: 14, lineHeight: 1.5, fontFamily: "var(--font-body)", boxShadow: "0 4px 16px rgba(76,110,145,0.25)" }}>
           {msg.text}
         </div>
       </div>
@@ -600,7 +565,7 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
 
         {/* Text message */}
         {msg.type === "text" && msg.text && (
-          <div style={{ background: "#F8F9FC", borderRadius: "4px 18px 18px 18px", padding: "12px 16px", fontSize: 14, lineHeight: 1.6, color: "#0F0A2E", border: "1px solid #E5E7EB", marginBottom: msg.quickReplies ? 8 : 0, whiteSpace: "pre-line" }}>
+          <div style={{ background: "#F5F7FA", borderRadius: "4px 18px 18px 18px", padding: "12px 16px", fontSize: 14, lineHeight: 1.6, color: "#16232E", border: "1px solid #E2E8F0", marginBottom: msg.quickReplies ? 8 : 0, whiteSpace: "pre-line" }}>
             {msg.text}
           </div>
         )}
@@ -608,30 +573,30 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
         {/* Mission created card (from AI agent) */}
         {msg.type === "agent-mission-created" && (
           <div>
-            {msg.text && <div style={{ fontSize: 14, color: "#0F0A2E", marginBottom: 10, lineHeight: 1.5 }}>{msg.text}</div>}
+            {msg.text && <div style={{ fontSize: 14, color: "#16232E", marginBottom: 10, lineHeight: 1.5 }}>{msg.text}</div>}
             <div
               onClick={() => onContextChange("agent-mission")}
-              style={{ background: "white", borderRadius: 16, border: "1.5px solid #6246EA", cursor: "pointer", overflow: "hidden", marginBottom: 8, transition: "box-shadow 0.15s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(98,70,234,0.18)")}
+              style={{ background: "white", borderRadius: 16, border: "1.5px solid #4C6E91", cursor: "pointer", overflow: "hidden", marginBottom: 8, transition: "box-shadow 0.15s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(76,110,145,0.18)")}
               onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
             >
               <div style={{ position: "relative", height: 96, overflow: "hidden" }}>
                 <img src={msg.data?.image} alt={msg.data?.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(15,10,46,0.7) 100%)", display: "flex", alignItems: "flex-end", padding: "10px 14px" }}>
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(22,35,46,0.7) 100%)", display: "flex", alignItems: "flex-end", padding: "10px 14px" }}>
                   <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "white", flex: 1 }}>{msg.data?.title}</div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>查看詳情 →</div>
                 </div>
               </div>
               <div style={{ padding: "10px 14px 12px" }}>
-                <div style={{ fontSize: 11, color: "#6B7280", marginBottom: 8 }}>{msg.data?.subtitle}</div>
-                <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden", marginBottom: 8 }}>
-                  <div style={{ height: "100%", width: `${msg.data?.progress ?? 0}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", borderRadius: 2 }} />
+                <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8 }}>{msg.data?.subtitle}</div>
+                <div style={{ height: 4, background: "#F1F5F9", borderRadius: 2, overflow: "hidden", marginBottom: 8 }}>
+                  <div style={{ height: "100%", width: `${msg.data?.progress ?? 0}%`, background: "linear-gradient(90deg, #4C6E91, #6E92B4)", borderRadius: 2 }} />
                 </div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {(msg.data?.tasks ?? []).slice(0, 4).map((t: any) => (
-                    <span key={t.id} style={{ fontSize: 11, color: "#6B7280", background: "#F3F4F6", padding: "2px 8px", borderRadius: 20 }}>{t.icon} {t.title}</span>
+                    <span key={t.id} style={{ fontSize: 11, color: "#64748B", background: "#F1F5F9", padding: "2px 8px", borderRadius: 20 }}>{t.icon} {t.title}</span>
                   ))}
-                  {(msg.data?.tasks?.length ?? 0) > 4 && <span style={{ fontSize: 11, color: "#9CA3AF", padding: "2px 6px" }}>+{msg.data.tasks.length - 4}</span>}
+                  {(msg.data?.tasks?.length ?? 0) > 4 && <span style={{ fontSize: 11, color: "#94A3B8", padding: "2px 6px" }}>+{msg.data.tasks.length - 4}</span>}
                 </div>
               </div>
             </div>
@@ -645,8 +610,8 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
               <div
                 key={rec.id}
                 onClick={() => { onReply(`選擇${rec.label}方案`); onContextChange("shopping"); }}
-                style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: rec.isDefault ? `2px solid ${rec.tagColor}` : "1px solid #E5E7EB", cursor: "pointer", position: "relative", overflow: "hidden", transition: "all 0.15s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(98,70,234,0.1)")}
+                style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: rec.isDefault ? `2px solid ${rec.tagColor}` : "1px solid #E2E8F0", cursor: "pointer", position: "relative", overflow: "hidden", transition: "all 0.15s" }}
+                onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(76,110,145,0.1)")}
                 onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
               >
                 {rec.isDefault && <div style={{ position: "absolute", top: 0, right: 0, background: rec.tagColor, fontSize: 10, fontWeight: 700, color: "white", padding: "3px 10px", borderRadius: "0 12px 0 10px", fontFamily: "var(--font-display)" }}>推薦</div>}
@@ -654,12 +619,12 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <span style={{ fontSize: 20 }}>{rec.icon}</span>
                     <div>
-                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#0F0A2E" }}>{rec.label}</div>
-                      <div style={{ fontSize: 11, color: "#6B7280" }}>{rec.desc}</div>
+                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#16232E" }}>{rec.label}</div>
+                      <div style={{ fontSize: 11, color: "#64748B" }}>{rec.desc}</div>
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "#0F0A2E" }}>NT${rec.total.toLocaleString()}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "#16232E" }}>NT${rec.total.toLocaleString()}</div>
                     <span style={{ fontSize: 10, color: rec.tagColor, fontWeight: 600 }}>{rec.tag}</span>
                   </div>
                 </div>
@@ -682,10 +647,10 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
 
         {/* Products */}
         {msg.type === "products" && (
-          <div style={{ background: "#F8F9FC", borderRadius: 14, padding: "12px 14px", border: "1px solid #E5E7EB", marginBottom: 8 }}>
-            <div style={{ fontSize: 13, color: "#0F0A2E", marginBottom: 8, lineHeight: 1.5 }}>{msg.text}</div>
-            <div style={{ fontSize: 12, color: "#6246EA", display: "flex", alignItems: "center", gap: 4, marginBottom: 10 }}><span>✦</span> {msg.data?.reason}</div>
-            <button onClick={() => onContextChange("shopping")} style={{ padding: "7px 16px", borderRadius: 20, border: "none", background: "#6246EA", color: "white", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-display)" }}>
+          <div style={{ background: "#F5F7FA", borderRadius: 14, padding: "12px 14px", border: "1px solid #E2E8F0", marginBottom: 8 }}>
+            <div style={{ fontSize: 13, color: "#16232E", marginBottom: 8, lineHeight: 1.5 }}>{msg.text}</div>
+            <div style={{ fontSize: 12, color: "#4C6E91", display: "flex", alignItems: "center", gap: 4, marginBottom: 10 }}><span>✦</span> {msg.data?.reason}</div>
+            <button onClick={() => onContextChange("shopping")} style={{ padding: "7px 16px", borderRadius: 20, border: "none", background: "#4C6E91", color: "white", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-display)" }}>
               查看推薦商品 →
             </button>
           </div>
@@ -698,9 +663,9 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast 
               <button
                 key={r}
                 onClick={() => onReply(r)}
-                style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid #E5E7EB", background: "white", fontSize: 13, color: "#0F0A2E", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: 500, transition: "all 0.15s" }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#6246EA"; e.currentTarget.style.color = "#6246EA"; e.currentTarget.style.background = "#EDE9FF"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#E5E7EB"; e.currentTarget.style.color = "#0F0A2E"; e.currentTarget.style.background = "white"; }}
+                style={{ padding: "7px 14px", borderRadius: 20, border: "1.5px solid #E2E8F0", background: "white", fontSize: 13, color: "#16232E", cursor: "pointer", fontFamily: "var(--font-display)", fontWeight: 500, transition: "all 0.15s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#4C6E91"; e.currentTarget.style.color = "#4C6E91"; e.currentTarget.style.background = "#E7EEF5"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.color = "#16232E"; e.currentTarget.style.background = "white"; }}
               >
                 {r}
               </button>

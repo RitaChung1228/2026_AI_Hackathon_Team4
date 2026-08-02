@@ -11,7 +11,7 @@ interface TaskDetailProps {
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
   confirmed:     { label: "已確認", bg: "#DCFCE7", color: "#16A34A" },
-  "in-progress": { label: "進行中", bg: "#EDE9FF", color: "#6246EA" },
+  "in-progress": { label: "進行中", bg: "#E7EEF5", color: "#4C6E91" },
   pending:       { label: "待處理", bg: "#FFF7ED", color: "#EA580C" },
   warning:       { label: "需確認", bg: "#FEE2E2", color: "#DC2626" },
 };
@@ -77,26 +77,26 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
   };
 
   const bookableCard = bookableId ? (
-    <div style={{ background: "white", borderRadius: 14, padding: 14, border: "1px solid #F3F4F6" }}>
+    <div style={{ background: "white", borderRadius: 14, padding: 14, border: "1px solid #F1F5F9" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {task.imgUrl ? (
           <img src={task.imgUrl} alt="" style={{ width: 44, height: 44, borderRadius: 12, objectFit: "cover", flexShrink: 0 }} />
         ) : (
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: "#EDE9FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{task.icon}</div>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: "#E7EEF5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{task.icon}</div>
         )}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#0F0A2E" }}>{task.vendorName || task.title}</div>
-          <div style={{ fontSize: 11, color: "#9CA3AF" }}>{task.detail}</div>
+          <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, color: "#16232E" }}>{task.vendorName || task.title}</div>
+          <div style={{ fontSize: 11, color: "#94A3B8" }}>{task.detail}</div>
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
-        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#0F0A2E" }}>
+        <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#16232E" }}>
           {task.price ? `NT$ ${task.price}` : "免費"}
         </span>
         <button
           onClick={handleBook}
           disabled={inCart}
-          style={{ padding: "8px 16px", borderRadius: 20, border: "none", cursor: inCart ? "default" : "pointer", background: inCart ? "#DCFCE7" : "#6246EA", color: inCart ? "#16A34A" : "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12 }}
+          style={{ padding: "8px 16px", borderRadius: 20, border: "none", cursor: inCart ? "default" : "pointer", background: inCart ? "#DCFCE7" : "#4C6E91", color: inCart ? "#16A34A" : "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 12 }}
         >
           {inCart ? "✓ 已選擇" : "選擇此方案"}
         </button>
@@ -116,7 +116,7 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
   const mapQuery = task.vendorName ? encodeURIComponent(task.vendorName) : "";
   const transitUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapQuery}&travelmode=transit`;
   const mapCard = task.vendorName ? (
-    <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: "1px solid #F3F4F6", height: 140 }}>
+    <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: "1px solid #F1F5F9", height: 140 }}>
       <iframe
         title={`map-${task.id}`}
         src={`https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed`}
@@ -127,7 +127,7 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
         href={`https://www.google.com/maps/dir/?api=1&destination=${mapQuery}`}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ position: "absolute", right: 8, bottom: 8, display: "flex", alignItems: "center", gap: 4, padding: "6px 12px", borderRadius: 20, background: "white", boxShadow: "0 2px 8px rgba(15,10,46,0.2)", fontSize: 11, fontWeight: 700, color: "#6246EA", fontFamily: "var(--font-display)", textDecoration: "none" }}
+        style={{ position: "absolute", right: 8, bottom: 8, display: "flex", alignItems: "center", gap: 4, padding: "6px 12px", borderRadius: 20, background: "white", boxShadow: "0 2px 8px rgba(22,35,46,0.2)", fontSize: 11, fontWeight: 700, color: "#4C6E91", fontFamily: "var(--font-display)", textDecoration: "none" }}
       >
         📍 導航前往
       </a>
@@ -135,15 +135,15 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
   ) : null;
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: "#F8F9FC" }}>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: "#F5F7FA" }}>
       {/* Header */}
-      <div style={{ background: "white", padding: "16px 16px 0", flexShrink: 0, borderBottom: "1px solid #F3F4F6" }}>
+      <div style={{ background: "white", padding: "16px 16px 0", flexShrink: 0, borderBottom: "1px solid #F1F5F9" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-          <button onClick={onBack} style={{ width: 32, height: 32, borderRadius: "50%", background: "#F3F4F6", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#6B7280", flexShrink: 0 }}>‹</button>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EDE9FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{task.icon}</div>
+          <button onClick={onBack} style={{ width: 32, height: 32, borderRadius: "50%", background: "#F1F5F9", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, color: "#64748B", flexShrink: 0 }}>‹</button>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "#E7EEF5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{task.icon}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#0F0A2E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.title}</div>
-            <div style={{ fontSize: 11, color: "#9CA3AF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.detail}</div>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#16232E", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.title}</div>
+            <div style={{ fontSize: 11, color: "#94A3B8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.detail}</div>
           </div>
           <span style={{ fontSize: 10, fontWeight: 600, color: sc.color, background: sc.bg, padding: "3px 9px", borderRadius: 20, flexShrink: 0 }}>{sc.label}</span>
         </div>
@@ -155,8 +155,8 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
               onClick={() => setTab(t.id)}
               style={{
                 flex: 1, padding: "8px 0 10px", border: "none", background: "none", cursor: "pointer",
-                borderBottom: tab === t.id ? "2px solid #6246EA" : "2px solid transparent",
-                color: tab === t.id ? "#6246EA" : "#9CA3AF",
+                borderBottom: tab === t.id ? "2px solid #4C6E91" : "2px solid transparent",
+                color: tab === t.id ? "#4C6E91" : "#94A3B8",
                 fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 11,
                 display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
               }}
@@ -172,22 +172,22 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px 100px" }} className="scrollbar-hide">
         {tab === "suggest" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ background: "linear-gradient(135deg, rgba(98,70,234,0.07), rgba(139,92,246,0.04))", border: "1px solid rgba(98,70,234,0.15)", borderRadius: 14, padding: "12px 14px", display: "flex", gap: 10 }}>
+            <div style={{ background: "linear-gradient(135deg, rgba(76,110,145,0.07), rgba(110,146,180,0.04))", border: "1px solid rgba(76,110,145,0.15)", borderRadius: 14, padding: "12px 14px", display: "flex", gap: 10 }}>
               <span style={{ fontSize: 15, flexShrink: 0 }}>✦</span>
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#6246EA", marginBottom: 4, fontFamily: "var(--font-display)" }}>AI 小幫手建議</div>
-                <p style={{ fontSize: 13, color: "#6246EA", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>{task.detail || "建議提早規劃，確保行程順利進行。"}</p>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#4C6E91", marginBottom: 4, fontFamily: "var(--font-display)" }}>AI 小幫手建議</div>
+                <p style={{ fontSize: 13, color: "#4C6E91", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>{task.detail || "建議提早規劃，確保行程順利進行。"}</p>
               </div>
             </div>
 
             {infoRows.length > 0 && (
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A2E", marginBottom: 8, fontFamily: "var(--font-display)" }}>任務資訊</div>
-                <div style={{ background: "white", borderRadius: 14, padding: "4px 14px", border: "1px solid #F3F4F6" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#16232E", marginBottom: 8, fontFamily: "var(--font-display)" }}>任務資訊</div>
+                <div style={{ background: "white", borderRadius: 14, padding: "4px 14px", border: "1px solid #F1F5F9" }}>
                   {infoRows.map((row, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < infoRows.length - 1 ? "1px solid #F8F9FC" : "none" }}>
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: i < infoRows.length - 1 ? "1px solid #F5F7FA" : "none" }}>
                       <span style={{ fontSize: 14, width: 20, textAlign: "center" }}>{row.icon}</span>
-                      <span style={{ fontSize: 13, color: "#374151" }}>{row.text}</span>
+                      <span style={{ fontSize: 13, color: "#334155" }}>{row.text}</span>
                     </div>
                   ))}
                 </div>
@@ -196,23 +196,23 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
 
             {task.vendorName && (
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A2E", marginBottom: 8, fontFamily: "var(--font-display)" }}>位置</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#16232E", marginBottom: 8, fontFamily: "var(--font-display)" }}>位置</div>
                 {mapCard}
               </div>
             )}
 
             {bookableCard && (
               <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A2E", marginBottom: 8, fontFamily: "var(--font-display)" }}>推薦方案</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#16232E", marginBottom: 8, fontFamily: "var(--font-display)" }}>推薦方案</div>
                 {bookableCard}
               </div>
             )}
 
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A2E", marginBottom: 8, fontFamily: "var(--font-display)" }}>注意事項</div>
-              <div style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: "1px solid #F3F4F6", display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "#16232E", marginBottom: 8, fontFamily: "var(--font-display)" }}>注意事項</div>
+              <div style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: "1px solid #F1F5F9", display: "flex", flexDirection: "column", gap: 8 }}>
                 {tips.map((tip: string, i: number) => (
-                  <div key={i} style={{ display: "flex", gap: 8, fontSize: 12, color: "#374151" }}>
+                  <div key={i} style={{ display: "flex", gap: 8, fontSize: 12, color: "#334155" }}>
                     <span style={{ color: "#16A34A" }}>✓</span>{tip}
                   </div>
                 ))}
@@ -230,7 +230,7 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
                 href={transitUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ fontSize: 12, color: "#6246EA", display: "flex", gap: 8, alignItems: "center", textDecoration: "none", fontWeight: 600 }}
+                style={{ fontSize: 12, color: "#4C6E91", display: "flex", gap: 8, alignItems: "center", textDecoration: "none", fontWeight: 600 }}
               >
                 <span>🚇</span> 在 Google Maps 規劃大眾運輸路線
               </a>
@@ -255,17 +255,17 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
         {tab === "remind" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {reminders.map((r) => (
-              <div key={r.id} style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: "1px solid #F3F4F6", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <span style={{ fontSize: 13, color: "#374151" }}>{r.label}</span>
+              <div key={r.id} style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: "1px solid #F1F5F9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 13, color: "#334155" }}>{r.label}</span>
                 <div
                   onClick={() => toggleReminder(r.id)}
-                  style={{ width: 40, height: 22, borderRadius: 11, background: r.on ? "#6246EA" : "#D1D5DB", position: "relative", cursor: "pointer", flexShrink: 0 }}
+                  style={{ width: 40, height: 22, borderRadius: 11, background: r.on ? "#4C6E91" : "#CBD5E1", position: "relative", cursor: "pointer", flexShrink: 0 }}
                 >
                   <div style={{ width: 18, height: 18, borderRadius: "50%", background: "white", position: "absolute", top: 2, left: r.on ? 20 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                 </div>
               </div>
             ))}
-            <button onClick={addReminder} style={{ padding: "10px", borderRadius: 14, border: "1.5px dashed #E5E7EB", background: "white", color: "#6246EA", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-display)" }}>
+            <button onClick={addReminder} style={{ padding: "10px", borderRadius: 14, border: "1.5px dashed #E2E8F0", background: "white", color: "#4C6E91", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "var(--font-display)" }}>
               ＋ 新增提醒
             </button>
           </div>
@@ -277,7 +277,7 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
         <button
           onClick={() => onComplete(task.id)}
           disabled={task.status === "confirmed"}
-          style={{ width: "100%", padding: 14, borderRadius: 16, border: "none", background: task.status === "confirmed" ? "#DCFCE7" : "linear-gradient(135deg, #6246EA, #8B5CF6)", color: task.status === "confirmed" ? "#16A34A" : "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, cursor: task.status === "confirmed" ? "default" : "pointer", boxShadow: task.status === "confirmed" ? "none" : "0 8px 24px rgba(98,70,234,0.3)" }}
+          style={{ width: "100%", padding: 14, borderRadius: 16, border: "none", background: task.status === "confirmed" ? "#DCFCE7" : "linear-gradient(135deg, #4C6E91, #6E92B4)", color: task.status === "confirmed" ? "#16A34A" : "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, cursor: task.status === "confirmed" ? "default" : "pointer", boxShadow: task.status === "confirmed" ? "none" : "0 8px 24px rgba(76,110,145,0.3)" }}
         >
           {task.status === "confirmed" ? "✓ 已完成此任務" : "已完成此任務"}
         </button>
@@ -288,6 +288,6 @@ export default function TaskDetail({ task, cartItems, onBack, onProductAdd, onCo
 
 function EmptyTabState({ text }: { text: string }) {
   return (
-    <div style={{ textAlign: "center", padding: "48px 0", color: "#C4B5FD", fontSize: 13 }}>{text}</div>
+    <div style={{ textAlign: "center", padding: "48px 0", color: "#A9C0D6", fontSize: 13 }}>{text}</div>
   );
 }

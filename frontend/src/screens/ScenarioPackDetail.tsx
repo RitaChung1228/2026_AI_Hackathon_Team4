@@ -102,7 +102,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
   const progress = showSteps && steps.length > 0 ? Math.round((checkedSteps.length / steps.length) * 100) : 0;
 
   return (
-    <div style={{ height: "100%", background: "#F8F9FC", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+    <div style={{ height: "100%", background: "#F5F7FA", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       {/* Hero */}
       <div
         style={{
@@ -151,7 +151,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
         {/* 行程日期 */}
         <div style={{ background: "white", borderRadius: 16, padding: "14px", marginBottom: 16, border: `1px solid ${pack.color}30` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", margin: 0 }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#16232E", margin: 0 }}>
               📅 行程日期
             </h3>
             <span style={{ fontSize: 12, color: pack.color, fontWeight: 700, fontFamily: "var(--font-display)" }}>
@@ -167,11 +167,11 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
               width: "100%",
               padding: "11px 12px",
               borderRadius: 12,
-              border: "1.5px solid #E5E7EB",
-              background: "#F8F9FC",
+              border: "1.5px solid #E2E8F0",
+              background: "#F5F7FA",
               fontSize: 14,
               fontFamily: "var(--font-body)",
-              color: "#0F0A2E",
+              color: "#16232E",
               outline: "none",
             }}
           />
@@ -191,9 +191,9 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
                   style={{
                     padding: "5px 12px",
                     borderRadius: 20,
-                    border: `1.5px solid ${active ? pack.color : "#E5E7EB"}`,
+                    border: `1.5px solid ${active ? pack.color : "#E2E8F0"}`,
                     background: active ? `${pack.color}15` : "white",
-                    color: active ? pack.color : "#6B7280",
+                    color: active ? pack.color : "#64748B",
                     fontSize: 12,
                     fontWeight: active ? 700 : 500,
                     cursor: "pointer",
@@ -205,7 +205,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
               );
             })}
           </div>
-          <p style={{ fontSize: 12, color: "#9CA3AF", margin: "10px 0 0", lineHeight: 1.5 }}>
+          <p style={{ fontSize: 12, color: "#94A3B8", margin: "10px 0 0", lineHeight: 1.5 }}>
             {formatDateLabel(date)} · 建立後會依日期在首頁「今日重點」提醒你
           </p>
         </div>
@@ -218,12 +218,12 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
               disabled={planning}
               style={{
                 width: "100%", padding: "16px", borderRadius: 16, border: "none",
-                background: planning ? "#E5E7EB" : "linear-gradient(135deg, #130E28, #6246EA)",
-                color: planning ? "#9CA3AF" : "white",
+                background: planning ? "#E2E8F0" : "linear-gradient(135deg, #1B2A38, #4C6E91)",
+                color: planning ? "#94A3B8" : "white",
                 fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15,
                 cursor: planning ? "default" : "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
-                boxShadow: planning ? "none" : "0 6px 20px rgba(98,70,234,0.3)",
+                boxShadow: planning ? "none" : "0 6px 20px rgba(76,110,145,0.3)",
                 transition: "all 0.3s",
               }}
             >
@@ -243,14 +243,14 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
         {showSteps && (
           <div className="screen-up" style={{ marginBottom: 20 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-              <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", margin: 0 }}>
+              <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#16232E", margin: 0 }}>
                 AI 規劃步驟
               </h3>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ height: 6, width: 60, borderRadius: 3, background: "#E5E7EB", overflow: "hidden" }}>
+                <div style={{ height: 6, width: 60, borderRadius: 3, background: "#E2E8F0", overflow: "hidden" }}>
                   <div style={{ height: "100%", width: `${progress}%`, background: `linear-gradient(90deg, ${pack.color}, ${pack.color}AA)`, transition: "width 0.4s ease", borderRadius: 3 }} />
                 </div>
-                <span style={{ fontSize: 12, color: "#6B7280", fontWeight: 600 }}>{progress}%</span>
+                <span style={{ fontSize: 12, color: "#64748B", fontWeight: 600 }}>{progress}%</span>
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -268,7 +268,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
                       display: "flex",
                       alignItems: "center",
                       gap: 12,
-                      border: `1.5px solid ${checked ? pack.color + "40" : "#F3F4F6"}`,
+                      border: `1.5px solid ${checked ? pack.color + "40" : "#F1F5F9"}`,
                       opacity: checked ? 0.7 : 1,
                       cursor: "pointer",
                       transition: "all 0.2s",
@@ -278,7 +278,7 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
                     <div
                       style={{
                         width: 24, height: 24, borderRadius: "50%",
-                        border: `2px solid ${checked ? pack.color : "#D1D5DB"}`,
+                        border: `2px solid ${checked ? pack.color : "#CBD5E1"}`,
                         background: checked ? pack.color : "white",
                         display: "flex", alignItems: "center", justifyContent: "center",
                         flexShrink: 0, transition: "all 0.2s",
@@ -288,10 +288,10 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
                     </div>
                     <span style={{ fontSize: 20, flexShrink: 0 }}>{step.icon}</span>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14, color: "#0F0A2E", textDecoration: checked ? "line-through" : "none" }}>
+                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14, color: "#16232E", textDecoration: checked ? "line-through" : "none" }}>
                         {step.title}
                       </div>
-                      <div style={{ fontSize: 12, color: "#9CA3AF", marginTop: 2 }}>{step.detail}</div>
+                      <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>{step.detail}</div>
                     </div>
                   </div>
                 );
@@ -303,10 +303,10 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
         {/* Modules section */}
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", margin: 0 }}>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#16232E", margin: 0 }}>
               工具模組
             </h3>
-            <span style={{ fontSize: 13, color: "#6B7280" }}>已啟用 {enabledCount}/{modules.length}</span>
+            <span style={{ fontSize: 13, color: "#64748B" }}>已啟用 {enabledCount}/{modules.length}</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {modules.map((mod) => (
@@ -315,17 +315,17 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
                 style={{
                   background: "white", borderRadius: 14, padding: "12px 14px",
                   display: "flex", alignItems: "center", gap: 12,
-                  border: `1px solid ${mod.enabled ? `${pack.color}30` : "#F3F4F6"}`,
+                  border: `1px solid ${mod.enabled ? `${pack.color}30` : "#F1F5F9"}`,
                   opacity: mod.enabled ? 1 : 0.5, transition: "all 0.2s",
                 }}
               >
                 <span style={{ fontSize: 22 }}>{mod.icon}</span>
-                <span style={{ flex: 1, fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14, color: "#0F0A2E" }}>
+                <span style={{ flex: 1, fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 14, color: "#16232E" }}>
                   {mod.name}
                 </span>
                 <div
                   onClick={() => toggleModule(mod.id)}
-                  style={{ width: 40, height: 22, borderRadius: 11, background: mod.enabled ? pack.color : "#D1D5DB", position: "relative", cursor: "pointer", transition: "background 0.2s", flexShrink: 0 }}
+                  style={{ width: 40, height: 22, borderRadius: 11, background: mod.enabled ? pack.color : "#CBD5E1", position: "relative", cursor: "pointer", transition: "background 0.2s", flexShrink: 0 }}
                 >
                   <div style={{ width: 18, height: 18, borderRadius: "50%", background: "white", position: "absolute", top: 2, left: mod.enabled ? 20 : 2, transition: "left 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                 </div>
@@ -336,10 +336,10 @@ export default function ScenarioPackDetail({ packId, onUse, onBack, onSave, isSa
 
         {/* Secondary actions */}
         <div style={{ display: "flex", gap: 10 }}>
-          <button style={{ flex: 1, padding: "11px", borderRadius: 14, border: "1.5px solid #E5E7EB", background: "white", color: "#6B7280", fontSize: 13, fontFamily: "var(--font-display)", fontWeight: 600, cursor: "pointer" }}>
+          <button style={{ flex: 1, padding: "11px", borderRadius: 14, border: "1.5px solid #E2E8F0", background: "white", color: "#64748B", fontSize: 13, fontFamily: "var(--font-display)", fontWeight: 600, cursor: "pointer" }}>
             ↗ 分享
           </button>
-          <button style={{ flex: 1, padding: "11px", borderRadius: 14, border: "1.5px solid #E5E7EB", background: "white", color: "#6B7280", fontSize: 13, fontFamily: "var(--font-display)", fontWeight: 600, cursor: "pointer" }}>
+          <button style={{ flex: 1, padding: "11px", borderRadius: 14, border: "1.5px solid #E2E8F0", background: "white", color: "#64748B", fontSize: 13, fontFamily: "var(--font-display)", fontWeight: 600, cursor: "pointer" }}>
             ⊞ 複製
           </button>
         </div>

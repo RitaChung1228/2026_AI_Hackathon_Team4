@@ -21,7 +21,7 @@ export default function Sidebar({ activeView, onNav, onClose, collapsed }: Sideb
     <aside
       style={{
         width: collapsed ? 60 : 220,
-        background: "#130E28",
+        background: "#1B2A38",
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -70,21 +70,11 @@ export default function Sidebar({ activeView, onNav, onClose, collapsed }: Sideb
           justifyContent: collapsed ? "center" : "flex-start",
         }}
       >
-        <div
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: 10,
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            boxShadow: "0 4px 12px rgba(98,70,234,0.4)",
-          }}
-        >
-          <span style={{ color: "white", fontWeight: 800, fontSize: 14, fontFamily: "var(--font-display)" }}>U</span>
-        </div>
+        <img
+          src="/logo-mark.png"
+          alt="Lifepack"
+          style={{ width: 34, height: 34, objectFit: "contain", flexShrink: 0 }}
+        />
         {!collapsed && (
           <span
             style={{
@@ -96,7 +86,7 @@ export default function Sidebar({ activeView, onNav, onClose, collapsed }: Sideb
               whiteSpace: "nowrap",
             }}
           >
-            UNI Flow
+            Lifepack
           </span>
         )}
       </div>
@@ -137,10 +127,10 @@ export default function Sidebar({ activeView, onNav, onClose, collapsed }: Sideb
             gap: 10,
             padding: collapsed ? "10px 0" : "10px 12px",
             borderRadius: 10,
-            border: "1px dashed rgba(98,70,234,0.4)",
-            background: "rgba(98,70,234,0.08)",
+            border: "1px dashed rgba(76,110,145,0.4)",
+            background: "rgba(76,110,145,0.08)",
             cursor: "pointer",
-            color: "#A78BFA",
+            color: "#8FB0CC",
             fontSize: 13,
             fontWeight: 600,
             fontFamily: "var(--font-display)",
@@ -163,7 +153,7 @@ export default function Sidebar({ activeView, onNav, onClose, collapsed }: Sideb
           gap: 10,
           padding: collapsed ? "10px 0" : "10px 12px",
           borderRadius: 10,
-          background: isActive("profile") ? "rgba(98,70,234,0.2)" : "transparent",
+          background: isActive("profile") ? "rgba(76,110,145,0.2)" : "transparent",
           border: "none",
           cursor: "pointer",
           width: "100%",
@@ -176,7 +166,7 @@ export default function Sidebar({ activeView, onNav, onClose, collapsed }: Sideb
             width: 30,
             height: 30,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

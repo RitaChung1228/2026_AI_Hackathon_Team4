@@ -118,3 +118,41 @@ export interface ChatMessage {
   data?: any;
   ts: number;
 }
+/* ── 訂單 / 到貨 ───────────────────────────────────────── */
+
+/** 訂單狀態：準備中 → 配送中 → 已到貨 */
+export type OrderStatus = "preparing" | "shipped" | "arrived";
+
+export interface Order {
+  id: string;
+  items: CartItem[];
+  /* 下單日（YYYY-MM-DD，本地日曆日） */
+  placedDate: string;
+  /* 預計到貨日（YYYY-MM-DD） */
+  etaDate: string;
+  status: OrderStatus;
+  /* 取貨門市 */
+  store: string;
+}
+
+/* ── 通知（鈴鐺） ──────────────────────────────────────── */
+
+/** schedule = 行程時程提醒；delivery = 訂單到貨提醒 */
+export type NotificationKind = "schedule" | "delivery";
+
+/** urgent = 今天/明天/逾期；soon = 3 天內；arrived = 已到貨；info = 配送中 */
+export type NotificationLevel = "urgent" | "soon" | "arrived" | "info";
+
+export interface AppNotification {
+  id: string;
+  kind: NotificationKind;
+  icon: string;
+  title: string;
+  detail: string;
+  /* 右側的相對時間文字，例如「明天」「已到貨」 */
+  meta: string;
+  level: NotificationLevel;
+  /* 有值時點擊通知可跳到對應情境包 */
+  packId?: string;
+  read?: boolean;
+}

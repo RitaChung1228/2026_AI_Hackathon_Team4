@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import Login from "./screens/Login";
 import Onboarding from "./screens/Onboarding";
 import Home from "./screens/Home";
@@ -8,16 +8,17 @@ import ContextPanel from "./components/ContextPanel";
 import BottomNav from "./components/BottomNav";
 import Missions from "./screens/Missions";
 import Profile from "./screens/Profile";
-import type { ContextView, CartItem, AuthUser, ScheduledTrip, ChatMessage } from "./types";
-import { scenarioPacks } from "./data";
-import { todayISO } from "./dateUtils";
+import type { ContextView, CartItem, AuthUser, ScheduledTrip, ChatMessage, Order, AppNotification } from "./types";
+import { scenarioPacks, pickupStores, mockUser } from "./data";
+import { todayISO, isoInDays } from "./dateUtils";
+import { buildNotifications } from "./notifications";
 
-type AppPage = "login" | "onboarding" | "home" | "pack-detail" | "chat" | "missions" | "profile" | "cart";
+type AppPage = "login" | "onboarding" | "edit-tags" | "home" | "pack-detail" | "chat" | "missions" | "profile" | "cart";
 
 export default function App() {
   const [page, setPage] = useState<AppPage>("login");
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [userTags, setUserTags] = useState<string[]>([]);
+  const [userTags, setUserTags] = useState<string[]>(mockUser.tags);
   const [selectedPackId, setSelectedPackId] = useState<string>("business-trip");
   const [savedPackIds, setSavedPackIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("home");
@@ -37,6 +38,16 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(WELCOME_MESSAGES);
   const agentHistory = useRef<any[]>([]);
 
+  /* 已結帳的訂單，用來產生「到貨」提醒 */
+  const [orders, setOrders] = useState<Order[]>([]);
+  /* 已讀過的通知 id */
+  const [readNotificationIds, setReadNotificationIds] = useState<string[]>([]);
+
+  /* 偏好設定：常用取貨門市 + 是否允許通知 */
+  const [pickupStoreId, setPickupStoreId] = useState<string>(pickupStores[0].id);
+  const [notifyEnabled, setNotifyEnabled] = useState(true);
+  const pickupStore = pickupStores.find((s) => s.id === pickupStoreId) ?? pickupStores[0];
+
   /* 註冊的新帳號才走標籤設定，一般登入直接進主頁 */
   const handleLogin = (loggedIn: AuthUser, isNewUser: boolean) => {
     setUser(loggedIn);
@@ -52,22 +63,33 @@ export default function App() {
     setTrips([]);
     setActiveTripId(null);
     setCartItems([]);
+    setOrders([]);
+    setReadNotificationIds([]);
     setContextView("idle");
     setPanelOpen(false);
     setTransportTime(undefined);
+    setPickupStoreId(pickupStores[0].id);
+    setNotifyEnabled(true);
     setActiveTab("home");
     setPage("login");
     setChatMessages(WELCOME_MESSAGES);
     agentHistory.current = [];
   }, []);
 
-  /* Onboarding complete */
+  /* Onboarding complete；跳過（沒選任何標籤）時保留示範標籤 */
   const handleOnboardingComplete = (tags: string[]) => {
-    setUserTags(tags);
+    if (tags.length > 0) setUserTags(tags);
     setPage("home");
     setActiveTab("home");
   };
 
+  /* 「我的」→ Dynamic Tags →「編輯」：改完存回並退回個人頁 */
+  const handleTagsSaved = (tags: string[]) => {
+    setUserTags(tags);
+    setPage("profile");
+  };
+
+  /* Open pack detail */
   const handleScenarioPack = (packId: string) => {
     setSelectedPackId(packId);
     setPage("pack-detail");
@@ -123,8 +145,10 @@ export default function App() {
     else if (tab === "profile") setPage("profile");
   };
 
+  /* 紫色 AI 按鈕 → 直接進服務畫面；購物車等面板正開著時先自動收起，不用手動打叉 */
   const handleAIOpen = () => {
     setActiveTab("ai");
+    setPanelOpen(false);
     setPage("chat");
   };
 
@@ -141,13 +165,85 @@ export default function App() {
     setCartItems((prev) => prev.find((i) => i.id === item.id) ? prev : [...prev, item]);
   }, []);
 
-  /* 結帳完成 → 進行中的任務標記為完成 */
+  /* 結帳完成 → 進行中的任務標記為完成，同時建立訂單以便追蹤到貨 */
   const handleCheckout = useCallback(() => {
     setContextView(cartItems.some((i) => i.id === "cake") ? "birthday-complete" : "complete");
     if (activeTripId) {
       setTrips((prev) => prev.map((t) => (t.id === activeTripId ? { ...t, progress: 100 } : t)));
     }
-  }, [cartItems, activeTripId]);
+    if (cartItems.length > 0) {
+      const order: Order = {
+        id: `o${Date.now()}`,
+        items: cartItems,
+        placedDate: todayISO(),
+        etaDate: isoInDays(2),
+        status: "preparing",
+        store: pickupStore.name,
+      };
+      setOrders((prev) => [order, ...prev]);
+    }
+  }, [cartItems, activeTripId, pickupStore]);
+
+  /**
+   * Demo 用的物流模擬：下單後自動由「準備中 → 配送中 → 已到貨」，
+   * 讓鈴鐺可以即時跳出到貨提醒。用 ref 記住已排的計時器，避免重複排程。
+   */
+  const orderTimersRef = useRef<Record<string, number>>({});
+
+  useEffect(() => {
+    orders.forEach((order) => {
+      if (order.status === "arrived") return;
+      const key = `${order.id}:${order.status}`;
+      if (orderTimersRef.current[key]) return;
+      const next: Order["status"] = order.status === "preparing" ? "shipped" : "arrived";
+      const delay = order.status === "preparing" ? 6000 : 10000;
+      orderTimersRef.current[key] = window.setTimeout(() => {
+        setOrders((prev) => prev.map((o) => (o.id === order.id ? { ...o, status: next } : o)));
+      }, delay);
+    });
+  }, [orders]);
+
+  /* 卸載時清掉所有計時器 */
+  useEffect(
+    () => () => {
+      Object.values(orderTimersRef.current).forEach((id) => window.clearTimeout(id));
+      orderTimersRef.current = {};
+    },
+    []
+  );
+
+  /* 行程時程 + 訂單到貨 → 鈴鐺通知清單；偏好設定關閉通知時不顯示任何提醒 */
+  const notifications = useMemo<AppNotification[]>(
+    () =>
+      notifyEnabled
+        ? buildNotifications(trips, orders).map((n) => ({
+            ...n,
+            read: readNotificationIds.includes(n.id),
+          }))
+        : [],
+    [trips, orders, readNotificationIds, notifyEnabled]
+  );
+
+  /* 展開鈴鐺 → 全部標記已讀 */
+  const handleNotificationsRead = useCallback(() => {
+    setReadNotificationIds((prev) => {
+      const ids = notifications.map((n) => n.id);
+      const merged = [...prev, ...ids.filter((id) => !prev.includes(id))];
+      return merged.length === prev.length ? prev : merged;
+    });
+  }, [notifications]);
+
+  /* 點通知 → 有對應情境包就跳到行程詳情 */
+  const handleNotificationSelect = useCallback((n: AppNotification) => {
+    if (!n.packId) return;
+    setSelectedPackId(n.packId);
+    setPage("pack-detail");
+  }, []);
+
+  /* 偏好設定 → 更改頭像或名稱 */
+  const handleProfileUpdate = useCallback((patch: { name: string; avatar: string }) => {
+    setUser((prev) => (prev ? { ...prev, name: patch.name, avatar: patch.avatar } : prev));
+  }, []);
 
   const handleSaveComplete = useCallback(() => {
     setContextView("idle");
@@ -156,7 +252,7 @@ export default function App() {
 
   const handleCartUpdate = useCallback((items: CartItem[]) => setCartItems(items), []);
 
-  const showBottomNav = page !== "onboarding" && page !== "login";
+  const showBottomNav = page !== "onboarding" && page !== "login" && page !== "edit-tags";
   const cartCount = cartItems.length;
 
   const renderScreen = () => {
@@ -193,6 +289,17 @@ export default function App() {
       );
     }
 
+    if (page === "edit-tags") {
+      return (
+        <Onboarding
+          mode="edit"
+          initialTags={userTags}
+          onComplete={handleTagsSaved}
+          onCancel={() => setPage("profile")}
+        />
+      );
+    }
+
     if (page === "profile") {
       return (
         <Profile
@@ -201,6 +308,14 @@ export default function App() {
           onPackSelect={(packId) => { setSelectedPackId(packId); setPage("pack-detail"); }}
           onUnsavePack={handleSavePack}
           onLogout={handleLogout}
+          pickupStoreId={pickupStoreId}
+          onPickupStoreChange={setPickupStoreId}
+          notifyEnabled={notifyEnabled}
+          onNotifyToggle={setNotifyEnabled}
+          onProfileUpdate={handleProfileUpdate}
+          tags={userTags}
+          onTagsChange={setUserTags}
+          onEditTags={() => setPage("edit-tags")}
         />
       );
     }
@@ -213,12 +328,9 @@ export default function App() {
             onTransportUpdate={handleTransportUpdate}
             onProductAdd={handleProductAdd}
             onPanelToggle={handlePanelToggle}
-            onMenuOpen={() => {}}
             onMissionCreate={handleChatMissionCreate}
             cartItems={cartItems}
             contextView={contextView}
-            panelOpen={panelOpen}
-            isMobile={true}
             onAgentMission={setAgentMission}
             quickPrompt={quickPrompt}
             onQuickPromptConsumed={() => setQuickPrompt(null)}
@@ -231,19 +343,19 @@ export default function App() {
             <>
               <div
                 onClick={handlePanelClose}
-                style={{ position: "absolute", inset: 0, background: "rgba(15,10,46,0.35)", zIndex: 100, backdropFilter: "blur(2px)", animation: "fadeIn 0.2s ease both" }}
+                style={{ position: "absolute", inset: 0, background: "rgba(22,35,46,0.35)", zIndex: 100, backdropFilter: "blur(2px)", animation: "fadeIn 0.2s ease both" }}
               />
               <div
                 className="panel-slide-in"
-                style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "100%", background: "#F7F8FC", zIndex: 110, display: "flex", flexDirection: "column", overflow: "hidden" }}
+                style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "100%", background: "#F5F7FA", zIndex: 110, display: "flex", flexDirection: "column", overflow: "hidden" }}
               >
-                <div style={{ height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", borderBottom: "1px solid #E5E7EB", background: "white", flexShrink: 0 }}>
-                  <span style={{ fontSize: 14, fontFamily: "var(--font-display)", fontWeight: 700, color: "#0F0A2E" }}>
+                <div style={{ height: 52, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", borderBottom: "1px solid #E2E8F0", background: "white", flexShrink: 0 }}>
+                  <span style={{ fontSize: 14, fontFamily: "var(--font-display)", fontWeight: 700, color: "#16232E" }}>
                     {viewLabel(contextView)}
                   </span>
                   <button
                     onClick={handlePanelClose}
-                    style={{ width: 30, height: 30, borderRadius: "50%", background: "#F3F4F6", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#6B7280", fontSize: 14 }}
+                    style={{ width: 30, height: 30, borderRadius: "50%", background: "#F1F5F9", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B", fontSize: 14 }}
                   >
                     ✕
                   </button>
@@ -278,6 +390,9 @@ export default function App() {
         onProductAdd={handleProductAdd}
         onScenarioPack={handleScenarioPack}
         onOpenCart={() => handleTabChange("cart")}
+        notifications={notifications}
+        onNotificationsRead={handleNotificationsRead}
+        onNotificationSelect={handleNotificationSelect}
       />
     );
   };
