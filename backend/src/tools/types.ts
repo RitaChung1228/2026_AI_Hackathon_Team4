@@ -32,12 +32,17 @@ export interface SearchServiceInput {
   keyword?: string;
 }
 
+// 欄位名稱與 DynamoDB ServicesCatalog 完全一致（snake_case）
 export interface Service {
-  id: string;
-  vendorId: string;
-  vendorName: string;
-  name: string;
-  type: number;
+  service_id: string;
+  service_name: string;
+  vendor_id: string;
+  vendor_name: string;
+  service_vendor_id: number;
+  type: string; // DB 原始為字串（"1" / "01" / "11" / "3"）
+  category: string;
+  price: number;
+  img_url: string;
   description: string;
 }
 

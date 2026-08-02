@@ -42,81 +42,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// node_modules/@aws-sdk/core/dist-es/submodules/client/emitWarningIfUnsupportedVersion.js
-var state, emitWarningIfUnsupportedVersion;
-var init_emitWarningIfUnsupportedVersion = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/client/emitWarningIfUnsupportedVersion.js"() {
-    state = {
-      warningEmitted: false
-    };
-    emitWarningIfUnsupportedVersion = (version) => {
-      if (version && !state.warningEmitted) {
-        if (process.env.AWS_SDK_JS_NODE_VERSION_SUPPORT_WARNING_DISABLED === "true") {
-          state.warningEmitted = true;
-          return;
-        }
-        const userMajorVersion = parseInt(version.substring(1, version.indexOf(".")));
-        const vv = 22;
-        if (userMajorVersion < vv) {
-          state.warningEmitted = true;
-          process.emitWarning(`NodeVersionSupportWarning: The AWS SDK for JavaScript (v3)
-versions published after the first week of January 2027
-will require node >=${vv}. You are running node ${version}.
-
-To continue receiving updates to AWS services, bug fixes,
-and security updates please upgrade to node >=${vv}.
-
-More information can be found at: https://a.co/c895JFp`);
-        }
-      }
-    };
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/client/longPollMiddleware.js
-var longPollMiddleware, longPollMiddlewareOptions, getLongPollPlugin;
-var init_longPollMiddleware = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/client/longPollMiddleware.js"() {
-    longPollMiddleware = () => (next, context) => async (args) => {
-      context.__retryLongPoll = true;
-      return next(args);
-    };
-    longPollMiddlewareOptions = {
-      name: "longPollMiddleware",
-      tags: ["RETRY"],
-      step: "initialize",
-      override: true
-    };
-    getLongPollPlugin = (options) => ({
-      applyToStack: (clientStack) => {
-        clientStack.add(longPollMiddleware(), longPollMiddlewareOptions);
-      }
-    });
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/client/setCredentialFeature.js
-function setCredentialFeature(credentials, feature, value) {
-  if (!credentials.$source) {
-    credentials.$source = {};
-  }
-  credentials.$source[feature] = value;
-  return credentials;
-}
-var init_setCredentialFeature = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/client/setCredentialFeature.js"() {
-  }
-});
-
-// node_modules/@smithy/core/dist-es/submodules/retry/middleware-retry/isStreamingPayload/isStreamingPayload.js
-var import_node_stream, isStreamingPayload;
-var init_isStreamingPayload = __esm({
-  "node_modules/@smithy/core/dist-es/submodules/retry/middleware-retry/isStreamingPayload/isStreamingPayload.js"() {
-    import_node_stream = require("node:stream");
-    isStreamingPayload = (request) => request?.body instanceof import_node_stream.Readable || typeof ReadableStream !== "undefined" && request?.body instanceof ReadableStream;
-  }
-});
-
 // node_modules/@smithy/core/dist-es/submodules/client/middleware-stack/MiddlewareStack.js
 var getAllAliases, getMiddlewareNameWithAliases, constructStack, stepWeights, priorityWeights;
 var init_MiddlewareStack = __esm({
@@ -803,7 +728,7 @@ var init_poller = __esm({
     init_circularReplacer();
     init_sleep();
     init_waiter();
-    runPolling = async ({ minDelay, maxDelay, maxWaitTime, abortController, client: client3, abortSignal }, input, acceptorChecks) => {
+    runPolling = async ({ minDelay, maxDelay, maxWaitTime, abortController, client: client4, abortSignal }, input, acceptorChecks) => {
       const observedResponses = {};
       const [minDelayMs, maxDelayMs] = [minDelay * 1e3, maxDelay * 1e3];
       let currentAttempt = 0;
@@ -824,7 +749,7 @@ var init_poller = __esm({
           }
           await sleep(delayMs / 1e3);
         }
-        const { state: state2, reason } = await acceptorChecks(client3, input);
+        const { state: state2, reason } = await acceptorChecks(client4, input);
         if (reason) {
           const message = createMessageFromResponse(reason);
           observedResponses[message] |= 0;
@@ -835,12 +760,12 @@ var init_poller = __esm({
         }
         currentAttempt += 1;
         if (!didWarn403 && Date.now() >= warn403Time) {
-          checkWarn403(observedResponses, client3);
+          checkWarn403(observedResponses, client4);
           didWarn403 = true;
         }
       }
     };
-    checkWarn403 = (observedResponses = {}, client3) => {
+    checkWarn403 = (observedResponses = {}, client4) => {
       const orderedErrors = Object.keys(observedResponses);
       let maxCount = 0;
       let count403 = 0;
@@ -851,7 +776,7 @@ var init_poller = __esm({
           count403 += n3;
         }
       }
-      const clientLogger = client3?.config?.logger;
+      const clientLogger = client4?.config?.logger;
       const warningLogger = typeof clientLogger?.warn === "function" && !clientLogger.constructor?.name?.includes?.("NoOpLogger") ? clientLogger : console;
       if (count403 >= 3 || orderedErrors[orderedErrors.length - 1]?.startsWith("403:")) {
         warningLogger.warn(`@smithy/util-waiter WARN - 403 status code encountered during waiter polling.`);
@@ -2185,11 +2110,11 @@ var init_defaults_mode = __esm({
 });
 
 // node_modules/@smithy/core/dist-es/submodules/client/smithy-client/emitWarningIfUnsupportedVersion.js
-var warningEmitted, emitWarningIfUnsupportedVersion2;
-var init_emitWarningIfUnsupportedVersion2 = __esm({
+var warningEmitted, emitWarningIfUnsupportedVersion;
+var init_emitWarningIfUnsupportedVersion = __esm({
   "node_modules/@smithy/core/dist-es/submodules/client/smithy-client/emitWarningIfUnsupportedVersion.js"() {
     warningEmitted = false;
-    emitWarningIfUnsupportedVersion2 = (version) => {
+    emitWarningIfUnsupportedVersion = (version) => {
       if (version && !warningEmitted && parseInt(version.substring(1, version.indexOf("."))) < 16) {
         warningEmitted = true;
       }
@@ -2518,7 +2443,7 @@ __export(client_exports, {
   createAggregatedClient: () => createAggregatedClient,
   createWaiter: () => createWaiter,
   decorateServiceException: () => decorateServiceException,
-  emitWarningIfUnsupportedVersion: () => emitWarningIfUnsupportedVersion2,
+  emitWarningIfUnsupportedVersion: () => emitWarningIfUnsupportedVersion,
   getArrayIfSingleItem: () => getArrayIfSingleItem,
   getChecksumConfiguration: () => getChecksumConfiguration,
   getDefaultClientConfiguration: () => getDefaultClientConfiguration,
@@ -2559,7 +2484,7 @@ var init_client2 = __esm({
     init_create_aggregated_client();
     init_default_error_handler();
     init_defaults_mode();
-    init_emitWarningIfUnsupportedVersion2();
+    init_emitWarningIfUnsupportedVersion();
     init_exceptions();
     init_defaultExtensionConfiguration();
     init_checksum();
@@ -2573,6 +2498,81 @@ var init_client2 = __esm({
     init_ser_utils();
     init_serde_json();
     init_client_command_builder();
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/client/emitWarningIfUnsupportedVersion.js
+var state, emitWarningIfUnsupportedVersion2;
+var init_emitWarningIfUnsupportedVersion2 = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/client/emitWarningIfUnsupportedVersion.js"() {
+    state = {
+      warningEmitted: false
+    };
+    emitWarningIfUnsupportedVersion2 = (version) => {
+      if (version && !state.warningEmitted) {
+        if (process.env.AWS_SDK_JS_NODE_VERSION_SUPPORT_WARNING_DISABLED === "true") {
+          state.warningEmitted = true;
+          return;
+        }
+        const userMajorVersion = parseInt(version.substring(1, version.indexOf(".")));
+        const vv = 22;
+        if (userMajorVersion < vv) {
+          state.warningEmitted = true;
+          process.emitWarning(`NodeVersionSupportWarning: The AWS SDK for JavaScript (v3)
+versions published after the first week of January 2027
+will require node >=${vv}. You are running node ${version}.
+
+To continue receiving updates to AWS services, bug fixes,
+and security updates please upgrade to node >=${vv}.
+
+More information can be found at: https://a.co/c895JFp`);
+        }
+      }
+    };
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/client/longPollMiddleware.js
+var longPollMiddleware, longPollMiddlewareOptions, getLongPollPlugin;
+var init_longPollMiddleware = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/client/longPollMiddleware.js"() {
+    longPollMiddleware = () => (next, context) => async (args) => {
+      context.__retryLongPoll = true;
+      return next(args);
+    };
+    longPollMiddlewareOptions = {
+      name: "longPollMiddleware",
+      tags: ["RETRY"],
+      step: "initialize",
+      override: true
+    };
+    getLongPollPlugin = (options) => ({
+      applyToStack: (clientStack) => {
+        clientStack.add(longPollMiddleware(), longPollMiddlewareOptions);
+      }
+    });
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/client/setCredentialFeature.js
+function setCredentialFeature(credentials, feature, value) {
+  if (!credentials.$source) {
+    credentials.$source = {};
+  }
+  credentials.$source[feature] = value;
+  return credentials;
+}
+var init_setCredentialFeature = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/client/setCredentialFeature.js"() {
+  }
+});
+
+// node_modules/@smithy/core/dist-es/submodules/retry/middleware-retry/isStreamingPayload/isStreamingPayload.js
+var import_node_stream, isStreamingPayload;
+var init_isStreamingPayload = __esm({
+  "node_modules/@smithy/core/dist-es/submodules/retry/middleware-retry/isStreamingPayload/isStreamingPayload.js"() {
+    import_node_stream = require("node:stream");
+    isStreamingPayload = (request) => request?.body instanceof import_node_stream.Readable || typeof ReadableStream !== "undefined" && request?.body instanceof ReadableStream;
   }
 });
 
@@ -11481,10 +11481,10 @@ function createPaginator(ClientCtor, CommandCtor, inputTokenName, outputTokenNam
 var makePagedClientRequest, get;
 var init_createPaginator = __esm({
   "node_modules/@smithy/core/dist-es/legacy-root-exports/pagination/createPaginator.js"() {
-    makePagedClientRequest = async (CommandCtor, client3, input, withCommand = (_) => _, ...args) => {
+    makePagedClientRequest = async (CommandCtor, client4, input, withCommand = (_) => _, ...args) => {
       let command5 = new CommandCtor(input);
       command5 = withCommand(command5) ?? command5;
-      return await client3.send(command5, ...args);
+      return await client4.send(command5, ...args);
     };
     get = (fromObject, path) => {
       let cursor2 = fromObject;
@@ -13417,7 +13417,7 @@ __export(client_exports2, {
   createUserAgentStringParsingProvider: () => createUserAgentStringParsingProvider,
   crtAvailability: () => crtAvailability,
   defaultUserAgent: () => defaultUserAgent,
-  emitWarningIfUnsupportedVersion: () => emitWarningIfUnsupportedVersion,
+  emitWarningIfUnsupportedVersion: () => emitWarningIfUnsupportedVersion2,
   fallback: () => fallback,
   getAwsRegionExtensionConfiguration: () => getAwsRegionExtensionConfiguration,
   getHostHeaderPlugin: () => getHostHeaderPlugin,
@@ -13456,7 +13456,7 @@ __export(client_exports2, {
 });
 var init_client3 = __esm({
   "node_modules/@aws-sdk/core/dist-es/submodules/client/index.js"() {
-    init_emitWarningIfUnsupportedVersion();
+    init_emitWarningIfUnsupportedVersion2();
     init_longPollMiddleware();
     init_setCredentialFeature();
     init_setFeature();
@@ -13486,702 +13486,1063 @@ var init_client3 = __esm({
   }
 });
 
-// node_modules/@aws-sdk/middleware-eventstream/dist-cjs/index.js
+// node_modules/@aws-sdk/util-dynamodb/dist-cjs/index.js
 var require_dist_cjs2 = __commonJS({
-  "node_modules/@aws-sdk/middleware-eventstream/dist-cjs/index.js"(exports2) {
-    var { HttpRequest: HttpRequest2 } = (init_protocols(), __toCommonJS(protocols_exports));
-    function resolveEventStreamConfig(input) {
-      const eventSigner = input.signer;
-      const messageSigner = input.signer;
-      const newInput = Object.assign(input, {
-        eventSigner,
-        messageSigner
-      });
-      const eventStreamPayloadHandler = newInput.eventStreamPayloadHandlerProvider(newInput);
-      return Object.assign(newInput, {
-        eventStreamPayloadHandler
-      });
+  "node_modules/@aws-sdk/util-dynamodb/dist-cjs/index.js"(exports2) {
+    var NumberValue = class _NumberValue {
+      value;
+      constructor(value) {
+        if (typeof value === "object" && "N" in value) {
+          this.value = String(value.N);
+        } else {
+          this.value = String(value);
+        }
+        const valueOf = typeof value.valueOf() === "number" ? value.valueOf() : 0;
+        const imprecise = valueOf > Number.MAX_SAFE_INTEGER || valueOf < Number.MIN_SAFE_INTEGER || Math.abs(valueOf) === Infinity || Number.isNaN(valueOf);
+        if (imprecise) {
+          throw new Error(`NumberValue should not be initialized with an imprecise number=${valueOf}. Use a string instead.`);
+        }
+      }
+      static from(value) {
+        return new _NumberValue(value);
+      }
+      toAttributeValue() {
+        return {
+          N: this.toString()
+        };
+      }
+      toBigInt() {
+        const stringValue = this.toString();
+        return BigInt(stringValue);
+      }
+      toString() {
+        return String(this.value);
+      }
+      valueOf() {
+        return this.toString();
+      }
+    };
+    var convertToAttr = (data, options) => {
+      if (data === void 0) {
+        throw new Error(`Pass options.removeUndefinedValues=true to remove undefined values from map/array/set.`);
+      } else if (data === null && typeof data === "object") {
+        return convertToNullAttr();
+      } else if (Array.isArray(data)) {
+        return convertToListAttr(data, options);
+      } else if (data?.constructor?.name === "Set") {
+        return convertToSetAttr(data, options);
+      } else if (data?.constructor?.name === "Map") {
+        return convertToMapAttrFromIterable(data, options);
+      } else if (data?.constructor?.name === "Object" || !data.constructor && typeof data === "object") {
+        return convertToMapAttrFromEnumerableProps(data, options);
+      } else if (isBinary(data)) {
+        if (data.length === 0 && options?.convertEmptyValues) {
+          return convertToNullAttr();
+        }
+        return convertToBinaryAttr(data);
+      } else if (typeof data === "boolean" || data?.constructor?.name === "Boolean") {
+        return { BOOL: data.valueOf() };
+      } else if (typeof data === "number" || data?.constructor?.name === "Number") {
+        return convertToNumberAttr(data, options);
+      } else if (data instanceof NumberValue) {
+        return data.toAttributeValue();
+      } else if (typeof data === "bigint") {
+        return convertToBigIntAttr(data);
+      } else if (typeof data === "string" || data?.constructor?.name === "String") {
+        if (data.length === 0 && options?.convertEmptyValues) {
+          return convertToNullAttr();
+        }
+        return convertToStringAttr(data);
+      } else if (options?.convertClassInstanceToMap && typeof data === "object") {
+        return convertToMapAttrFromEnumerableProps(data, options);
+      }
+      throw new Error(`Unsupported type passed: ${data}. Pass options.convertClassInstanceToMap=true to marshall typeof object as map attribute.`);
+    };
+    var convertToListAttr = (data, options) => ({
+      L: data.filter((item) => typeof item !== "function" && (!options?.removeUndefinedValues || options?.removeUndefinedValues && item !== void 0)).map((item) => convertToAttr(item, options))
+    });
+    var convertToSetAttr = (set, options) => {
+      const setToOperate = options?.removeUndefinedValues ? new Set([...set].filter((value) => value !== void 0)) : set;
+      if (!options?.removeUndefinedValues && setToOperate.has(void 0)) {
+        throw new Error(`Pass options.removeUndefinedValues=true to remove undefined values from map/array/set.`);
+      }
+      if (setToOperate.size === 0) {
+        if (options?.convertEmptyValues) {
+          return convertToNullAttr();
+        }
+        throw new Error(`Pass a non-empty set, or options.convertEmptyValues=true.`);
+      }
+      const item = setToOperate.values().next().value;
+      if (item instanceof NumberValue) {
+        return {
+          NS: Array.from(setToOperate).map((_) => _.toString())
+        };
+      } else if (typeof item === "number") {
+        return {
+          NS: Array.from(setToOperate).map((num) => convertToNumberAttr(num, options)).map((item2) => item2.N)
+        };
+      } else if (typeof item === "bigint") {
+        return {
+          NS: Array.from(setToOperate).map(convertToBigIntAttr).map((item2) => item2.N)
+        };
+      } else if (typeof item === "string") {
+        return {
+          SS: Array.from(setToOperate).map(convertToStringAttr).map((item2) => item2.S)
+        };
+      } else if (isBinary(item)) {
+        return {
+          BS: Array.from(setToOperate).map(convertToBinaryAttr).map((item2) => item2.B)
+        };
+      } else {
+        throw new Error(`Only Number Set (NS), Binary Set (BS) or String Set (SS) are allowed.`);
+      }
+    };
+    var convertToMapAttrFromIterable = (data, options) => ({
+      M: ((data2) => {
+        const map3 = {};
+        for (const [key, value] of data2) {
+          if (typeof value !== "function" && (value !== void 0 || !options?.removeUndefinedValues)) {
+            map3[key] = convertToAttr(value, options);
+          }
+        }
+        return map3;
+      })(data)
+    });
+    var convertToMapAttrFromEnumerableProps = (data, options) => ({
+      M: ((data2) => {
+        const map3 = {};
+        for (const key in data2) {
+          const value = data2[key];
+          if (typeof value !== "function" && (value !== void 0 || !options?.removeUndefinedValues)) {
+            map3[key] = convertToAttr(value, options);
+          }
+        }
+        return map3;
+      })(data)
+    });
+    var convertToNullAttr = () => ({ NULL: true });
+    var convertToBinaryAttr = (data) => ({ B: data });
+    var convertToStringAttr = (data) => ({ S: data.toString() });
+    var convertToBigIntAttr = (data) => ({ N: data.toString() });
+    var validateBigIntAndThrow = (errorPrefix) => {
+      throw new Error(`${errorPrefix} Use NumberValue from @aws-sdk/lib-dynamodb.`);
+    };
+    var convertToNumberAttr = (num, options) => {
+      if ([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].map((val) => val.toString()).includes(num.toString())) {
+        throw new Error(`Special numeric value ${num.toString()} is not allowed`);
+      } else if (!options?.allowImpreciseNumbers) {
+        if (Number(num) > Number.MAX_SAFE_INTEGER) {
+          validateBigIntAndThrow(`Number ${num.toString()} is greater than Number.MAX_SAFE_INTEGER.`);
+        } else if (Number(num) < Number.MIN_SAFE_INTEGER) {
+          validateBigIntAndThrow(`Number ${num.toString()} is lesser than Number.MIN_SAFE_INTEGER.`);
+        }
+      }
+      return { N: num.toString() };
+    };
+    var isBinary = (data) => {
+      const binaryTypes = [
+        "ArrayBuffer",
+        "Blob",
+        "Buffer",
+        "DataView",
+        "File",
+        "Int8Array",
+        "Uint8Array",
+        "Uint8ClampedArray",
+        "Int16Array",
+        "Uint16Array",
+        "Int32Array",
+        "Uint32Array",
+        "Float32Array",
+        "Float64Array",
+        "BigInt64Array",
+        "BigUint64Array"
+      ];
+      if (data?.constructor) {
+        return binaryTypes.includes(data.constructor.name);
+      }
+      return false;
+    };
+    var convertToNative = (data, options) => {
+      for (const [key, value] of Object.entries(data)) {
+        if (value !== void 0) {
+          switch (key) {
+            case "NULL":
+              return null;
+            case "BOOL":
+              return Boolean(value);
+            case "N":
+              return convertNumber(value, options);
+            case "B":
+              return convertBinary(value);
+            case "S":
+              return convertString(value);
+            case "L":
+              return convertList(value, options);
+            case "M":
+              return convertMap2(value, options);
+            case "NS":
+              return new Set(value.map((item) => convertNumber(item, options)));
+            case "BS":
+              return new Set(value.map(convertBinary));
+            case "SS":
+              return new Set(value.map(convertString));
+            default:
+              throw new Error(`Unsupported type passed: ${key}`);
+          }
+        }
+      }
+      throw new Error(`No value defined: ${JSON.stringify(data)}`);
+    };
+    var convertNumber = (numString, options) => {
+      if (typeof options?.wrapNumbers === "function") {
+        return options?.wrapNumbers(numString);
+      }
+      if (options?.wrapNumbers) {
+        return NumberValue.from(numString);
+      }
+      const num = Number(numString);
+      const infinityValues = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
+      const isLargeFiniteNumber = (num > Number.MAX_SAFE_INTEGER || num < Number.MIN_SAFE_INTEGER) && !infinityValues.includes(num);
+      if (isLargeFiniteNumber) {
+        if (typeof BigInt === "function") {
+          try {
+            return BigInt(numString);
+          } catch (error2) {
+            throw new Error(`${numString} can't be converted to BigInt. Set options.wrapNumbers to get string value.`);
+          }
+        } else {
+          throw new Error(`${numString} is outside SAFE_INTEGER bounds. Set options.wrapNumbers to get string value.`);
+        }
+      }
+      return num;
+    };
+    var convertString = (stringValue) => stringValue;
+    var convertBinary = (binaryValue) => binaryValue;
+    var convertList = (list2, options) => list2.map((item) => convertToNative(item, options));
+    var convertMap2 = (map3, options) => Object.entries(map3).reduce((acc, [key, value]) => (acc[key] = convertToNative(value, options), acc), {});
+    function marshall(data, options) {
+      const attributeValue = convertToAttr(data, options);
+      const [key, value] = Object.entries(attributeValue)[0];
+      switch (key) {
+        case "M":
+        case "L":
+          return options?.convertTopLevelContainer ? attributeValue : value;
+        case "SS":
+        case "NS":
+        case "BS":
+        case "S":
+        case "N":
+        case "B":
+        case "NULL":
+        case "BOOL":
+        case "$unknown":
+        default:
+          return attributeValue;
+      }
     }
-    var eventStreamHandlingMiddleware = (options) => (next, context) => async (args) => {
-      const { request } = args;
-      if (!HttpRequest2.isInstance(request))
-        return next(args);
-      return options.eventStreamPayloadHandler.handle(next, args, context);
+    var unmarshall = (data, options) => {
+      if (options?.convertWithoutMapWrapper) {
+        return convertToNative(data, options);
+      }
+      return convertToNative({ M: data }, options);
     };
-    var eventStreamHandlingMiddlewareOptions = {
-      tags: ["EVENT_STREAM", "SIGNATURE", "HANDLE"],
-      name: "eventStreamHandlingMiddleware",
-      relation: "after",
-      toMiddleware: "awsAuthMiddleware",
-      override: true
-    };
-    var eventStreamHeaderMiddleware = (next) => async (args) => {
-      const { request } = args;
-      if (!HttpRequest2.isInstance(request))
-        return next(args);
-      request.headers = {
-        ...request.headers,
-        "content-type": "application/vnd.amazon.eventstream",
-        "x-amz-content-sha256": "STREAMING-AWS4-HMAC-SHA256-EVENTS"
-      };
-      return next({
-        ...args,
-        request
+    exports2.NumberValueImpl = NumberValue;
+    exports2.convertToAttr = convertToAttr;
+    exports2.convertToNative = convertToNative;
+    exports2.marshall = marshall;
+    exports2.unmarshall = unmarshall;
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConstants.js
+function validateAccountIdEndpointMode(value) {
+  return ACCOUNT_ID_ENDPOINT_MODE_VALUES.includes(value);
+}
+var DEFAULT_ACCOUNT_ID_ENDPOINT_MODE, ACCOUNT_ID_ENDPOINT_MODE_VALUES;
+var init_AccountIdEndpointModeConstants = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConstants.js"() {
+    DEFAULT_ACCOUNT_ID_ENDPOINT_MODE = "preferred";
+    ACCOUNT_ID_ENDPOINT_MODE_VALUES = ["disabled", "preferred", "required"];
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConfigResolver.js
+var resolveAccountIdEndpointModeConfig;
+var init_AccountIdEndpointModeConfigResolver = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConfigResolver.js"() {
+    init_client2();
+    init_AccountIdEndpointModeConstants();
+    resolveAccountIdEndpointModeConfig = (input) => {
+      const { accountIdEndpointMode } = input;
+      const accountIdEndpointModeProvider = normalizeProvider(accountIdEndpointMode ?? DEFAULT_ACCOUNT_ID_ENDPOINT_MODE);
+      return Object.assign(input, {
+        accountIdEndpointMode: async () => {
+          const accIdMode = await accountIdEndpointModeProvider();
+          if (!validateAccountIdEndpointMode(accIdMode)) {
+            throw new Error(`Invalid value for accountIdEndpointMode: ${accIdMode}. Valid values are: "required", "preferred", "disabled".`);
+          }
+          return accIdMode;
+        }
       });
     };
-    var eventStreamHeaderMiddlewareOptions = {
-      step: "build",
-      tags: ["EVENT_STREAM", "HEADER", "CONTENT_TYPE", "CONTENT_SHA256"],
-      name: "eventStreamHeaderMiddleware",
-      override: true
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/NodeAccountIdEndpointModeConfigOptions.js
+var err, _throw, ENV_ACCOUNT_ID_ENDPOINT_MODE, CONFIG_ACCOUNT_ID_ENDPOINT_MODE, NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS;
+var init_NodeAccountIdEndpointModeConfigOptions = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/NodeAccountIdEndpointModeConfigOptions.js"() {
+    init_AccountIdEndpointModeConstants();
+    err = "Invalid AccountIdEndpointMode value";
+    _throw = (message) => {
+      throw new Error(message);
     };
-    var getEventStreamPlugin = (options) => ({
-      applyToStack: (clientStack) => {
-        clientStack.addRelativeTo(eventStreamHandlingMiddleware(options), eventStreamHandlingMiddlewareOptions);
-        clientStack.add(eventStreamHeaderMiddleware, eventStreamHeaderMiddlewareOptions);
+    ENV_ACCOUNT_ID_ENDPOINT_MODE = "AWS_ACCOUNT_ID_ENDPOINT_MODE";
+    CONFIG_ACCOUNT_ID_ENDPOINT_MODE = "account_id_endpoint_mode";
+    NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS = {
+      environmentVariableSelector: (env2) => {
+        const value = env2[ENV_ACCOUNT_ID_ENDPOINT_MODE];
+        if (value && !validateAccountIdEndpointMode(value)) {
+          _throw(err);
+        }
+        return value;
+      },
+      configFileSelector: (profile) => {
+        const value = profile[CONFIG_ACCOUNT_ID_ENDPOINT_MODE];
+        if (value && !validateAccountIdEndpointMode(value)) {
+          _throw(err);
+        }
+        return value;
+      },
+      default: DEFAULT_ACCOUNT_ID_ENDPOINT_MODE
+    };
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/index.js
+var account_id_endpoint_exports = {};
+__export(account_id_endpoint_exports, {
+  ACCOUNT_ID_ENDPOINT_MODE_VALUES: () => ACCOUNT_ID_ENDPOINT_MODE_VALUES,
+  CONFIG_ACCOUNT_ID_ENDPOINT_MODE: () => CONFIG_ACCOUNT_ID_ENDPOINT_MODE,
+  DEFAULT_ACCOUNT_ID_ENDPOINT_MODE: () => DEFAULT_ACCOUNT_ID_ENDPOINT_MODE,
+  ENV_ACCOUNT_ID_ENDPOINT_MODE: () => ENV_ACCOUNT_ID_ENDPOINT_MODE,
+  NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS: () => NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS,
+  resolveAccountIdEndpointModeConfig: () => resolveAccountIdEndpointModeConfig,
+  validateAccountIdEndpointMode: () => validateAccountIdEndpointMode
+});
+var init_account_id_endpoint = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/index.js"() {
+    init_AccountIdEndpointModeConfigResolver();
+    init_AccountIdEndpointModeConstants();
+    init_NodeAccountIdEndpointModeConfigOptions();
+  }
+});
+
+// node_modules/obliterator/iterator.js
+var require_iterator = __commonJS({
+  "node_modules/obliterator/iterator.js"(exports2, module2) {
+    function Iterator(next) {
+      Object.defineProperty(this, "_next", {
+        writable: false,
+        enumerable: false,
+        value: next
+      });
+      this.done = false;
+    }
+    Iterator.prototype.next = function() {
+      if (this.done)
+        return { done: true };
+      var step = this._next();
+      if (step.done)
+        this.done = true;
+      return step;
+    };
+    if (typeof Symbol !== "undefined")
+      Iterator.prototype[Symbol.iterator] = function() {
+        return this;
+      };
+    Iterator.of = function() {
+      var args = arguments, l3 = args.length, i5 = 0;
+      return new Iterator(function() {
+        if (i5 >= l3)
+          return { done: true };
+        return { done: false, value: args[i5++] };
+      });
+    };
+    Iterator.empty = function() {
+      var iterator = new Iterator(null);
+      iterator.done = true;
+      return iterator;
+    };
+    Iterator.is = function(value) {
+      if (value instanceof Iterator)
+        return true;
+      return typeof value === "object" && value !== null && typeof value.next === "function";
+    };
+    module2.exports = Iterator;
+  }
+});
+
+// node_modules/obliterator/foreach.js
+var require_foreach = __commonJS({
+  "node_modules/obliterator/foreach.js"(exports2, module2) {
+    var ARRAY_BUFFER_SUPPORT = typeof ArrayBuffer !== "undefined";
+    var SYMBOL_SUPPORT = typeof Symbol !== "undefined";
+    function forEach(iterable, callback) {
+      var iterator, k5, i5, l3, s2;
+      if (!iterable)
+        throw new Error("obliterator/forEach: invalid iterable.");
+      if (typeof callback !== "function")
+        throw new Error("obliterator/forEach: expecting a callback.");
+      if (Array.isArray(iterable) || ARRAY_BUFFER_SUPPORT && ArrayBuffer.isView(iterable) || typeof iterable === "string" || iterable.toString() === "[object Arguments]") {
+        for (i5 = 0, l3 = iterable.length; i5 < l3; i5++)
+          callback(iterable[i5], i5);
+        return;
+      }
+      if (typeof iterable.forEach === "function") {
+        iterable.forEach(callback);
+        return;
+      }
+      if (SYMBOL_SUPPORT && Symbol.iterator in iterable && typeof iterable.next !== "function") {
+        iterable = iterable[Symbol.iterator]();
+      }
+      if (typeof iterable.next === "function") {
+        iterator = iterable;
+        i5 = 0;
+        while (s2 = iterator.next(), s2.done !== true) {
+          callback(s2.value, i5);
+          i5++;
+        }
+        return;
+      }
+      for (k5 in iterable) {
+        if (iterable.hasOwnProperty(k5)) {
+          callback(iterable[k5], k5);
+        }
+      }
+      return;
+    }
+    forEach.forEachWithNullKeys = function(iterable, callback) {
+      var iterator, k5, i5, l3, s2;
+      if (!iterable)
+        throw new Error("obliterator/forEachWithNullKeys: invalid iterable.");
+      if (typeof callback !== "function")
+        throw new Error("obliterator/forEachWithNullKeys: expecting a callback.");
+      if (Array.isArray(iterable) || ARRAY_BUFFER_SUPPORT && ArrayBuffer.isView(iterable) || typeof iterable === "string" || iterable.toString() === "[object Arguments]") {
+        for (i5 = 0, l3 = iterable.length; i5 < l3; i5++)
+          callback(iterable[i5], null);
+        return;
+      }
+      if (iterable instanceof Set) {
+        iterable.forEach(function(value) {
+          callback(value, null);
+        });
+        return;
+      }
+      if (typeof iterable.forEach === "function") {
+        iterable.forEach(callback);
+        return;
+      }
+      if (SYMBOL_SUPPORT && Symbol.iterator in iterable && typeof iterable.next !== "function") {
+        iterable = iterable[Symbol.iterator]();
+      }
+      if (typeof iterable.next === "function") {
+        iterator = iterable;
+        i5 = 0;
+        while (s2 = iterator.next(), s2.done !== true) {
+          callback(s2.value, null);
+          i5++;
+        }
+        return;
+      }
+      for (k5 in iterable) {
+        if (iterable.hasOwnProperty(k5)) {
+          callback(iterable[k5], k5);
+        }
+      }
+      return;
+    };
+    module2.exports = forEach;
+  }
+});
+
+// node_modules/mnemonist/utils/typed-arrays.js
+var require_typed_arrays = __commonJS({
+  "node_modules/mnemonist/utils/typed-arrays.js"(exports2) {
+    var MAX_8BIT_INTEGER = Math.pow(2, 8) - 1;
+    var MAX_16BIT_INTEGER = Math.pow(2, 16) - 1;
+    var MAX_32BIT_INTEGER = Math.pow(2, 32) - 1;
+    var MAX_SIGNED_8BIT_INTEGER = Math.pow(2, 7) - 1;
+    var MAX_SIGNED_16BIT_INTEGER = Math.pow(2, 15) - 1;
+    var MAX_SIGNED_32BIT_INTEGER = Math.pow(2, 31) - 1;
+    exports2.getPointerArray = function(size) {
+      var maxIndex = size - 1;
+      if (maxIndex <= MAX_8BIT_INTEGER)
+        return Uint8Array;
+      if (maxIndex <= MAX_16BIT_INTEGER)
+        return Uint16Array;
+      if (maxIndex <= MAX_32BIT_INTEGER)
+        return Uint32Array;
+      return Float64Array;
+    };
+    exports2.getSignedPointerArray = function(size) {
+      var maxIndex = size - 1;
+      if (maxIndex <= MAX_SIGNED_8BIT_INTEGER)
+        return Int8Array;
+      if (maxIndex <= MAX_SIGNED_16BIT_INTEGER)
+        return Int16Array;
+      if (maxIndex <= MAX_SIGNED_32BIT_INTEGER)
+        return Int32Array;
+      return Float64Array;
+    };
+    exports2.getNumberType = function(value) {
+      if (value === (value | 0)) {
+        if (Math.sign(value) === -1) {
+          if (value <= 127 && value >= -128)
+            return Int8Array;
+          if (value <= 32767 && value >= -32768)
+            return Int16Array;
+          return Int32Array;
+        } else {
+          if (value <= 255)
+            return Uint8Array;
+          if (value <= 65535)
+            return Uint16Array;
+          return Uint32Array;
+        }
+      }
+      return Float64Array;
+    };
+    var TYPE_PRIORITY = {
+      Uint8Array: 1,
+      Int8Array: 2,
+      Uint16Array: 3,
+      Int16Array: 4,
+      Uint32Array: 5,
+      Int32Array: 6,
+      Float32Array: 7,
+      Float64Array: 8
+    };
+    exports2.getMinimalRepresentation = function(array, getter) {
+      var maxType = null, maxPriority = 0, p3, t, v, i5, l3;
+      for (i5 = 0, l3 = array.length; i5 < l3; i5++) {
+        v = getter ? getter(array[i5]) : array[i5];
+        t = exports2.getNumberType(v);
+        p3 = TYPE_PRIORITY[t.name];
+        if (p3 > maxPriority) {
+          maxPriority = p3;
+          maxType = t;
+        }
+      }
+      return maxType;
+    };
+    exports2.isTypedArray = function(value) {
+      return typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView(value);
+    };
+    exports2.concat = function() {
+      var length = 0, i5, o3, l3;
+      for (i5 = 0, l3 = arguments.length; i5 < l3; i5++)
+        length += arguments[i5].length;
+      var array = new arguments[0].constructor(length);
+      for (i5 = 0, o3 = 0; i5 < l3; i5++) {
+        array.set(arguments[i5], o3);
+        o3 += arguments[i5].length;
+      }
+      return array;
+    };
+    exports2.indices = function(length) {
+      var PointerArray = exports2.getPointerArray(length);
+      var array = new PointerArray(length);
+      for (var i5 = 0; i5 < length; i5++)
+        array[i5] = i5;
+      return array;
+    };
+  }
+});
+
+// node_modules/mnemonist/utils/iterables.js
+var require_iterables = __commonJS({
+  "node_modules/mnemonist/utils/iterables.js"(exports2) {
+    var forEach = require_foreach();
+    var typed = require_typed_arrays();
+    function isArrayLike(target) {
+      return Array.isArray(target) || typed.isTypedArray(target);
+    }
+    function guessLength(target) {
+      if (typeof target.length === "number")
+        return target.length;
+      if (typeof target.size === "number")
+        return target.size;
+      return;
+    }
+    function toArray(target) {
+      var l3 = guessLength(target);
+      var array = typeof l3 === "number" ? new Array(l3) : [];
+      var i5 = 0;
+      forEach(target, function(value) {
+        array[i5++] = value;
+      });
+      return array;
+    }
+    function toArrayWithIndices(target) {
+      var l3 = guessLength(target);
+      var IndexArray = typeof l3 === "number" ? typed.getPointerArray(l3) : Array;
+      var array = typeof l3 === "number" ? new Array(l3) : [];
+      var indices = typeof l3 === "number" ? new IndexArray(l3) : [];
+      var i5 = 0;
+      forEach(target, function(value) {
+        array[i5] = value;
+        indices[i5] = i5++;
+      });
+      return [array, indices];
+    }
+    exports2.isArrayLike = isArrayLike;
+    exports2.guessLength = guessLength;
+    exports2.toArray = toArray;
+    exports2.toArrayWithIndices = toArrayWithIndices;
+  }
+});
+
+// node_modules/mnemonist/lru-cache.js
+var require_lru_cache = __commonJS({
+  "node_modules/mnemonist/lru-cache.js"(exports2, module2) {
+    var Iterator = require_iterator();
+    var forEach = require_foreach();
+    var typed = require_typed_arrays();
+    var iterables = require_iterables();
+    function LRUCache(Keys, Values, capacity) {
+      if (arguments.length < 2) {
+        capacity = Keys;
+        Keys = null;
+        Values = null;
+      }
+      this.capacity = capacity;
+      if (typeof this.capacity !== "number" || this.capacity <= 0)
+        throw new Error("mnemonist/lru-cache: capacity should be positive number.");
+      var PointerArray = typed.getPointerArray(capacity);
+      this.forward = new PointerArray(capacity);
+      this.backward = new PointerArray(capacity);
+      this.K = typeof Keys === "function" ? new Keys(capacity) : new Array(capacity);
+      this.V = typeof Values === "function" ? new Values(capacity) : new Array(capacity);
+      this.size = 0;
+      this.head = 0;
+      this.tail = 0;
+      this.items = {};
+    }
+    LRUCache.prototype.clear = function() {
+      this.size = 0;
+      this.head = 0;
+      this.tail = 0;
+      this.items = {};
+    };
+    LRUCache.prototype.splayOnTop = function(pointer) {
+      var oldHead = this.head;
+      if (this.head === pointer)
+        return this;
+      var previous = this.backward[pointer], next = this.forward[pointer];
+      if (this.tail === pointer) {
+        this.tail = previous;
+      } else {
+        this.backward[next] = previous;
+      }
+      this.forward[previous] = next;
+      this.backward[oldHead] = pointer;
+      this.head = pointer;
+      this.forward[pointer] = oldHead;
+      return this;
+    };
+    LRUCache.prototype.set = function(key, value) {
+      var pointer = this.items[key];
+      if (typeof pointer !== "undefined") {
+        this.splayOnTop(pointer);
+        this.V[pointer] = value;
+        return;
+      }
+      if (this.size < this.capacity) {
+        pointer = this.size++;
+      } else {
+        pointer = this.tail;
+        this.tail = this.backward[pointer];
+        delete this.items[this.K[pointer]];
+      }
+      this.items[key] = pointer;
+      this.K[pointer] = key;
+      this.V[pointer] = value;
+      this.forward[pointer] = this.head;
+      this.backward[this.head] = pointer;
+      this.head = pointer;
+    };
+    LRUCache.prototype.setpop = function(key, value) {
+      var oldValue = null;
+      var oldKey = null;
+      var pointer = this.items[key];
+      if (typeof pointer !== "undefined") {
+        this.splayOnTop(pointer);
+        oldValue = this.V[pointer];
+        this.V[pointer] = value;
+        return { evicted: false, key, value: oldValue };
+      }
+      if (this.size < this.capacity) {
+        pointer = this.size++;
+      } else {
+        pointer = this.tail;
+        this.tail = this.backward[pointer];
+        oldValue = this.V[pointer];
+        oldKey = this.K[pointer];
+        delete this.items[this.K[pointer]];
+      }
+      this.items[key] = pointer;
+      this.K[pointer] = key;
+      this.V[pointer] = value;
+      this.forward[pointer] = this.head;
+      this.backward[this.head] = pointer;
+      this.head = pointer;
+      if (oldKey) {
+        return { evicted: true, key: oldKey, value: oldValue };
+      } else {
+        return null;
+      }
+    };
+    LRUCache.prototype.has = function(key) {
+      return key in this.items;
+    };
+    LRUCache.prototype.get = function(key) {
+      var pointer = this.items[key];
+      if (typeof pointer === "undefined")
+        return;
+      this.splayOnTop(pointer);
+      return this.V[pointer];
+    };
+    LRUCache.prototype.peek = function(key) {
+      var pointer = this.items[key];
+      if (typeof pointer === "undefined")
+        return;
+      return this.V[pointer];
+    };
+    LRUCache.prototype.forEach = function(callback, scope) {
+      scope = arguments.length > 1 ? scope : this;
+      var i5 = 0, l3 = this.size;
+      var pointer = this.head, keys = this.K, values = this.V, forward = this.forward;
+      while (i5 < l3) {
+        callback.call(scope, values[pointer], keys[pointer], this);
+        pointer = forward[pointer];
+        i5++;
+      }
+    };
+    LRUCache.prototype.keys = function() {
+      var i5 = 0, l3 = this.size;
+      var pointer = this.head, keys = this.K, forward = this.forward;
+      return new Iterator(function() {
+        if (i5 >= l3)
+          return { done: true };
+        var key = keys[pointer];
+        i5++;
+        if (i5 < l3)
+          pointer = forward[pointer];
+        return {
+          done: false,
+          value: key
+        };
+      });
+    };
+    LRUCache.prototype.values = function() {
+      var i5 = 0, l3 = this.size;
+      var pointer = this.head, values = this.V, forward = this.forward;
+      return new Iterator(function() {
+        if (i5 >= l3)
+          return { done: true };
+        var value = values[pointer];
+        i5++;
+        if (i5 < l3)
+          pointer = forward[pointer];
+        return {
+          done: false,
+          value
+        };
+      });
+    };
+    LRUCache.prototype.entries = function() {
+      var i5 = 0, l3 = this.size;
+      var pointer = this.head, keys = this.K, values = this.V, forward = this.forward;
+      return new Iterator(function() {
+        if (i5 >= l3)
+          return { done: true };
+        var key = keys[pointer], value = values[pointer];
+        i5++;
+        if (i5 < l3)
+          pointer = forward[pointer];
+        return {
+          done: false,
+          value: [key, value]
+        };
+      });
+    };
+    if (typeof Symbol !== "undefined")
+      LRUCache.prototype[Symbol.iterator] = LRUCache.prototype.entries;
+    LRUCache.prototype.inspect = function() {
+      var proxy = /* @__PURE__ */ new Map();
+      var iterator = this.entries(), step;
+      while (step = iterator.next(), !step.done)
+        proxy.set(step.value[0], step.value[1]);
+      Object.defineProperty(proxy, "constructor", {
+        value: LRUCache,
+        enumerable: false
+      });
+      return proxy;
+    };
+    if (typeof Symbol !== "undefined")
+      LRUCache.prototype[/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")] = LRUCache.prototype.inspect;
+    LRUCache.from = function(iterable, Keys, Values, capacity) {
+      if (arguments.length < 2) {
+        capacity = iterables.guessLength(iterable);
+        if (typeof capacity !== "number")
+          throw new Error("mnemonist/lru-cache.from: could not guess iterable length. Please provide desired capacity as last argument.");
+      } else if (arguments.length === 2) {
+        capacity = Keys;
+        Keys = null;
+        Values = null;
+      }
+      var cache5 = new LRUCache(Keys, Values, capacity);
+      forEach(iterable, function(value, key) {
+        cache5.set(key, value);
+      });
+      return cache5;
+    };
+    module2.exports = LRUCache;
+  }
+});
+
+// node_modules/@aws-sdk/endpoint-cache/dist-cjs/index.js
+var require_dist_cjs3 = __commonJS({
+  "node_modules/@aws-sdk/endpoint-cache/dist-cjs/index.js"(exports2) {
+    var LRUCache = require_lru_cache();
+    var EndpointCache2 = class {
+      cache;
+      constructor(capacity) {
+        this.cache = new LRUCache(capacity);
+      }
+      getEndpoint(key) {
+        const endpointsWithExpiry = this.get(key);
+        if (!endpointsWithExpiry || endpointsWithExpiry.length === 0) {
+          return void 0;
+        }
+        const endpoints = endpointsWithExpiry.map((endpoint) => endpoint.Address);
+        return endpoints[Math.floor(Math.random() * endpoints.length)];
+      }
+      get(key) {
+        if (!this.has(key)) {
+          return;
+        }
+        const value = this.cache.get(key);
+        if (!value) {
+          return;
+        }
+        const now = Date.now();
+        const endpointsWithExpiry = value.filter((endpoint) => now < endpoint.Expires);
+        if (endpointsWithExpiry.length === 0) {
+          this.delete(key);
+          return void 0;
+        }
+        return endpointsWithExpiry;
+      }
+      set(key, endpoints) {
+        const now = Date.now();
+        this.cache.set(key, endpoints.map(({ Address, CachePeriodInMinutes }) => ({
+          Address,
+          Expires: now + CachePeriodInMinutes * 60 * 1e3
+        })));
+      }
+      delete(key) {
+        this.cache.set(key, []);
+      }
+      has(key) {
+        if (!this.cache.has(key)) {
+          return false;
+        }
+        const endpoints = this.cache.peek(key);
+        if (!endpoints) {
+          return false;
+        }
+        return endpoints.length > 0;
+      }
+      clear() {
+        this.cache.clear();
+      }
+    };
+    exports2.EndpointCache = EndpointCache2;
+  }
+});
+
+// node_modules/@aws-sdk/middleware-endpoint-discovery/dist-cjs/index.js
+var require_dist_cjs4 = __commonJS({
+  "node_modules/@aws-sdk/middleware-endpoint-discovery/dist-cjs/index.js"(exports2) {
+    var { HttpRequest: HttpRequest2 } = (init_protocols(), __toCommonJS(protocols_exports));
+    var { EndpointCache: EndpointCache2 } = require_dist_cjs3();
+    var ENV_ENDPOINT_DISCOVERY = ["AWS_ENABLE_ENDPOINT_DISCOVERY", "AWS_ENDPOINT_DISCOVERY_ENABLED"];
+    var CONFIG_ENDPOINT_DISCOVERY = "endpoint_discovery_enabled";
+    var isFalsy = (value) => ["false", "0"].indexOf(value) >= 0;
+    var NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS = {
+      environmentVariableSelector: (env2) => {
+        for (let i5 = 0; i5 < ENV_ENDPOINT_DISCOVERY.length; i5++) {
+          const envKey = ENV_ENDPOINT_DISCOVERY[i5];
+          if (envKey in env2) {
+            const value = env2[envKey];
+            if (value === "") {
+              throw Error(`Environment variable ${envKey} can't be empty of undefined, got "${value}"`);
+            }
+            return !isFalsy(value);
+          }
+        }
+      },
+      configFileSelector: (profile) => {
+        if (CONFIG_ENDPOINT_DISCOVERY in profile) {
+          const value = profile[CONFIG_ENDPOINT_DISCOVERY];
+          if (value === void 0) {
+            throw Error(`Shared config entry ${CONFIG_ENDPOINT_DISCOVERY} can't be undefined, got "${value}"`);
+          }
+          return !isFalsy(value);
+        }
+      },
+      default: void 0
+    };
+    var getCacheKey = async (commandName, config, options) => {
+      const { accessKeyId } = await config.credentials();
+      const { identifiers } = options;
+      return JSON.stringify({
+        ...accessKeyId && { accessKeyId },
+        ...identifiers && {
+          commandName,
+          identifiers: Object.entries(identifiers).sort().reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+        }
+      });
+    };
+    var requestQueue = {};
+    var updateDiscoveredEndpointInCache = async (config, options) => new Promise((resolve, reject) => {
+      const { endpointCache } = config;
+      const { cacheKey, commandName, identifiers } = options;
+      const endpoints = endpointCache.get(cacheKey);
+      if (endpoints && endpoints.length === 1 && endpoints[0].Address === "") {
+        if (options.isDiscoveredEndpointRequired) {
+          if (!requestQueue[cacheKey])
+            requestQueue[cacheKey] = [];
+          requestQueue[cacheKey].push({ resolve, reject });
+        } else {
+          resolve();
+        }
+      } else if (endpoints && endpoints.length > 0) {
+        resolve();
+      } else {
+        const placeholderEndpoints = [{ Address: "", CachePeriodInMinutes: 1 }];
+        endpointCache.set(cacheKey, placeholderEndpoints);
+        const command5 = new options.endpointDiscoveryCommandCtor({
+          Operation: commandName.slice(0, -7),
+          Identifiers: identifiers
+        });
+        const handler2 = command5.resolveMiddleware(options.clientStack, config, options.options);
+        handler2(command5).then((result) => {
+          endpointCache.set(cacheKey, result.output.Endpoints);
+          if (requestQueue[cacheKey]) {
+            requestQueue[cacheKey].forEach(({ resolve: resolve2 }) => {
+              resolve2();
+            });
+            delete requestQueue[cacheKey];
+          }
+          resolve();
+        }).catch((error2) => {
+          endpointCache.delete(cacheKey);
+          const errorToThrow = Object.assign(new Error(`The operation to discover endpoint failed. Please retry, or provide a custom endpoint and disable endpoint discovery to proceed.`), { reason: error2 });
+          if (requestQueue[cacheKey]) {
+            requestQueue[cacheKey].forEach(({ reject: reject2 }) => {
+              reject2(errorToThrow);
+            });
+            delete requestQueue[cacheKey];
+          }
+          if (options.isDiscoveredEndpointRequired) {
+            reject(errorToThrow);
+          } else {
+            endpointCache.set(cacheKey, placeholderEndpoints);
+            resolve();
+          }
+        });
       }
     });
-    exports2.eventStreamHandlingMiddleware = eventStreamHandlingMiddleware;
-    exports2.eventStreamHandlingMiddlewareOptions = eventStreamHandlingMiddlewareOptions;
-    exports2.eventStreamHeaderMiddleware = eventStreamHeaderMiddleware;
-    exports2.eventStreamHeaderMiddlewareOptions = eventStreamHeaderMiddlewareOptions;
-    exports2.getEventStreamPlugin = getEventStreamPlugin;
-    exports2.resolveEventStreamConfig = resolveEventStreamConfig;
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/util/util-arn-parser/arn.js
-var validate, parse, build;
-var init_arn = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/util/util-arn-parser/arn.js"() {
-    validate = (str) => typeof str === "string" && str.indexOf("arn:") === 0 && str.split(":").length >= 6;
-    parse = (arn) => {
-      const segments = arn.split(":");
-      if (segments.length < 6 || segments[0] !== "arn")
-        throw new Error("Malformed ARN");
-      const [, partition2, service, region, accountId, ...resource] = segments;
-      return {
-        partition: partition2,
-        service,
-        region,
-        accountId,
-        resource: resource.join(":")
-      };
-    };
-    build = (arnObject) => {
-      const { partition: partition2 = "aws", service, region, accountId, resource } = arnObject;
-      if ([service, region, accountId, resource].some((segment) => typeof segment !== "string")) {
-        throw new Error("Input ARN object is invalid");
+    var endpointDiscoveryMiddleware = (config, middlewareConfig) => (next, context) => async (args) => {
+      if (config.isCustomEndpoint) {
+        if (config.isClientEndpointDiscoveryEnabled) {
+          throw new Error(`Custom endpoint is supplied; endpointDiscoveryEnabled must not be true.`);
+        }
+        return next(args);
       }
-      return `arn:${partition2}:${service}:${region}:${accountId}:${resource}`;
-    };
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/util/util-format-url/format-url.js
-function formatUrl(request) {
-  const { port, query } = request;
-  let { protocol, path, hostname } = request;
-  if (protocol && protocol.slice(-1) !== ":") {
-    protocol += ":";
-  }
-  if (port) {
-    hostname += `:${port}`;
-  }
-  if (path && path.charAt(0) !== "/") {
-    path = `/${path}`;
-  }
-  let queryString = query ? buildQueryString(query) : "";
-  if (queryString && queryString[0] !== "?") {
-    queryString = `?${queryString}`;
-  }
-  let auth = "";
-  if (request.username != null || request.password != null) {
-    const username = request.username ?? "";
-    const password = request.password ?? "";
-    auth = `${username}:${password}@`;
-  }
-  let fragment = "";
-  if (request.fragment) {
-    fragment = `#${request.fragment}`;
-  }
-  return `${protocol}//${auth}${hostname}${path}${queryString}${fragment}`;
-}
-var init_format_url = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/util/util-format-url/format-url.js"() {
-    init_protocols();
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/util/index.js
-var util_exports = {};
-__export(util_exports, {
-  build: () => build,
-  formatUrl: () => formatUrl,
-  parse: () => parse,
-  validate: () => validate
-});
-var init_util2 = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/util/index.js"() {
-    init_arn();
-    init_format_url();
-  }
-});
-
-// node_modules/@smithy/fetch-http-handler/dist-cjs/index.js
-var require_dist_cjs3 = __commonJS({
-  "node_modules/@smithy/fetch-http-handler/dist-cjs/index.js"(exports2) {
-    var { buildQueryString: buildQueryString2, HttpResponse: HttpResponse2 } = (init_protocols(), __toCommonJS(protocols_exports));
-    var { streamCollector: streamCollector7 } = (init_serde(), __toCommonJS(serde_exports));
-    exports2.streamCollector = streamCollector7;
-    function createRequest(url, requestOptions) {
-      return new Request(url, requestOptions);
-    }
-    function requestTimeout(timeoutInMs = 0) {
-      return new Promise((resolve, reject) => {
-        if (timeoutInMs) {
-          setTimeout(() => {
-            const timeoutError = new Error(`Request did not complete within ${timeoutInMs} ms`);
-            timeoutError.name = "TimeoutError";
-            reject(timeoutError);
-          }, timeoutInMs);
+      const { endpointDiscoveryCommandCtor } = config;
+      const { isDiscoveredEndpointRequired, identifiers } = middlewareConfig;
+      const clientName = context.clientName;
+      const commandName = context.commandName;
+      const isEndpointDiscoveryEnabled = await config.endpointDiscoveryEnabled();
+      const cacheKey = await getCacheKey(commandName, config, { identifiers });
+      if (isDiscoveredEndpointRequired) {
+        if (isEndpointDiscoveryEnabled === false) {
+          throw new Error(`Endpoint Discovery is disabled but ${commandName} on ${clientName} requires it. Please check your configurations.`);
         }
-      });
-    }
-    var keepAliveSupport = {
-      supported: void 0
-    };
-    var FetchHttpHandler = class _FetchHttpHandler {
-      config;
-      configProvider;
-      static create(instanceOrOptions) {
-        if (typeof instanceOrOptions?.handle === "function") {
-          return instanceOrOptions;
-        }
-        return new _FetchHttpHandler(instanceOrOptions);
-      }
-      constructor(options) {
-        if (typeof options === "function") {
-          this.configProvider = options().then((opts) => opts || {});
-        } else {
-          this.config = options ?? {};
-          this.configProvider = Promise.resolve(this.config);
-        }
-        if (keepAliveSupport.supported === void 0) {
-          keepAliveSupport.supported = Boolean(typeof Request !== "undefined" && "keepalive" in createRequest("https://[::1]"));
-        }
-      }
-      destroy() {
-      }
-      async handle(request, { abortSignal, requestTimeout: requestTimeout$1 } = {}) {
-        if (!this.config) {
-          this.config = await this.configProvider;
-        }
-        const requestTimeoutInMs = requestTimeout$1 ?? this.config.requestTimeout;
-        const keepAlive = this.config.keepAlive === true;
-        const credentials = this.config.credentials;
-        if (abortSignal?.aborted) {
-          const abortError = buildAbortError(abortSignal);
-          return Promise.reject(abortError);
-        }
-        let path = request.path;
-        const queryString = buildQueryString2(request.query || {});
-        if (queryString) {
-          path += `?${queryString}`;
-        }
-        if (request.fragment) {
-          path += `#${request.fragment}`;
-        }
-        let auth = "";
-        if (request.username != null || request.password != null) {
-          const username = request.username ?? "";
-          const password = request.password ?? "";
-          auth = `${username}:${password}@`;
-        }
-        const { port, method } = request;
-        const url = `${request.protocol}//${auth}${request.hostname}${port ? `:${port}` : ""}${path}`;
-        const body = method === "GET" || method === "HEAD" ? void 0 : request.body;
-        const requestOptions = {
-          body,
-          headers: new Headers(request.headers),
-          method,
-          credentials
-        };
-        if (this.config?.cache) {
-          requestOptions.cache = this.config.cache;
-        }
-        if (body) {
-          requestOptions.duplex = "half";
-        }
-        if (typeof AbortController !== "undefined") {
-          requestOptions.signal = abortSignal;
-        }
-        if (keepAliveSupport.supported) {
-          requestOptions.keepalive = keepAlive;
-        }
-        if (typeof this.config.requestInit === "function") {
-          Object.assign(requestOptions, this.config.requestInit(request));
-        }
-        let removeSignalEventListener = () => {
-        };
-        const fetchRequest = createRequest(url, requestOptions);
-        const raceOfPromises = [
-          fetch(fetchRequest).then((response) => {
-            const fetchHeaders = response.headers;
-            const transformedHeaders = {};
-            for (const pair of fetchHeaders.entries()) {
-              transformedHeaders[pair[0]] = pair[1];
-            }
-            const hasReadableStream = response.body != void 0;
-            if (!hasReadableStream) {
-              return response.blob().then((body2) => ({
-                response: new HttpResponse2({
-                  headers: transformedHeaders,
-                  reason: response.statusText,
-                  statusCode: response.status,
-                  body: body2
-                })
-              }));
-            }
-            return {
-              response: new HttpResponse2({
-                headers: transformedHeaders,
-                reason: response.statusText,
-                statusCode: response.status,
-                body: response.body
-              })
-            };
-          }),
-          requestTimeout(requestTimeoutInMs)
-        ];
-        if (abortSignal) {
-          raceOfPromises.push(new Promise((resolve, reject) => {
-            const onAbort = () => {
-              const abortError = buildAbortError(abortSignal);
-              reject(abortError);
-            };
-            if (typeof abortSignal.addEventListener === "function") {
-              const signal = abortSignal;
-              signal.addEventListener("abort", onAbort, { once: true });
-              removeSignalEventListener = () => signal.removeEventListener("abort", onAbort);
-            } else {
-              abortSignal.onabort = onAbort;
-            }
-          }));
-        }
-        return Promise.race(raceOfPromises).finally(removeSignalEventListener);
-      }
-      updateHttpClientConfig(key, value) {
-        this.config = void 0;
-        this.configProvider = this.configProvider.then((config) => {
-          config[key] = value;
-          return config;
+        await updateDiscoveredEndpointInCache(config, {
+          ...middlewareConfig,
+          commandName,
+          cacheKey,
+          endpointDiscoveryCommandCtor
+        });
+      } else if (isEndpointDiscoveryEnabled) {
+        updateDiscoveredEndpointInCache(config, {
+          ...middlewareConfig,
+          commandName,
+          cacheKey,
+          endpointDiscoveryCommandCtor
         });
       }
-      httpHandlerConfigs() {
-        return this.config ?? {};
-      }
-    };
-    function buildAbortError(abortSignal) {
-      const reason = abortSignal && typeof abortSignal === "object" && "reason" in abortSignal ? abortSignal.reason : void 0;
-      if (reason) {
-        if (reason instanceof Error) {
-          const abortError3 = new Error("Request aborted");
-          abortError3.name = "AbortError";
-          abortError3.cause = reason;
-          return abortError3;
-        }
-        const abortError2 = new Error(String(reason));
-        abortError2.name = "AbortError";
-        return abortError2;
-      }
-      const abortError = new Error("Request aborted");
-      abortError.name = "AbortError";
-      return abortError;
-    }
-    exports2.FetchHttpHandler = FetchHttpHandler;
-    exports2.keepAliveSupport = keepAliveSupport;
-  }
-});
-
-// node_modules/@aws-sdk/middleware-websocket/dist-cjs/index.js
-var require_dist_cjs4 = __commonJS({
-  "node_modules/@aws-sdk/middleware-websocket/dist-cjs/index.js"(exports2) {
-    var { formatUrl: formatUrl2 } = (init_util2(), __toCommonJS(util_exports));
-    var { iterableToReadableStream: iterableToReadableStream2, readableStreamToIterable: readableStreamToIterable2, EventStreamCodec: EventStreamCodec2 } = (init_event_streams(), __toCommonJS(event_streams_exports));
-    var { HttpResponse: HttpResponse2, HttpRequest: HttpRequest2 } = (init_protocols(), __toCommonJS(protocols_exports));
-    var { fromBase64: fromBase642, fromHex: fromHex2 } = (init_serde(), __toCommonJS(serde_exports));
-    var { FetchHttpHandler } = require_dist_cjs3();
-    var isWebSocketRequest = (request) => request.protocol === "ws:" || request.protocol === "wss:";
-    var DEFAULT_WS_CONNECTION_TIMEOUT_MS = 3e3;
-    var WebSocketFetchHandler = class _WebSocketFetchHandler {
-      metadata = {
-        handlerProtocol: "websocket/h1.1"
-      };
-      config = {};
-      configPromise;
-      httpHandler;
-      sockets = {};
-      static create(instanceOrOptions, httpHandler = new FetchHttpHandler()) {
-        if (typeof instanceOrOptions?.handle === "function") {
-          return instanceOrOptions;
-        }
-        return new _WebSocketFetchHandler(instanceOrOptions, httpHandler);
-      }
-      constructor(options, httpHandler = new FetchHttpHandler()) {
-        this.httpHandler = httpHandler;
-        const setConfig = (opts) => {
-          this.config = {
-            ...opts ?? {}
-          };
-          return this.config;
-        };
-        if (typeof options === "function") {
-          this.config = {};
-          this.configPromise = options().then((opts) => {
-            return setConfig(opts);
-          });
-        } else {
-          this.configPromise = Promise.resolve(setConfig(options));
-        }
-      }
-      destroy() {
-        for (const [key, sockets] of Object.entries(this.sockets)) {
-          for (const socket of sockets) {
-            socket.close(1e3, `Socket closed through destroy() call`);
-          }
-          delete this.sockets[key];
-        }
-      }
-      async handle(request) {
-        this.config = await this.configPromise;
-        const { logger: logger2 } = this.config;
-        if (!isWebSocketRequest(request)) {
-          logger2?.debug?.(`@aws-sdk - ws fetching ${request.protocol}${request.hostname}${request.path}`);
-          return this.httpHandler.handle(request);
-        }
-        const url = formatUrl2(request);
-        logger2?.debug?.(`@aws-sdk - ws connecting ${url.split("?")[0]}`);
-        const socket = new WebSocket(url);
-        if (!this.sockets[url]) {
-          this.sockets[url] = [];
-        }
-        this.sockets[url].push(socket);
-        socket.binaryType = "arraybuffer";
-        const { connectionTimeout = DEFAULT_WS_CONNECTION_TIMEOUT_MS } = this.config;
-        await this.waitForReady(socket, connectionTimeout);
-        const { body } = request;
-        const bodyStream = getIterator(body);
-        const asyncIterable = this.connect(socket, bodyStream);
-        const outputPayload = toReadableStream(asyncIterable);
-        return {
-          response: new HttpResponse2({
-            statusCode: 200,
-            body: outputPayload
-          })
-        };
-      }
-      updateHttpClientConfig(key, value) {
-        this.configPromise = this.configPromise.then((config) => {
-          config[key] = value;
-          return config;
-        });
-      }
-      httpHandlerConfigs() {
-        return this.config ?? {};
-      }
-      removeNotUsableSockets(url) {
-        this.sockets[url] = (this.sockets[url] ?? []).filter((socket) => ![WebSocket.CLOSING, WebSocket.CLOSED].includes(socket.readyState));
-      }
-      waitForReady(socket, connectionTimeout) {
-        return new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            this.removeNotUsableSockets(socket.url);
-            reject({
-              $metadata: {
-                httpStatusCode: 500,
-                websocketSynthetic500Error: true
-              }
-            });
-          }, connectionTimeout);
-          socket.onopen = () => {
-            clearTimeout(timeout);
-            resolve();
-          };
-        });
-      }
-      connect(socket, data) {
-        const messageQueue = [];
-        let pendingResolve = null;
-        let pendingReject = null;
-        const push = (item) => {
-          if (pendingResolve) {
-            if (item.error) {
-              pendingReject(item.error);
-            } else {
-              pendingResolve({ done: item.done, value: item.value });
-            }
-            pendingResolve = null;
-            pendingReject = null;
-          } else {
-            messageQueue.push(item);
-          }
-        };
-        socket.onmessage = (event) => {
-          const { data: data2 } = event;
-          if (typeof data2 === "string") {
-            push({
-              done: false,
-              value: fromBase642(data2)
-            });
-          } else {
-            push({
-              done: false,
-              value: new Uint8Array(data2)
-            });
-          }
-        };
-        socket.onerror = (event) => {
-          socket.close();
-          push({ done: true, error: event });
-        };
-        socket.onclose = () => {
-          this.removeNotUsableSockets(socket.url);
-          push({ done: true });
-        };
-        const outputStream = {
-          [Symbol.asyncIterator]: () => ({
-            async next() {
-              if (messageQueue.length > 0) {
-                const item = messageQueue.shift();
-                if (item.error) {
-                  throw item.error;
-                }
-                return { done: item.done, value: item.value };
-              }
-              return new Promise((resolve, reject) => {
-                pendingResolve = resolve;
-                pendingReject = reject;
-              });
-            }
-          })
-        };
-        const send = async () => {
-          try {
-            for await (const chunk of data) {
-              if (socket.readyState >= WebSocket.CLOSING) {
-                break;
-              } else {
-                socket.send(chunk);
-              }
-            }
-          } catch (err2) {
-            push({
-              done: true,
-              error: err2
-            });
-          } finally {
-            socket.close(1e3);
-          }
-        };
-        send();
-        return outputStream;
-      }
-    };
-    var getIterator = (stream) => {
-      if (stream[Symbol.asyncIterator]) {
-        return stream;
-      }
-      if (isReadableStream2(stream)) {
-        return readableStreamToIterable2(stream);
-      }
-      return {
-        [Symbol.asyncIterator]: async function* () {
-          yield stream;
-        }
-      };
-    };
-    var toReadableStream = (asyncIterable) => typeof ReadableStream === "function" ? iterableToReadableStream2(asyncIterable) : asyncIterable;
-    var isReadableStream2 = (payload2) => typeof ReadableStream === "function" && payload2 instanceof ReadableStream;
-    var websocketEndpointMiddleware = (config, options) => (next) => (args) => {
       const { request } = args;
-      if (HttpRequest2.isInstance(request) && config.requestHandler.metadata?.handlerProtocol?.toLowerCase().includes("websocket")) {
-        request.protocol = "wss:";
-        request.method = "GET";
-        request.path = `${request.path}-websocket`;
-        const { headers } = request;
-        delete headers["content-type"];
-        delete headers["x-amz-content-sha256"];
-        for (const name of Object.keys(headers)) {
-          if (name.indexOf(options.headerPrefix) === 0) {
-            const chunkedName = name.replace(options.headerPrefix, "");
-            request.query[chunkedName] = headers[name];
-          }
+      if (cacheKey && HttpRequest2.isInstance(request)) {
+        const endpoint = config.endpointCache.getEndpoint(cacheKey);
+        if (endpoint) {
+          request.hostname = endpoint;
         }
-        if (headers["x-amz-user-agent"]) {
-          request.query["user-agent"] = headers["x-amz-user-agent"];
-        }
-        request.headers = { host: headers.host ?? request.hostname };
       }
       return next(args);
     };
-    var websocketEndpointMiddlewareOptions = {
-      name: "websocketEndpointMiddleware",
-      tags: ["WEBSOCKET", "EVENT_STREAM"],
-      relation: "after",
-      toMiddleware: "eventStreamHeaderMiddleware",
+    var endpointDiscoveryMiddlewareOptions = {
+      name: "endpointDiscoveryMiddleware",
+      step: "build",
+      tags: ["ENDPOINT_DISCOVERY"],
       override: true
     };
-    var injectSessionIdMiddleware = () => (next) => async (args) => {
-      const requestParams = {
-        ...args.input
-      };
-      const response = await next(args);
-      const output = response.output;
-      if (requestParams.SessionId && output.SessionId == null) {
-        output.SessionId = requestParams.SessionId;
-      }
-      return response;
-    };
-    var injectSessionIdMiddlewareOptions = {
-      step: "initialize",
-      name: "injectSessionIdMiddleware",
-      tags: ["WEBSOCKET", "EVENT_STREAM"],
-      override: true
-    };
-    var getWebSocketPlugin = (config, options) => ({
-      applyToStack: (clientStack) => {
-        clientStack.addRelativeTo(websocketEndpointMiddleware(config, options), websocketEndpointMiddlewareOptions);
-        clientStack.add(injectSessionIdMiddleware(), injectSessionIdMiddlewareOptions);
+    var getEndpointDiscoveryPlugin = (pluginConfig, middlewareConfig) => ({
+      applyToStack: (commandStack) => {
+        commandStack.add(endpointDiscoveryMiddleware(pluginConfig, middlewareConfig), endpointDiscoveryMiddlewareOptions);
       }
     });
-    var WebsocketSignatureV4 = class {
-      signer;
-      constructor(options) {
-        this.signer = options.signer;
+    var getEndpointDiscoveryRequiredPlugin = (pluginConfig, middlewareConfig) => ({
+      applyToStack: (commandStack) => {
+        commandStack.add(endpointDiscoveryMiddleware(pluginConfig, { ...middlewareConfig, isDiscoveredEndpointRequired: true }), endpointDiscoveryMiddlewareOptions);
       }
-      presign(originalRequest, options = {}) {
-        return this.signer.presign(originalRequest, options);
+    });
+    var getEndpointDiscoveryOptionalPlugin = (pluginConfig, middlewareConfig) => ({
+      applyToStack: (commandStack) => {
+        commandStack.add(endpointDiscoveryMiddleware(pluginConfig, { ...middlewareConfig, isDiscoveredEndpointRequired: false }), endpointDiscoveryMiddlewareOptions);
       }
-      async sign(toSign, options) {
-        if (HttpRequest2.isInstance(toSign) && isWebSocketRequest(toSign)) {
-          const signedRequest = await this.signer.presign({ ...toSign, body: "" }, {
-            ...options,
-            expiresIn: 60,
-            unsignableHeaders: new Set(Object.keys(toSign.headers).filter((header) => header !== "host"))
-          });
-          return {
-            ...signedRequest,
-            body: toSign.body
-          };
-        } else {
-          return this.signer.sign(toSign, options);
-        }
-      }
-      signMessage(message, args) {
-        return this.signer.signMessage(message, args);
-      }
-    };
-    var resolveWebSocketConfig = (input) => {
-      const { signer } = input;
+    });
+    var resolveEndpointDiscoveryConfig = (input, { endpointDiscoveryCommandCtor }) => {
+      const { endpointCacheSize, endpointDiscoveryEnabled, endpointDiscoveryEnabledProvider } = input;
       return Object.assign(input, {
-        signer: async (authScheme) => {
-          const signerObj = await signer(authScheme);
-          if (validateSigner(signerObj)) {
-            return new WebsocketSignatureV4({ signer: signerObj });
-          }
-          throw new Error("Expected WebsocketSignatureV4 signer, please check the client constructor.");
-        }
+        endpointDiscoveryCommandCtor,
+        endpointCache: new EndpointCache2(endpointCacheSize ?? 1e3),
+        endpointDiscoveryEnabled: endpointDiscoveryEnabled !== void 0 ? () => Promise.resolve(endpointDiscoveryEnabled) : endpointDiscoveryEnabledProvider,
+        isClientEndpointDiscoveryEnabled: endpointDiscoveryEnabled !== void 0
       });
     };
-    var validateSigner = (signer) => !!signer;
-    var EventSigningTransformStream = class extends TransformStream {
-      constructor(initialSignature, messageSigner, eventStreamCodec, systemClockOffsetProvider, credentials) {
-        let priorSignature = initialSignature;
-        const staticCredentials = credentials?.();
-        super({
-          start() {
-          },
-          async transform(chunk, controller) {
-            try {
-              const now = new Date(Date.now() + await systemClockOffsetProvider());
-              const dateHeader = {
-                ":date": { type: "timestamp", value: now }
-              };
-              const signedMessage = await messageSigner.sign({
-                message: {
-                  body: chunk,
-                  headers: dateHeader
-                },
-                priorSignature
-              }, {
-                signingDate: now,
-                eventStreamCredentials: await staticCredentials
-              });
-              priorSignature = signedMessage.signature;
-              const serializedSigned = eventStreamCodec.encode({
-                headers: {
-                  ...dateHeader,
-                  ":chunk-signature": {
-                    type: "binary",
-                    value: fromHex2(signedMessage.signature)
-                  }
-                },
-                body: chunk
-              });
-              controller.enqueue(serializedSigned);
-            } catch (error2) {
-              controller.error(error2);
-            }
-          }
-        });
-      }
-    };
-    var EventStreamPayloadHandler = class {
-      messageSigner;
-      eventStreamCodec;
-      systemClockOffsetProvider;
-      credentials;
-      constructor(options) {
-        this.messageSigner = options.messageSigner;
-        this.eventStreamCodec = new EventStreamCodec2(options.utf8Encoder, options.utf8Decoder);
-        this.systemClockOffsetProvider = async () => options.systemClockOffset ?? 0;
-        this.credentials = options.credentials;
-      }
-      async handle(next, args, context = {}) {
-        const request = args.request;
-        const { body: payload2, headers, query } = request;
-        if (!(payload2 instanceof ReadableStream)) {
-          throw new Error("Eventstream payload must be a ReadableStream.");
-        }
-        const placeHolderStream = new TransformStream();
-        request.body = placeHolderStream.readable;
-        const match = (headers?.authorization ?? "").match(/Signature=(\w+)$/);
-        let priorSignature = (match ?? [])[1] ?? (query && query["X-Amz-Signature"]) ?? "";
-        if (context.__staticSignature) {
-          priorSignature = "";
-        }
-        const signingStream = new EventSigningTransformStream(priorSignature, await this.messageSigner(), this.eventStreamCodec, this.systemClockOffsetProvider, this.credentials);
-        payload2.pipeThrough(signingStream).pipeThrough(placeHolderStream);
-        let result;
-        try {
-          result = await next(args);
-        } catch (e5) {
-          const p3 = payload2.cancel?.();
-          if (p3 instanceof Promise) {
-            p3.catch(() => {
-            });
-          }
-          throw e5;
-        }
-        return result;
-      }
-    };
-    var eventStreamPayloadHandlerProvider = (options) => new EventStreamPayloadHandler(options);
-    exports2.WebSocketFetchHandler = WebSocketFetchHandler;
-    exports2.eventStreamPayloadHandlerProvider = eventStreamPayloadHandlerProvider;
-    exports2.getWebSocketPlugin = getWebSocketPlugin;
-    exports2.resolveWebSocketConfig = resolveWebSocketConfig;
+    exports2.NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS = NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS;
+    exports2.endpointDiscoveryMiddlewareOptions = endpointDiscoveryMiddlewareOptions;
+    exports2.getEndpointDiscoveryOptionalPlugin = getEndpointDiscoveryOptionalPlugin;
+    exports2.getEndpointDiscoveryPlugin = getEndpointDiscoveryPlugin;
+    exports2.getEndpointDiscoveryRequiredPlugin = getEndpointDiscoveryRequiredPlugin;
+    exports2.resolveEndpointDiscoveryConfig = resolveEndpointDiscoveryConfig;
   }
 });
 
@@ -22105,11 +22466,11 @@ var init_runtimeConfig = __esm({
     import_node_http_handler = __toESM(require_dist_cjs8());
     init_runtimeConfig_shared();
     getRuntimeConfig2 = (config) => {
-      emitWarningIfUnsupportedVersion2(process.version);
+      emitWarningIfUnsupportedVersion(process.version);
       const defaultsMode = resolveDefaultsModeConfig(config);
       const defaultConfigProvider = () => defaultsMode().then(loadConfigsForDefaultMode);
       const clientSharedValues = getRuntimeConfig(config);
-      emitWarningIfUnsupportedVersion(process.version);
+      emitWarningIfUnsupportedVersion2(process.version);
       const loaderConfig = {
         profile: config?.profile,
         logger: clientSharedValues.logger
@@ -22968,11 +23329,11 @@ var init_runtimeConfig2 = __esm({
     import_node_http_handler2 = __toESM(require_dist_cjs8());
     init_runtimeConfig_shared2();
     getRuntimeConfig4 = (config) => {
-      emitWarningIfUnsupportedVersion2(process.version);
+      emitWarningIfUnsupportedVersion(process.version);
       const defaultsMode = resolveDefaultsModeConfig(config);
       const defaultConfigProvider = () => defaultsMode().then(loadConfigsForDefaultMode);
       const clientSharedValues = getRuntimeConfig3(config);
-      emitWarningIfUnsupportedVersion(process.version);
+      emitWarningIfUnsupportedVersion2(process.version);
       const loaderConfig = {
         profile: config?.profile,
         logger: clientSharedValues.logger
@@ -24313,11 +24674,11 @@ var init_runtimeConfig3 = __esm({
     import_node_http_handler3 = __toESM(require_dist_cjs8());
     init_runtimeConfig_shared3();
     getRuntimeConfig6 = (config) => {
-      emitWarningIfUnsupportedVersion2(process.version);
+      emitWarningIfUnsupportedVersion(process.version);
       const defaultsMode = resolveDefaultsModeConfig(config);
       const defaultConfigProvider = () => defaultsMode().then(loadConfigsForDefaultMode);
       const clientSharedValues = getRuntimeConfig5(config);
-      emitWarningIfUnsupportedVersion(process.version);
+      emitWarningIfUnsupportedVersion2(process.version);
       const loaderConfig = {
         profile: config?.profile,
         logger: clientSharedValues.logger
@@ -25367,11 +25728,11 @@ var init_runtimeConfig4 = __esm({
     import_node_http_handler4 = __toESM(require_dist_cjs8());
     init_runtimeConfig_shared4();
     getRuntimeConfig8 = (config) => {
-      emitWarningIfUnsupportedVersion2(process.version);
+      emitWarningIfUnsupportedVersion(process.version);
       const defaultsMode = resolveDefaultsModeConfig(config);
       const defaultConfigProvider = () => defaultsMode().then(loadConfigsForDefaultMode);
       const clientSharedValues = getRuntimeConfig7(config);
-      emitWarningIfUnsupportedVersion(process.version);
+      emitWarningIfUnsupportedVersion2(process.version);
       const loaderConfig = {
         profile: config?.profile,
         logger: clientSharedValues.logger
@@ -25702,7 +26063,7 @@ var require_dist_cjs14 = __commonJS({
         };
         const requestHandler = isH22(this.callerClientConfig?.requestHandler) ? void 0 : this.callerClientConfig?.requestHandler;
         const region = this.profileData.region ?? await this.callerClientConfig?.region?.() ?? process.env.AWS_REGION;
-        const client3 = new SigninClient2({
+        const client4 = new SigninClient2({
           credentials: {
             accessKeyId: "",
             secretAccessKey: ""
@@ -25713,7 +26074,7 @@ var require_dist_cjs14 = __commonJS({
           userAgentAppId,
           ...this.init?.clientConfig
         });
-        this.createDPoPInterceptor(client3.middlewareStack);
+        this.createDPoPInterceptor(client4.middlewareStack);
         const commandInput = {
           tokenInput: {
             clientId: token.clientId,
@@ -25722,7 +26083,7 @@ var require_dist_cjs14 = __commonJS({
           }
         };
         try {
-          const response = await client3.send(new CreateOAuth2TokenCommand2(commandInput));
+          const response = await client4.send(new CreateOAuth2TokenCommand2(commandInput));
           const { accessKeyId, secretAccessKey, sessionToken } = response.tokenOutput?.accessToken ?? {};
           const { refreshToken, expiresIn } = response.tokenOutput ?? {};
           if (!accessKeyId || !secretAccessKey || !sessionToken || !refreshToken) {
@@ -26411,5121 +26772,8 @@ var require_dist_cjs18 = __commonJS({
   }
 });
 
-// node_modules/@aws-sdk/eventstream-handler-node/dist-cjs/index.js
-var require_dist_cjs19 = __commonJS({
-  "node_modules/@aws-sdk/eventstream-handler-node/dist-cjs/index.js"(exports2) {
-    var { EventStreamCodec: EventStreamCodec2 } = (init_event_streams(), __toCommonJS(event_streams_exports));
-    var { Transform, Readable: Readable7, PassThrough: PassThrough2, pipeline } = require("node:stream");
-    var EventSigningTransformStream = class extends Transform {
-      priorSignature;
-      messageSigner;
-      eventStreamCodec;
-      systemClockOffsetProvider;
-      staticCredentials;
-      constructor(options) {
-        super({
-          autoDestroy: true,
-          readableObjectMode: true,
-          writableObjectMode: true,
-          ...options
-        });
-        this.priorSignature = options.priorSignature;
-        this.eventStreamCodec = options.eventStreamCodec;
-        this.messageSigner = options.messageSigner;
-        this.systemClockOffsetProvider = options.systemClockOffsetProvider;
-        this.staticCredentials = options.credentials?.();
-      }
-      async _transform(chunk, encoding, callback) {
-        try {
-          const now = new Date(Date.now() + await this.systemClockOffsetProvider());
-          const dateHeader = {
-            ":date": { type: "timestamp", value: now }
-          };
-          const signedMessage = await this.messageSigner.sign({
-            message: {
-              body: chunk,
-              headers: dateHeader
-            },
-            priorSignature: this.priorSignature
-          }, {
-            signingDate: now,
-            eventStreamCredentials: await this.staticCredentials
-          });
-          this.priorSignature = signedMessage.signature;
-          const serializedSigned = this.eventStreamCodec.encode({
-            headers: {
-              ...dateHeader,
-              ":chunk-signature": {
-                type: "binary",
-                value: getSignatureBinary(signedMessage.signature)
-              }
-            },
-            body: chunk
-          });
-          this.push(serializedSigned);
-          return callback();
-        } catch (err2) {
-          callback(err2);
-        }
-      }
-    };
-    function getSignatureBinary(signature) {
-      const buf2 = Buffer.from(signature, "hex");
-      return new Uint8Array(buf2.buffer, buf2.byteOffset, buf2.byteLength / Uint8Array.BYTES_PER_ELEMENT);
-    }
-    var EventStreamPayloadHandler = class {
-      messageSigner;
-      eventStreamCodec;
-      systemClockOffsetProvider;
-      credentials;
-      constructor(options) {
-        this.messageSigner = options.messageSigner;
-        this.eventStreamCodec = new EventStreamCodec2(options.utf8Encoder, options.utf8Decoder);
-        this.systemClockOffsetProvider = async () => options.systemClockOffset ?? 0;
-        this.credentials = options.credentials;
-      }
-      async handle(next, args, context = {}) {
-        const request = args.request;
-        const { body: payload2, query } = request;
-        if (!(payload2 instanceof Readable7)) {
-          throw new Error("Eventstream payload must be a Readable stream.");
-        }
-        request.body = new PassThrough2({
-          objectMode: true
-        });
-        const match = request.headers?.authorization?.match(/Signature=([\w]+)$/);
-        let priorSignature = match?.[1] ?? query?.["X-Amz-Signature"] ?? "";
-        if (context.__staticSignature) {
-          priorSignature = "";
-        }
-        const signingStream = new EventSigningTransformStream({
-          priorSignature,
-          eventStreamCodec: this.eventStreamCodec,
-          messageSigner: await this.messageSigner(),
-          systemClockOffsetProvider: this.systemClockOffsetProvider,
-          credentials: this.credentials
-        });
-        let resolvePipeline;
-        const pipelineError = new Promise((resolve, reject) => {
-          resolvePipeline = () => resolve(void 0);
-          pipeline(payload2, signingStream, request.body, (err2) => {
-            if (err2) {
-              reject(new Error(`Pipeline error in @aws-sdk/eventstream-handler-node: ${err2.message}`, { cause: err2 }));
-            }
-          });
-        });
-        let result;
-        try {
-          result = await Promise.race([next(args), pipelineError]);
-        } catch (e5) {
-          request.body.end();
-          throw e5;
-        } finally {
-          resolvePipeline();
-        }
-        return result;
-      }
-    };
-    var eventStreamPayloadHandlerProvider = (options) => new EventStreamPayloadHandler(options);
-    exports2.eventStreamPayloadHandlerProvider = eventStreamPayloadHandlerProvider;
-  }
-});
-
-// node_modules/@aws-sdk/token-providers/dist-cjs/index.js
-var require_dist_cjs20 = __commonJS({
-  "node_modules/@aws-sdk/token-providers/dist-cjs/index.js"(exports2) {
-    var { setTokenFeature: setTokenFeature2 } = (init_client3(), __toCommonJS(client_exports2));
-    var { getBearerTokenEnvKey: getBearerTokenEnvKey2 } = (init_httpAuthSchemes2(), __toCommonJS(httpAuthSchemes_exports));
-    var { TokenProviderError: TokenProviderError2, getSSOTokenFilepath: getSSOTokenFilepath2, parseKnownFiles: parseKnownFiles2, getProfileName: getProfileName2, loadSsoSessionData: loadSsoSessionData2, getSSOTokenFromFile: getSSOTokenFromFile2, memoize: memoize2, chain: chain2 } = (init_config2(), __toCommonJS(config_exports));
-    var { promises } = require("node:fs");
-    var fromEnvSigningName = ({ logger: logger2, signingName } = {}) => async () => {
-      logger2?.debug?.("@aws-sdk/token-providers - fromEnvSigningName");
-      if (!signingName) {
-        throw new TokenProviderError2("Please pass 'signingName' to compute environment variable key", { logger: logger2 });
-      }
-      const bearerTokenKey = getBearerTokenEnvKey2(signingName);
-      if (!(bearerTokenKey in process.env)) {
-        throw new TokenProviderError2(`Token not present in '${bearerTokenKey}' environment variable`, { logger: logger2 });
-      }
-      const token = { token: process.env[bearerTokenKey] };
-      setTokenFeature2(token, "BEARER_SERVICE_ENV_VARS", "3");
-      return token;
-    };
-    var EXPIRE_WINDOW_MS = 5 * 60 * 1e3;
-    var REFRESH_MESSAGE = `To refresh this SSO session run 'aws sso login' with the corresponding profile.`;
-    var getSsoOidcClient = async (ssoRegion, init = {}, callerClientConfig) => {
-      const { SSOOIDCClient: SSOOIDCClient2 } = (init_sso_oidc(), __toCommonJS(sso_oidc_exports));
-      const coalesce2 = (prop) => init.clientConfig?.[prop] ?? init.parentClientConfig?.[prop] ?? callerClientConfig?.[prop];
-      const ssoOidcClient = new SSOOIDCClient2(Object.assign({}, init.clientConfig ?? {}, {
-        region: ssoRegion ?? init.clientConfig?.region,
-        logger: coalesce2("logger"),
-        userAgentAppId: coalesce2("userAgentAppId")
-      }));
-      return ssoOidcClient;
-    };
-    var getNewSsoOidcToken = async (ssoToken, ssoRegion, init = {}, callerClientConfig) => {
-      const { CreateTokenCommand: CreateTokenCommand2 } = (init_sso_oidc(), __toCommonJS(sso_oidc_exports));
-      const ssoOidcClient = await getSsoOidcClient(ssoRegion, init, callerClientConfig);
-      return ssoOidcClient.send(new CreateTokenCommand2({
-        clientId: ssoToken.clientId,
-        clientSecret: ssoToken.clientSecret,
-        refreshToken: ssoToken.refreshToken,
-        grantType: "refresh_token"
-      }));
-    };
-    var validateTokenExpiry = (token) => {
-      if (token.expiration && token.expiration.getTime() < Date.now()) {
-        throw new TokenProviderError2(`Token is expired. ${REFRESH_MESSAGE}`, false);
-      }
-    };
-    var validateTokenKey = (key, value, forRefresh = false) => {
-      if (typeof value === "undefined") {
-        throw new TokenProviderError2(`Value not present for '${key}' in SSO Token${forRefresh ? ". Cannot refresh" : ""}. ${REFRESH_MESSAGE}`, false);
-      }
-    };
-    var { writeFile } = promises;
-    var writeSSOTokenToFile = (id, ssoToken) => {
-      const tokenFilepath = getSSOTokenFilepath2(id);
-      const tokenString = JSON.stringify(ssoToken, null, 2);
-      return writeFile(tokenFilepath, tokenString);
-    };
-    var lastRefreshAttemptTime = /* @__PURE__ */ new Date(0);
-    var fromSso = (init = {}) => async ({ callerClientConfig } = {}) => {
-      init.logger?.debug("@aws-sdk/token-providers - fromSso");
-      const profiles = await parseKnownFiles2(init);
-      const profileName = getProfileName2({
-        profile: init.profile ?? callerClientConfig?.profile
-      });
-      const profile = profiles[profileName];
-      if (!profile) {
-        throw new TokenProviderError2(`Profile '${profileName}' could not be found in shared credentials file.`, false);
-      } else if (!profile["sso_session"]) {
-        throw new TokenProviderError2(`Profile '${profileName}' is missing required property 'sso_session'.`);
-      }
-      const ssoSessionName = profile["sso_session"];
-      const ssoSessions = await loadSsoSessionData2(init);
-      const ssoSession = ssoSessions[ssoSessionName];
-      if (!ssoSession) {
-        throw new TokenProviderError2(`Sso session '${ssoSessionName}' could not be found in shared credentials file.`, false);
-      }
-      for (const ssoSessionRequiredKey of ["sso_start_url", "sso_region"]) {
-        if (!ssoSession[ssoSessionRequiredKey]) {
-          throw new TokenProviderError2(`Sso session '${ssoSessionName}' is missing required property '${ssoSessionRequiredKey}'.`, false);
-        }
-      }
-      ssoSession["sso_start_url"];
-      const ssoRegion = ssoSession["sso_region"];
-      let ssoToken;
-      try {
-        ssoToken = await getSSOTokenFromFile2(ssoSessionName);
-      } catch (e5) {
-        throw new TokenProviderError2(`The SSO session token associated with profile=${profileName} was not found or is invalid. ${REFRESH_MESSAGE}`, false);
-      }
-      validateTokenKey("accessToken", ssoToken.accessToken);
-      validateTokenKey("expiresAt", ssoToken.expiresAt);
-      const { accessToken, expiresAt } = ssoToken;
-      const existingToken = { token: accessToken, expiration: new Date(expiresAt) };
-      if (existingToken.expiration.getTime() - Date.now() > EXPIRE_WINDOW_MS) {
-        return existingToken;
-      }
-      if (Date.now() - lastRefreshAttemptTime.getTime() < 30 * 1e3) {
-        validateTokenExpiry(existingToken);
-        return existingToken;
-      }
-      validateTokenKey("clientId", ssoToken.clientId, true);
-      validateTokenKey("clientSecret", ssoToken.clientSecret, true);
-      validateTokenKey("refreshToken", ssoToken.refreshToken, true);
-      try {
-        lastRefreshAttemptTime.setTime(Date.now());
-        const newSsoOidcToken = await getNewSsoOidcToken(ssoToken, ssoRegion, init, callerClientConfig);
-        validateTokenKey("accessToken", newSsoOidcToken.accessToken);
-        validateTokenKey("expiresIn", newSsoOidcToken.expiresIn);
-        const newTokenExpiration = new Date(Date.now() + newSsoOidcToken.expiresIn * 1e3);
-        try {
-          await writeSSOTokenToFile(ssoSessionName, {
-            ...ssoToken,
-            accessToken: newSsoOidcToken.accessToken,
-            expiresAt: newTokenExpiration.toISOString(),
-            refreshToken: newSsoOidcToken.refreshToken
-          });
-        } catch (error2) {
-        }
-        return {
-          token: newSsoOidcToken.accessToken,
-          expiration: newTokenExpiration
-        };
-      } catch (error2) {
-        validateTokenExpiry(existingToken);
-        return existingToken;
-      }
-    };
-    var fromStatic2 = ({ token, logger: logger2 }) => async () => {
-      logger2?.debug("@aws-sdk/token-providers - fromStatic");
-      if (!token || !token.token) {
-        throw new TokenProviderError2(`Please pass a valid token to fromStatic`, false);
-      }
-      return token;
-    };
-    var nodeProvider = (init = {}) => memoize2(chain2(fromSso(init), async () => {
-      throw new TokenProviderError2("Could not load token from any providers", false);
-    }), (token) => token.expiration !== void 0 && token.expiration.getTime() - Date.now() < 3e5, (token) => token.expiration !== void 0);
-    exports2.fromEnvSigningName = fromEnvSigningName;
-    exports2.fromSso = fromSso;
-    exports2.fromStatic = fromStatic2;
-    exports2.nodeProvider = nodeProvider;
-  }
-});
-
-// node_modules/@aws-sdk/client-bedrock-runtime/dist-cjs/index.js
-var require_dist_cjs21 = __commonJS({
-  "node_modules/@aws-sdk/client-bedrock-runtime/dist-cjs/index.js"(exports2) {
-    var { awsEndpointFunctions: awsEndpointFunctions2, emitWarningIfUnsupportedVersion: emitWarningIfUnsupportedVersion$1, createDefaultUserAgentProvider: createDefaultUserAgentProvider2, NODE_APP_ID_CONFIG_OPTIONS: NODE_APP_ID_CONFIG_OPTIONS2, getAwsRegionExtensionConfiguration: getAwsRegionExtensionConfiguration2, resolveAwsRegionExtensionConfiguration: resolveAwsRegionExtensionConfiguration2, resolveUserAgentConfig: resolveUserAgentConfig2, resolveHostHeaderConfig: resolveHostHeaderConfig2, getUserAgentPlugin: getUserAgentPlugin2, getHostHeaderPlugin: getHostHeaderPlugin2, getLoggerPlugin: getLoggerPlugin2, getRecursionDetectionPlugin: getRecursionDetectionPlugin2 } = (init_client3(), __toCommonJS(client_exports2));
-    var { resolveEventStreamConfig, getEventStreamPlugin } = require_dist_cjs2();
-    var { resolveWebSocketConfig, getWebSocketPlugin } = require_dist_cjs4();
-    var { memoizeIdentityProvider: memoizeIdentityProvider2, isIdentityExpired: isIdentityExpired2, doesIdentityRequireRefresh: doesIdentityRequireRefresh2, HttpBearerAuthSigner: HttpBearerAuthSigner2, getHttpAuthSchemeEndpointRuleSetPlugin: getHttpAuthSchemeEndpointRuleSetPlugin2, DefaultIdentityProviderConfig: DefaultIdentityProviderConfig2, getHttpSigningPlugin: getHttpSigningPlugin2, createPaginator: createPaginator2 } = (init_dist_es(), __toCommonJS(dist_es_exports));
-    var { normalizeProvider: normalizeProvider3, getSmithyContext: getSmithyContext2, ServiceException: ServiceException2, NoOpLogger: NoOpLogger2, emitWarningIfUnsupportedVersion: emitWarningIfUnsupportedVersion3, loadConfigsForDefaultMode: loadConfigsForDefaultMode2, getDefaultExtensionConfiguration: getDefaultExtensionConfiguration2, resolveDefaultRuntimeConfig: resolveDefaultRuntimeConfig2, Client: Client2, makeBuilder: makeBuilder2, createAggregatedClient: createAggregatedClient2 } = (init_client2(), __toCommonJS(client_exports));
-    var { Command: $Command } = (init_client2(), __toCommonJS(client_exports));
-    exports2.$Command = $Command;
-    exports2.__Client = Client2;
-    var { resolveDefaultsModeConfig: resolveDefaultsModeConfig2, loadConfig: loadConfig2, NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS: NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS2, NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS: NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS2, NODE_REGION_CONFIG_OPTIONS: NODE_REGION_CONFIG_OPTIONS2, NODE_REGION_CONFIG_FILE_OPTIONS: NODE_REGION_CONFIG_FILE_OPTIONS2, resolveRegionConfig: resolveRegionConfig2 } = (init_config2(), __toCommonJS(config_exports));
-    var { BinaryDecisionDiagram: BinaryDecisionDiagram2, EndpointCache: EndpointCache2, decideEndpoint: decideEndpoint2, customEndpointFunctions: customEndpointFunctions2, resolveEndpointConfig: resolveEndpointConfig2, getEndpointPlugin: getEndpointPlugin2 } = (init_endpoints(), __toCommonJS(endpoints_exports));
-    var { eventStreamSerdeProvider: eventStreamSerdeProvider3, resolveEventStreamSerdeConfig: resolveEventStreamSerdeConfig2 } = (init_event_streams(), __toCommonJS(event_streams_exports));
-    var { parseUrl: parseUrl2, getHttpHandlerExtensionConfiguration: getHttpHandlerExtensionConfiguration2, resolveHttpHandlerRuntimeConfig: resolveHttpHandlerRuntimeConfig2, getContentLengthPlugin: getContentLengthPlugin2 } = (init_protocols(), __toCommonJS(protocols_exports));
-    var { DEFAULT_RETRY_MODE: DEFAULT_RETRY_MODE2, NODE_RETRY_MODE_CONFIG_OPTIONS: NODE_RETRY_MODE_CONFIG_OPTIONS2, NODE_MAX_ATTEMPT_CONFIG_OPTIONS: NODE_MAX_ATTEMPT_CONFIG_OPTIONS2, resolveRetryConfig: resolveRetryConfig2, getRetryPlugin: getRetryPlugin2 } = (init_retry2(), __toCommonJS(retry_exports));
-    var { TypeRegistry: TypeRegistry2, getSchemaSerdePlugin: getSchemaSerdePlugin2 } = (init_schema(), __toCommonJS(schema_exports));
-    var { resolveAwsSdkSigV4Config: resolveAwsSdkSigV4Config2, AwsSdkSigV4Signer: AwsSdkSigV4Signer2, NODE_AUTH_SCHEME_PREFERENCE_OPTIONS: NODE_AUTH_SCHEME_PREFERENCE_OPTIONS2 } = (init_httpAuthSchemes2(), __toCommonJS(httpAuthSchemes_exports));
-    var { defaultProvider } = require_dist_cjs18();
-    var { eventStreamPayloadHandlerProvider } = require_dist_cjs19();
-    var { fromEnvSigningName, nodeProvider } = require_dist_cjs20();
-    var { toUtf8: toUtf83, fromUtf8: fromUtf83, toBase64: toBase643, fromBase64: fromBase642, calculateBodyLength: calculateBodyLength2 } = (init_serde(), __toCommonJS(serde_exports));
-    var { streamCollector: streamCollector7, NodeHttp2Handler } = require_dist_cjs8();
-    var { AwsRestJsonProtocol: AwsRestJsonProtocol2 } = (init_protocols2(), __toCommonJS(protocols_exports2));
-    var { Sha256 } = (init_checksum2(), __toCommonJS(checksum_exports));
-    var defaultBedrockRuntimeHttpAuthSchemeParametersProvider = async (config, context, input) => {
-      return {
-        operation: getSmithyContext2(context).operation,
-        region: await normalizeProvider3(config.region)() || (() => {
-          throw new Error("expected `region` to be configured for `aws.auth#sigv4`");
-        })()
-      };
-    };
-    function createAwsAuthSigv4HttpAuthOption5(authParameters) {
-      return {
-        schemeId: "aws.auth#sigv4",
-        signingProperties: {
-          name: "bedrock",
-          region: authParameters.region
-        },
-        propertiesExtractor: (config, context) => ({
-          signingProperties: {
-            config,
-            context
-          }
-        })
-      };
-    }
-    function createSmithyApiHttpBearerAuthHttpAuthOption(authParameters) {
-      return {
-        schemeId: "smithy.api#httpBearerAuth",
-        propertiesExtractor: ({ profile, filepath, configFilepath, ignoreCache }, context) => ({
-          identityProperties: {
-            profile,
-            filepath,
-            configFilepath,
-            ignoreCache
-          }
-        })
-      };
-    }
-    var defaultBedrockRuntimeHttpAuthSchemeProvider = (authParameters) => {
-      const options = [];
-      switch (authParameters.operation) {
-        default: {
-          options.push(createAwsAuthSigv4HttpAuthOption5(authParameters));
-          options.push(createSmithyApiHttpBearerAuthHttpAuthOption());
-        }
-      }
-      return options;
-    };
-    var resolveHttpAuthSchemeConfig5 = (config) => {
-      const token = memoizeIdentityProvider2(config.token, isIdentityExpired2, doesIdentityRequireRefresh2);
-      const config_0 = resolveAwsSdkSigV4Config2(config);
-      return Object.assign(config_0, {
-        authSchemePreference: normalizeProvider3(config.authSchemePreference ?? []),
-        token
-      });
-    };
-    var resolveClientEndpointParameters5 = (options) => {
-      return Object.assign(options, {
-        useDualstackEndpoint: options.useDualstackEndpoint ?? false,
-        useFipsEndpoint: options.useFipsEndpoint ?? false,
-        defaultSigningName: "bedrock"
-      });
-    };
-    var commonParams5 = {
-      UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
-      Endpoint: { type: "builtInParams", name: "endpoint" },
-      Region: { type: "builtInParams", name: "region" },
-      UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" }
-    };
-    var version = "3.1100.0";
-    var packageInfo = {
-      version
-    };
-    var k5 = "ref";
-    var a5 = -1;
-    var b5 = true;
-    var c5 = "isSet";
-    var d5 = "PartitionResult";
-    var e5 = "booleanEquals";
-    var f5 = "getAttr";
-    var g5 = { [k5]: "Endpoint" };
-    var h5 = { [k5]: d5 };
-    var i5 = {};
-    var j5 = [{ [k5]: "Region" }];
-    var _data5 = {
-      conditions: [
-        [c5, [g5]],
-        [c5, j5],
-        ["aws.partition", j5, d5],
-        [e5, [{ [k5]: "UseFIPS" }, b5]],
-        [e5, [{ [k5]: "UseDualStack" }, b5]],
-        [e5, [{ fn: f5, argv: [h5, "supportsDualStack"] }, b5]],
-        [e5, [{ fn: f5, argv: [h5, "supportsFIPS"] }, b5]]
-      ],
-      results: [
-        [a5],
-        [a5, "Invalid Configuration: FIPS and custom endpoint are not supported"],
-        [a5, "Invalid Configuration: Dualstack and custom endpoint are not supported"],
-        [g5, i5],
-        ["https://bedrock-runtime-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", i5],
-        [a5, "FIPS and DualStack are enabled, but this partition does not support one or both"],
-        ["https://bedrock-runtime-fips.{Region}.{PartitionResult#dnsSuffix}", i5],
-        [a5, "FIPS is enabled but this partition does not support FIPS"],
-        ["https://bedrock-runtime.{Region}.{PartitionResult#dualStackDnsSuffix}", i5],
-        [a5, "DualStack is enabled but this partition does not support DualStack"],
-        ["https://bedrock-runtime.{Region}.{PartitionResult#dnsSuffix}", i5],
-        [a5, "Invalid Configuration: Missing Region"]
-      ]
-    };
-    var root5 = 2;
-    var r5 = 1e8;
-    var nodes5 = new Int32Array([
-      -1,
-      1,
-      -1,
-      0,
-      12,
-      3,
-      1,
-      4,
-      r5 + 11,
-      2,
-      5,
-      r5 + 11,
-      3,
-      8,
-      6,
-      4,
-      7,
-      r5 + 10,
-      5,
-      r5 + 8,
-      r5 + 9,
-      4,
-      10,
-      9,
-      6,
-      r5 + 6,
-      r5 + 7,
-      5,
-      11,
-      r5 + 5,
-      6,
-      r5 + 4,
-      r5 + 5,
-      3,
-      r5 + 1,
-      13,
-      4,
-      r5 + 2,
-      r5 + 3
-    ]);
-    var bdd5 = BinaryDecisionDiagram2.from(nodes5, root5, _data5.conditions, _data5.results);
-    var cache5 = new EndpointCache2({
-      size: 50,
-      params: ["Endpoint", "Region", "UseDualStack", "UseFIPS"]
-    });
-    var defaultEndpointResolver5 = (endpointParams, context = {}) => {
-      return cache5.get(endpointParams, () => decideEndpoint2(bdd5, {
-        endpointParams,
-        logger: context.logger
-      }));
-    };
-    customEndpointFunctions2.aws = awsEndpointFunctions2;
-    var BedrockRuntimeServiceException = class _BedrockRuntimeServiceException extends ServiceException2 {
-      constructor(options) {
-        super(options);
-        Object.setPrototypeOf(this, _BedrockRuntimeServiceException.prototype);
-      }
-    };
-    var AccessDeniedException3 = class _AccessDeniedException extends BedrockRuntimeServiceException {
-      name = "AccessDeniedException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "AccessDeniedException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _AccessDeniedException.prototype);
-      }
-    };
-    var InternalServerException3 = class _InternalServerException extends BedrockRuntimeServiceException {
-      name = "InternalServerException";
-      $fault = "server";
-      constructor(opts) {
-        super({
-          name: "InternalServerException",
-          $fault: "server",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _InternalServerException.prototype);
-      }
-    };
-    var ThrottlingException = class _ThrottlingException extends BedrockRuntimeServiceException {
-      name = "ThrottlingException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "ThrottlingException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ThrottlingException.prototype);
-      }
-    };
-    var ValidationException2 = class _ValidationException extends BedrockRuntimeServiceException {
-      name = "ValidationException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "ValidationException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ValidationException.prototype);
-      }
-    };
-    var ConflictException = class _ConflictException extends BedrockRuntimeServiceException {
-      name = "ConflictException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "ConflictException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ConflictException.prototype);
-      }
-    };
-    var ResourceNotFoundException2 = class _ResourceNotFoundException extends BedrockRuntimeServiceException {
-      name = "ResourceNotFoundException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "ResourceNotFoundException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ResourceNotFoundException.prototype);
-      }
-    };
-    var ServiceQuotaExceededException = class _ServiceQuotaExceededException extends BedrockRuntimeServiceException {
-      name = "ServiceQuotaExceededException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "ServiceQuotaExceededException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ServiceQuotaExceededException.prototype);
-      }
-    };
-    var ServiceUnavailableException = class _ServiceUnavailableException extends BedrockRuntimeServiceException {
-      name = "ServiceUnavailableException";
-      $fault = "server";
-      constructor(opts) {
-        super({
-          name: "ServiceUnavailableException",
-          $fault: "server",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ServiceUnavailableException.prototype);
-      }
-    };
-    var ModelErrorException = class _ModelErrorException extends BedrockRuntimeServiceException {
-      name = "ModelErrorException";
-      $fault = "client";
-      originalStatusCode;
-      resourceName;
-      constructor(opts) {
-        super({
-          name: "ModelErrorException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ModelErrorException.prototype);
-        this.originalStatusCode = opts.originalStatusCode;
-        this.resourceName = opts.resourceName;
-      }
-    };
-    var ModelNotReadyException = class _ModelNotReadyException extends BedrockRuntimeServiceException {
-      name = "ModelNotReadyException";
-      $fault = "client";
-      $retryable = {};
-      constructor(opts) {
-        super({
-          name: "ModelNotReadyException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ModelNotReadyException.prototype);
-      }
-    };
-    var ModelTimeoutException = class _ModelTimeoutException extends BedrockRuntimeServiceException {
-      name = "ModelTimeoutException";
-      $fault = "client";
-      constructor(opts) {
-        super({
-          name: "ModelTimeoutException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ModelTimeoutException.prototype);
-      }
-    };
-    var ModelStreamErrorException = class _ModelStreamErrorException extends BedrockRuntimeServiceException {
-      name = "ModelStreamErrorException";
-      $fault = "client";
-      originalStatusCode;
-      originalMessage;
-      constructor(opts) {
-        super({
-          name: "ModelStreamErrorException",
-          $fault: "client",
-          ...opts
-        });
-        Object.setPrototypeOf(this, _ModelStreamErrorException.prototype);
-        this.originalStatusCode = opts.originalStatusCode;
-        this.originalMessage = opts.originalMessage;
-      }
-    };
-    var _A2 = "Accept";
-    var _AB = "AudioBlock";
-    var _ADE3 = "AccessDeniedException";
-    var _AG = "ApplyGuardrail";
-    var _AGD = "AppliedGuardrailDetails";
-    var _AGR = "ApplyGuardrailRequest";
-    var _AGRp = "ApplyGuardrailResponse";
-    var _AIM = "AsyncInvokeMessage";
-    var _AIODC = "AsyncInvokeOutputDataConfig";
-    var _AIS = "AsyncInvokeSummary";
-    var _AISODC = "AsyncInvokeS3OutputDataConfig";
-    var _AISs = "AsyncInvokeSummaries";
-    var _AS = "AudioSource";
-    var _ATC = "AnyToolChoice";
-    var _ATCu = "AutoToolChoice";
-    var _B = "Body";
-    var _BIPP = "BidirectionalInputPayloadPart";
-    var _BOPP = "BidirectionalOutputPayloadPart";
-    var _C2 = "Citation";
-    var _CB = "ContentBlocks";
-    var _CBD = "ContentBlockDelta";
-    var _CBDE = "ContentBlockDeltaEvent";
-    var _CBS = "ContentBlockStart";
-    var _CBSE = "ContentBlockStartEvent";
-    var _CBSEo = "ContentBlockStopEvent";
-    var _CBo = "ContentBlock";
-    var _CC = "CitationsConfig";
-    var _CCB = "CitationsContentBlock";
-    var _CD = "CacheDetail";
-    var _CDL = "CacheDetailsList";
-    var _CDi = "CitationsDelta";
-    var _CE = "ConflictException";
-    var _CGC = "CitationGeneratedContent";
-    var _CGCL = "CitationGeneratedContentList";
-    var _CL = "CitationLocation";
-    var _CM = "ConverseMetrics";
-    var _CO = "ConverseOutput";
-    var _CPB = "CachePointBlock";
-    var _CR = "ConverseRequest";
-    var _CRo = "ConverseResponse";
-    var _CS2 = "ConverseStream";
-    var _CSC = "CitationSourceContent";
-    var _CSCD = "CitationSourceContentDelta";
-    var _CSCL = "CitationSourceContentList";
-    var _CSCLD = "CitationSourceContentListDelta";
-    var _CSM = "ConverseStreamMetrics";
-    var _CSME = "ConverseStreamMetadataEvent";
-    var _CSO = "ConverseStreamOutput";
-    var _CSR = "ConverseStreamRequest";
-    var _CSRo = "ConverseStreamResponse";
-    var _CST = "ConverseStreamTrace";
-    var _CT2 = "ConverseTrace";
-    var _CTI = "CountTokensInput";
-    var _CTR2 = "ConverseTokensRequest";
-    var _CTRo = "CountTokensRequest";
-    var _CTRou = "CountTokensResponse";
-    var _CT_ = "Content-Type";
-    var _CTo = "CountTokens";
-    var _Ci = "Citations";
-    var _Co = "Converse";
-    var _DB = "DocumentBlock";
-    var _DCB = "DocumentContentBlocks";
-    var _DCBo = "DocumentContentBlock";
-    var _DCL = "DocumentCharLocation";
-    var _DCLo = "DocumentChunkLocation";
-    var _DPL = "DocumentPageLocation";
-    var _DS2 = "DocumentSource";
-    var _EB = "ErrorBlock";
-    var _GA = "GuardrailAssessment";
-    var _GAI = "GetAsyncInvoke";
-    var _GAIR = "GetAsyncInvokeRequest";
-    var _GAIRe = "GetAsyncInvokeResponse";
-    var _GAL = "GuardrailAssessmentList";
-    var _GALM = "GuardrailAssessmentListMap";
-    var _GAM = "GuardrailAssessmentMap";
-    var _GARDSL = "GuardrailAutomatedReasoningDifferenceScenarioList";
-    var _GARF = "GuardrailAutomatedReasoningFinding";
-    var _GARFL = "GuardrailAutomatedReasoningFindingList";
-    var _GARIF = "GuardrailAutomatedReasoningImpossibleFinding";
-    var _GARIFu = "GuardrailAutomatedReasoningInvalidFinding";
-    var _GARITR = "GuardrailAutomatedReasoningInputTextReference";
-    var _GARITRL = "GuardrailAutomatedReasoningInputTextReferenceList";
-    var _GARLW = "GuardrailAutomatedReasoningLogicWarning";
-    var _GARNTF = "GuardrailAutomatedReasoningNoTranslationsFinding";
-    var _GARPA = "GuardrailAutomatedReasoningPolicyAssessment";
-    var _GARR = "GuardrailAutomatedReasoningRule";
-    var _GARRL = "GuardrailAutomatedReasoningRuleList";
-    var _GARS = "GuardrailAutomatedReasoningScenario";
-    var _GARSF = "GuardrailAutomatedReasoningSatisfiableFinding";
-    var _GARSL = "GuardrailAutomatedReasoningStatementList";
-    var _GARSLC = "GuardrailAutomatedReasoningStatementLogicContent";
-    var _GARSNLC = "GuardrailAutomatedReasoningStatementNaturalLanguageContent";
-    var _GARSu = "GuardrailAutomatedReasoningStatement";
-    var _GART = "GuardrailAutomatedReasoningTranslation";
-    var _GARTAF = "GuardrailAutomatedReasoningTranslationAmbiguousFinding";
-    var _GARTCF = "GuardrailAutomatedReasoningTooComplexFinding";
-    var _GARTL = "GuardrailAutomatedReasoningTranslationList";
-    var _GARTO = "GuardrailAutomatedReasoningTranslationOption";
-    var _GARTOL = "GuardrailAutomatedReasoningTranslationOptionList";
-    var _GARVF = "GuardrailAutomatedReasoningValidFinding";
-    var _GC = "GuardrailConfiguration";
-    var _GCB = "GuardrailContentBlock";
-    var _GCBL = "GuardrailContentBlockList";
-    var _GCC = "GuardrailChecksConfig";
-    var _GCCB = "GuardrailChecksContentBlock";
-    var _GCCBL = "GuardrailChecksContentBlockList";
-    var _GCCBu = "GuardrailConverseContentBlock";
-    var _GCCFC = "GuardrailChecksContentFilterConfig";
-    var _GCCFCC = "GuardrailChecksContentFilterCategoryConfig";
-    var _GCCFCCL = "GuardrailChecksContentFilterCategoryConfigList";
-    var _GCCFR = "GuardrailChecksContentFilterResult";
-    var _GCCFRE = "GuardrailChecksContentFilterResultEntry";
-    var _GCCFRL = "GuardrailChecksContentFilterResultList";
-    var _GCCFU = "GuardrailChecksContentFilterUsage";
-    var _GCF = "GuardrailContentFilter";
-    var _GCFL = "GuardrailContentFilterList";
-    var _GCGF = "GuardrailContextualGroundingFilter";
-    var _GCGFu = "GuardrailContextualGroundingFilters";
-    var _GCGPA = "GuardrailContextualGroundingPolicyAssessment";
-    var _GCIB = "GuardrailConverseImageBlock";
-    var _GCIS = "GuardrailConverseImageSource";
-    var _GCM = "GuardrailChecksMessage";
-    var _GCML = "GuardrailChecksMessageList";
-    var _GCPA = "GuardrailContentPolicyAssessment";
-    var _GCPAC = "GuardrailChecksPromptAttackConfig";
-    var _GCPACC = "GuardrailChecksPromptAttackCategoryConfig";
-    var _GCPACCL = "GuardrailChecksPromptAttackCategoryConfigList";
-    var _GCPAR = "GuardrailChecksPromptAttackResult";
-    var _GCPARE = "GuardrailChecksPromptAttackResultEntry";
-    var _GCPARL = "GuardrailChecksPromptAttackResultList";
-    var _GCPAU = "GuardrailChecksPromptAttackUsage";
-    var _GCR = "GuardrailChecksResults";
-    var _GCSIC = "GuardrailChecksSensitiveInformationConfig";
-    var _GCSIEC = "GuardrailChecksSensitiveInformationEntityConfig";
-    var _GCSIECL = "GuardrailChecksSensitiveInformationEntityConfigList";
-    var _GCSIR = "GuardrailChecksSensitiveInformationResult";
-    var _GCSIRE = "GuardrailChecksSensitiveInformationResultEntry";
-    var _GCSIRL = "GuardrailChecksSensitiveInformationResultList";
-    var _GCSIU = "GuardrailChecksSensitiveInformationUsage";
-    var _GCTB = "GuardrailConverseTextBlock";
-    var _GCTC = "GuardrailChecksTextContent";
-    var _GCUR = "GuardrailChecksUsageResults";
-    var _GCW = "GuardrailCustomWord";
-    var _GCWL = "GuardrailCustomWordList";
-    var _GCu = "GuardrailCoverage";
-    var _GIB = "GuardrailImageBlock";
-    var _GIC = "GuardrailImageCoverage";
-    var _GIM = "GuardrailInvocationMetrics";
-    var _GIS = "GuardrailImageSource";
-    var _GMW = "GuardrailManagedWord";
-    var _GMWL = "GuardrailManagedWordList";
-    var _GOC = "GuardrailOutputContent";
-    var _GOCL = "GuardrailOutputContentList";
-    var _GPEF = "GuardrailPiiEntityFilter";
-    var _GPEFL = "GuardrailPiiEntityFilterList";
-    var _GRF = "GuardrailRegexFilter";
-    var _GRFL = "GuardrailRegexFilterList";
-    var _GSC = "GuardrailStreamConfiguration";
-    var _GSIPA = "GuardrailSensitiveInformationPolicyAssessment";
-    var _GT = "GuardrailTopic";
-    var _GTA = "GuardrailTraceAssessment";
-    var _GTB = "GuardrailTextBlock";
-    var _GTCC = "GuardrailTextCharactersCoverage";
-    var _GTL = "GuardrailTopicList";
-    var _GTPA = "GuardrailTopicPolicyAssessment";
-    var _GU = "GuardrailUsage";
-    var _GWPA = "GuardrailWordPolicyAssessment";
-    var _IB = "ImageBlock";
-    var _IBD = "ImageBlockDelta";
-    var _IBS = "ImageBlockStart";
-    var _IC = "InferenceConfiguration";
-    var _IGC = "InvokeGuardrailChecks";
-    var _IGCR = "InvokeGuardrailChecksRequest";
-    var _IGCRn = "InvokeGuardrailChecksResponse";
-    var _IM = "InvokeModel";
-    var _IMR = "InvokeModelRequest";
-    var _IMRn = "InvokeModelResponse";
-    var _IMTR = "InvokeModelTokensRequest";
-    var _IMWBS = "InvokeModelWithBidirectionalStream";
-    var _IMWBSI = "InvokeModelWithBidirectionalStreamInput";
-    var _IMWBSO = "InvokeModelWithBidirectionalStreamOutput";
-    var _IMWBSR = "InvokeModelWithBidirectionalStreamRequest";
-    var _IMWBSRn = "InvokeModelWithBidirectionalStreamResponse";
-    var _IMWRS = "InvokeModelWithResponseStream";
-    var _IMWRSR = "InvokeModelWithResponseStreamRequest";
-    var _IMWRSRn = "InvokeModelWithResponseStreamResponse";
-    var _IS = "ImageSource";
-    var _ISE3 = "InternalServerException";
-    var _JSD = "JsonSchemaDefinition";
-    var _LAI = "ListAsyncInvokes";
-    var _LAIR = "ListAsyncInvokesRequest";
-    var _LAIRi = "ListAsyncInvokesResponse";
-    var _M = "Message";
-    var _MEE = "ModelErrorException";
-    var _MIP = "ModelInputPayload";
-    var _MNRE = "ModelNotReadyException";
-    var _MSE = "MessageStartEvent";
-    var _MSEE = "ModelStreamErrorException";
-    var _MSEe = "MessageStopEvent";
-    var _MTE = "ModelTimeoutException";
-    var _Me = "Messages";
-    var _OC = "OutputConfig";
-    var _OF = "OutputFormat";
-    var _OFS = "OutputFormatStructure";
-    var _PB = "PartBody";
-    var _PC2 = "PerformanceConfiguration";
-    var _PP = "PayloadPart";
-    var _PRT = "PromptRouterTrace";
-    var _PVM = "PromptVariableMap";
-    var _PVV = "PromptVariableValues";
-    var _RCB = "ReasoningContentBlock";
-    var _RCBD = "ReasoningContentBlockDelta";
-    var _RM = "RequestMetadata";
-    var _RMJ = "RequestMetadataJson";
-    var _RNFE2 = "ResourceNotFoundException";
-    var _RS = "ResponseStream";
-    var _RTB = "ReasoningTextBlock";
-    var _SAI = "StartAsyncInvoke";
-    var _SAIR = "StartAsyncInvokeRequest";
-    var _SAIRt = "StartAsyncInvokeResponse";
-    var _SCB = "SystemContentBlocks";
-    var _SCBy = "SystemContentBlock";
-    var _SL = "S3Location";
-    var _SQEE = "ServiceQuotaExceededException";
-    var _SRB = "SearchResultBlock";
-    var _SRCB = "SearchResultContentBlock";
-    var _SRCBe = "SearchResultContentBlocks";
-    var _SRL = "SearchResultLocation";
-    var _ST2 = "ServiceTier";
-    var _STC = "SpecificToolChoice";
-    var _STy = "SystemTool";
-    var _SUE = "ServiceUnavailableException";
-    var _T2 = "Tag";
-    var _TAB = "ToolAdditionBlock";
-    var _TC2 = "ToolConfiguration";
-    var _TCo = "ToolChoice";
-    var _TE = "ThrottlingException";
-    var _TIS = "ToolInputSchema";
-    var _TL = "TagList";
-    var _TR = "ToolReference";
-    var _TRB = "ToolRemovalBlock";
-    var _TRBD = "ToolResultBlocksDelta";
-    var _TRBDo = "ToolResultBlockDelta";
-    var _TRBS = "ToolResultBlockStart";
-    var _TRBo = "ToolResultBlock";
-    var _TRCB = "ToolResultContentBlocks";
-    var _TRCBo = "ToolResultContentBlock";
-    var _TS = "ToolSpecification";
-    var _TU = "TokenUsage";
-    var _TUB = "ToolUseBlock";
-    var _TUBD = "ToolUseBlockDelta";
-    var _TUBS = "ToolUseBlockStart";
-    var _To = "Tools";
-    var _Too = "Tool";
-    var _VB = "VideoBlock";
-    var _VE2 = "ValidationException";
-    var _VS = "VideoSource";
-    var _WL = "WebLocation";
-    var _XABA = "X-Amzn-Bedrock-Accept";
-    var _XABCT = "X-Amzn-Bedrock-Content-Type";
-    var _XABG = "X-Amzn-Bedrock-GuardrailIdentifier";
-    var _XABG_ = "X-Amzn-Bedrock-GuardrailVersion";
-    var _XABPL = "X-Amzn-Bedrock-PerformanceConfig-Latency";
-    var _XABRM = "X-Amzn-Bedrock-Request-Metadata";
-    var _XABST = "X-Amzn-Bedrock-Service-Tier";
-    var _XABT = "X-Amzn-Bedrock-Trace";
-    var _a2 = "action";
-    var _aGD = "appliedGuardrailDetails";
-    var _aIS = "asyncInvokeSummaries";
-    var _aMRF = "additionalModelRequestFields";
-    var _aMRFP = "additionalModelResponseFieldPaths";
-    var _aMRFd = "additionalModelResponseFields";
-    var _aR = "actionReason";
-    var _aRP = "automatedReasoningPolicy";
-    var _aRPU = "automatedReasoningPolicyUnits";
-    var _aRPu = "automatedReasoningPolicies";
-    var _ac = "accept";
-    var _an = "any";
-    var _as = "assessments";
-    var _au = "audio";
-    var _aut = "auto";
-    var _b = "bytes";
-    var _bO = "bucketOwner";
-    var _bOe = "beginOffset";
-    var _bo = "body";
-    var _c5 = "client";
-    var _cBD = "contentBlockDelta";
-    var _cBI = "contentBlockIndex";
-    var _cBS = "contentBlockStart";
-    var _cBSo = "contentBlockStop";
-    var _cC = "citationsContent";
-    var _cD = "cacheDetails";
-    var _cF = "contentFilter";
-    var _cFS = "claimsFalseScenario";
-    var _cGP = "contextualGroundingPolicy";
-    var _cGPU = "contextualGroundingPolicyUnits";
-    var _cI3 = "contentIndex";
-    var _cP = "contentPolicy";
-    var _cPIU = "contentPolicyImageUnits";
-    var _cPU = "contentPolicyUnits";
-    var _cPa = "cachePoint";
-    var _cR = "contradictingRules";
-    var _cRIT = "cacheReadInputTokens";
-    var _cRT = "clientRequestToken";
-    var _cS2 = "confidenceScore";
-    var _cT = "contentType";
-    var _cTS = "claimsTrueScenario";
-    var _cW = "customWords";
-    var _cWIT = "cacheWriteInputTokens";
-    var _ca = "category";
-    var _cat = "categories";
-    var _ch = "checks";
-    var _chu = "chunk";
-    var _ci = "citations";
-    var _cit = "citation";
-    var _cl = "claims";
-    var _co3 = "content";
-    var _con = "context";
-    var _conf = "confidence";
-    var _conv = "converse";
-    var _d = "delta";
-    var _dC2 = "documentChar";
-    var _dCo = "documentChunk";
-    var _dI = "documentIndex";
-    var _dP = "documentPage";
-    var _dS = "differenceScenarios";
-    var _de = "detected";
-    var _des = "description";
-    var _do = "domain";
-    var _doc = "document";
-    var _e5 = "error";
-    var _eO = "endOffset";
-    var _eT = "endTime";
-    var _ef = "effort";
-    var _en = "enabled";
-    var _end = "end";
-    var _ent = "entities";
-    var _f = "format";
-    var _fM = "failureMessage";
-    var _fS = "filterStrength";
-    var _fi = "findings";
-    var _fil = "filters";
-    var _g = "guardrail";
-    var _gA = "guardrailArn";
-    var _gC = "guardrailCoverage";
-    var _gCu = "guardrailConfig";
-    var _gCua = "guardContent";
-    var _gI = "guardrailId";
-    var _gIu = "guardrailIdentifier";
-    var _gO = "guardrailOrigin";
-    var _gOu = "guardrailOwnership";
-    var _gPL = "guardrailProcessingLatency";
-    var _gV = "guardrailVersion";
-    var _gu = "guarded";
-    var _h4 = "http";
-    var _hE5 = "httpError";
-    var _hH2 = "httpHeader";
-    var _hQ2 = "httpQuery";
-    var _i = "input";
-    var _iA = "invocationArn";
-    var _iAn = "inputAssessment";
-    var _iC = "inferenceConfig";
-    var _iM = "invocationMetrics";
-    var _iMI = "invokedModelId";
-    var _iMn = "invokeModel";
-    var _iS = "inputSchema";
-    var _iSE = "internalServerException";
-    var _iT3 = "inputTokens";
-    var _id = "identifier";
-    var _im = "images";
-    var _ima = "image";
-    var _imp = "impossible";
-    var _in = "invalid";
-    var _j = "json";
-    var _jS = "jsonSchema";
-    var _k = "key";
-    var _kKI = "kmsKeyId";
-    var _l = "location";
-    var _lM = "latencyMs";
-    var _lMT = "lastModifiedTime";
-    var _lW = "logicWarning";
-    var _la = "latency";
-    var _lo = "logic";
-    var _m4 = "message";
-    var _mA = "modelArn";
-    var _mI = "modelId";
-    var _mIe = "messageIndex";
-    var _mIo = "modelInput";
-    var _mO = "modelOutput";
-    var _mR = "maxResults";
-    var _mS = "messageStart";
-    var _mSEE = "modelStreamErrorException";
-    var _mSe = "messageStop";
-    var _mT = "maxTokens";
-    var _mTE = "modelTimeoutException";
-    var _mWL = "managedWordLists";
-    var _ma = "match";
-    var _me = "messages";
-    var _met = "metrics";
-    var _meta = "metadata";
-    var _n = "name";
-    var _nL = "naturalLanguage";
-    var _nT = "nextToken";
-    var _nTo = "noTranslations";
-    var _o = "outputs";
-    var _oA = "outputAssessments";
-    var _oC = "outputConfig";
-    var _oDC = "outputDataConfig";
-    var _oM = "originalMessage";
-    var _oS = "outputScope";
-    var _oSC = "originalStatusCode";
-    var _oT = "outputTokens";
-    var _op = "options";
-    var _ou = "output";
-    var _p = "premises";
-    var _pA = "promptAttack";
-    var _pC = "performanceConfig";
-    var _pCL = "performanceConfigLatency";
-    var _pE = "piiEntities";
-    var _pR = "promptRouter";
-    var _pV = "promptVariables";
-    var _pVA = "policyVersionArn";
-    var _q = "qualifiers";
-    var _r3 = "results";
-    var _rC2 = "reasoningContent";
-    var _rCe = "redactedContent";
-    var _rM = "requestMetadata";
-    var _rN2 = "resourceName";
-    var _rT3 = "reasoningText";
-    var _re = "regex";
-    var _reg = "regexes";
-    var _ro = "role";
-    var _s5 = "smithy.ts.sdk.synthetic.com.amazonaws.bedrockruntime";
-    var _sB = "sortBy";
-    var _sC = "sourceContent";
-    var _sE = "statusEquals";
-    var _sI = "sensitiveInformation";
-    var _sIP = "sensitiveInformationPolicy";
-    var _sIPFU = "sensitiveInformationPolicyFreeUnits";
-    var _sIPU = "sensitiveInformationPolicyUnits";
-    var _sL = "s3Location";
-    var _sN = "serverName";
-    var _sO = "sortOrder";
-    var _sODC = "s3OutputDataConfig";
-    var _sPM = "streamProcessingMode";
-    var _sR = "stopReason";
-    var _sRI = "searchResultIndex";
-    var _sRL = "searchResultLocation";
-    var _sRe = "searchResult";
-    var _sRu = "supportingRules";
-    var _sS = "severityScore";
-    var _sSt = "stopSequences";
-    var _sT3 = "submitTime";
-    var _sTA = "submitTimeAfter";
-    var _sTB = "submitTimeBefore";
-    var _sTe = "serviceTier";
-    var _sTy = "systemTool";
-    var _sU = "s3Uri";
-    var _sUE = "serviceUnavailableException";
-    var _sa = "satisfiable";
-    var _sc2 = "score";
-    var _sch = "schema";
-    var _se3 = "server";
-    var _si = "signature";
-    var _so = "source";
-    var _st = "status";
-    var _sta = "start";
-    var _stat = "statements";
-    var _str = "stream";
-    var _stre = "streaming";
-    var _stri = "strict";
-    var _stru = "structure";
-    var _sy = "system";
-    var _t = "ttl";
-    var _tA = "toolAddition";
-    var _tAr = "translationAmbiguous";
-    var _tC = "toolConfig";
-    var _tCe = "textCharacters";
-    var _tCo = "toolChoice";
-    var _tCoo = "tooComplex";
-    var _tE = "throttlingException";
-    var _tF = "textFormat";
-    var _tP = "topicPolicy";
-    var _tPU = "topicPolicyUnits";
-    var _tPo = "topP";
-    var _tR = "toolResult";
-    var _tRo = "toolRemoval";
-    var _tS = "toolSpec";
-    var _tT3 = "totalTokens";
-    var _tU = "textUnits";
-    var _tUI = "toolUseId";
-    var _tUo = "toolUse";
-    var _ta = "tags";
-    var _te = "text";
-    var _tem = "temperature";
-    var _th = "threshold";
-    var _ti = "title";
-    var _to = "total";
-    var _too = "tool";
-    var _tool = "tools";
-    var _top = "topics";
-    var _tr = "trace";
-    var _tra = "translation";
-    var _tran = "translations";
-    var _tru = "truncated";
-    var _ty = "type";
-    var _u = "usage";
-    var _uC = "untranslatedClaims";
-    var _uP = "untranslatedPremises";
-    var _ur = "uri";
-    var _url = "url";
-    var _v = "value";
-    var _vE = "validationException";
-    var _va = "valid";
-    var _vi = "video";
-    var _w = "web";
-    var _wP = "wordPolicy";
-    var _wPU = "wordPolicyUnits";
-    var n05 = "com.amazonaws.bedrockruntime";
-    var _s_registry5 = TypeRegistry2.for(_s5);
-    var BedrockRuntimeServiceException$ = [-3, _s5, "BedrockRuntimeServiceException", 0, [], []];
-    _s_registry5.registerError(BedrockRuntimeServiceException$, BedrockRuntimeServiceException);
-    var n0_registry5 = TypeRegistry2.for(n05);
-    var AccessDeniedException$3 = [
-      -3,
-      n05,
-      _ADE3,
-      { [_e5]: _c5, [_hE5]: 403 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(AccessDeniedException$3, AccessDeniedException3);
-    var ConflictException$ = [
-      -3,
-      n05,
-      _CE,
-      { [_e5]: _c5, [_hE5]: 400 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ConflictException$, ConflictException);
-    var InternalServerException$3 = [
-      -3,
-      n05,
-      _ISE3,
-      { [_e5]: _se3, [_hE5]: 500 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(InternalServerException$3, InternalServerException3);
-    var ModelErrorException$ = [
-      -3,
-      n05,
-      _MEE,
-      { [_e5]: _c5, [_hE5]: 424 },
-      [_m4, _oSC, _rN2],
-      [0, 1, 0]
-    ];
-    n0_registry5.registerError(ModelErrorException$, ModelErrorException);
-    var ModelNotReadyException$ = [
-      -3,
-      n05,
-      _MNRE,
-      { [_e5]: _c5, [_hE5]: 429 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ModelNotReadyException$, ModelNotReadyException);
-    var ModelStreamErrorException$ = [
-      -3,
-      n05,
-      _MSEE,
-      { [_e5]: _c5, [_hE5]: 424 },
-      [_m4, _oSC, _oM],
-      [0, 1, 0]
-    ];
-    n0_registry5.registerError(ModelStreamErrorException$, ModelStreamErrorException);
-    var ModelTimeoutException$ = [
-      -3,
-      n05,
-      _MTE,
-      { [_e5]: _c5, [_hE5]: 408 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ModelTimeoutException$, ModelTimeoutException);
-    var ResourceNotFoundException$2 = [
-      -3,
-      n05,
-      _RNFE2,
-      { [_e5]: _c5, [_hE5]: 404 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ResourceNotFoundException$2, ResourceNotFoundException2);
-    var ServiceQuotaExceededException$ = [
-      -3,
-      n05,
-      _SQEE,
-      { [_e5]: _c5, [_hE5]: 400 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ServiceQuotaExceededException$, ServiceQuotaExceededException);
-    var ServiceUnavailableException$ = [
-      -3,
-      n05,
-      _SUE,
-      { [_e5]: _se3, [_hE5]: 503 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ServiceUnavailableException$, ServiceUnavailableException);
-    var ThrottlingException$ = [
-      -3,
-      n05,
-      _TE,
-      { [_e5]: _c5, [_hE5]: 429 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ThrottlingException$, ThrottlingException);
-    var ValidationException$2 = [
-      -3,
-      n05,
-      _VE2,
-      { [_e5]: _c5, [_hE5]: 400 },
-      [_m4],
-      [0]
-    ];
-    n0_registry5.registerError(ValidationException$2, ValidationException2);
-    var errorTypeRegistries5 = [
-      _s_registry5,
-      n0_registry5
-    ];
-    var AsyncInvokeMessage = [0, n05, _AIM, 8, 0];
-    var Body = [0, n05, _B, 8, 21];
-    var GuardrailAutomatedReasoningStatementLogicContent = [0, n05, _GARSLC, 8, 0];
-    var GuardrailAutomatedReasoningStatementNaturalLanguageContent = [0, n05, _GARSNLC, 8, 0];
-    var GuardrailChecksTextContent = [0, n05, _GCTC, 8, 0];
-    var ModelInputPayload = [0, n05, _MIP, 8, 15];
-    var PartBody = [0, n05, _PB, 8, 21];
-    var RequestMetadataJson = [0, n05, _RMJ, 8, 0];
-    var AnyToolChoice$ = [
-      3,
-      n05,
-      _ATC,
-      0,
-      [],
-      []
-    ];
-    var AppliedGuardrailDetails$ = [
-      3,
-      n05,
-      _AGD,
-      0,
-      [_gI, _gV, _gA, _gO, _gOu],
-      [0, 0, 0, 64 | 0, 0]
-    ];
-    var ApplyGuardrailRequest$ = [
-      3,
-      n05,
-      _AGR,
-      0,
-      [_gIu, _gV, _so, _co3, _oS],
-      [[0, 1], [0, 1], 0, [() => GuardrailContentBlockList, 0], 0],
-      4
-    ];
-    var ApplyGuardrailResponse$ = [
-      3,
-      n05,
-      _AGRp,
-      0,
-      [_u, _a2, _o, _as, _aR, _gC],
-      [() => GuardrailUsage$, 0, () => GuardrailOutputContentList, [() => GuardrailAssessmentList, 0], 0, () => GuardrailCoverage$],
-      4
-    ];
-    var AsyncInvokeS3OutputDataConfig$ = [
-      3,
-      n05,
-      _AISODC,
-      0,
-      [_sU, _kKI, _bO],
-      [0, 0, 0],
-      1
-    ];
-    var AsyncInvokeSummary$ = [
-      3,
-      n05,
-      _AIS,
-      0,
-      [_iA, _mA, _sT3, _oDC, _cRT, _st, _fM, _lMT, _eT],
-      [0, 0, 5, () => AsyncInvokeOutputDataConfig$, 0, 0, [() => AsyncInvokeMessage, 0], 5, 5],
-      4
-    ];
-    var AudioBlock$ = [
-      3,
-      n05,
-      _AB,
-      0,
-      [_f, _so, _e5],
-      [0, [() => AudioSource$, 0], [() => ErrorBlock$, 0]],
-      2
-    ];
-    var AutoToolChoice$ = [
-      3,
-      n05,
-      _ATCu,
-      0,
-      [],
-      []
-    ];
-    var BidirectionalInputPayloadPart$ = [
-      3,
-      n05,
-      _BIPP,
-      8,
-      [_b],
-      [[() => PartBody, 0]]
-    ];
-    var BidirectionalOutputPayloadPart$ = [
-      3,
-      n05,
-      _BOPP,
-      8,
-      [_b],
-      [[() => PartBody, 0]]
-    ];
-    var CacheDetail$ = [
-      3,
-      n05,
-      _CD,
-      0,
-      [_t, _iT3],
-      [0, 1],
-      2
-    ];
-    var CachePointBlock$ = [
-      3,
-      n05,
-      _CPB,
-      0,
-      [_ty, _t],
-      [0, 0],
-      1
-    ];
-    var Citation$ = [
-      3,
-      n05,
-      _C2,
-      0,
-      [_ti, _so, _sC, _l],
-      [0, 0, () => CitationSourceContentList, () => CitationLocation$]
-    ];
-    var CitationsConfig$ = [
-      3,
-      n05,
-      _CC,
-      0,
-      [_en],
-      [2],
-      1
-    ];
-    var CitationsContentBlock$ = [
-      3,
-      n05,
-      _CCB,
-      0,
-      [_co3, _ci],
-      [() => CitationGeneratedContentList, () => Citations]
-    ];
-    var CitationsDelta$ = [
-      3,
-      n05,
-      _CDi,
-      0,
-      [_ti, _so, _sC, _l],
-      [0, 0, () => CitationSourceContentListDelta, () => CitationLocation$]
-    ];
-    var CitationSourceContentDelta$ = [
-      3,
-      n05,
-      _CSCD,
-      0,
-      [_te],
-      [0]
-    ];
-    var ContentBlockDeltaEvent$ = [
-      3,
-      n05,
-      _CBDE,
-      0,
-      [_d, _cBI],
-      [[() => ContentBlockDelta$, 0], 1],
-      2
-    ];
-    var ContentBlockStartEvent$ = [
-      3,
-      n05,
-      _CBSE,
-      0,
-      [_sta, _cBI],
-      [() => ContentBlockStart$, 1],
-      2
-    ];
-    var ContentBlockStopEvent$ = [
-      3,
-      n05,
-      _CBSEo,
-      0,
-      [_cBI],
-      [1],
-      1
-    ];
-    var ConverseMetrics$ = [
-      3,
-      n05,
-      _CM,
-      0,
-      [_lM],
-      [1],
-      1
-    ];
-    var ConverseRequest$ = [
-      3,
-      n05,
-      _CR,
-      0,
-      [_mI, _me, _sy, _iC, _tC, _gCu, _aMRF, _pV, _aMRFP, _rM, _pC, _sTe, _oC],
-      [[0, 1], [() => Messages, 0], [() => SystemContentBlocks, 0], () => InferenceConfiguration$, () => ToolConfiguration$, () => GuardrailConfiguration$, 15, [() => PromptVariableMap, 0], 64 | 0, [() => RequestMetadata, 0], () => PerformanceConfiguration$, () => ServiceTier$, [() => OutputConfig$, 0]],
-      1
-    ];
-    var ConverseResponse$ = [
-      3,
-      n05,
-      _CRo,
-      0,
-      [_ou, _sR, _u, _met, _aMRFd, _tr, _pC, _sTe],
-      [[() => ConverseOutput$, 0], 0, () => TokenUsage$, () => ConverseMetrics$, 15, [() => ConverseTrace$, 0], () => PerformanceConfiguration$, () => ServiceTier$],
-      4
-    ];
-    var ConverseStreamMetadataEvent$ = [
-      3,
-      n05,
-      _CSME,
-      0,
-      [_u, _met, _tr, _pC, _sTe],
-      [() => TokenUsage$, () => ConverseStreamMetrics$, [() => ConverseStreamTrace$, 0], () => PerformanceConfiguration$, () => ServiceTier$],
-      2
-    ];
-    var ConverseStreamMetrics$ = [
-      3,
-      n05,
-      _CSM,
-      0,
-      [_lM],
-      [1],
-      1
-    ];
-    var ConverseStreamRequest$ = [
-      3,
-      n05,
-      _CSR,
-      0,
-      [_mI, _me, _sy, _iC, _tC, _gCu, _aMRF, _pV, _aMRFP, _rM, _pC, _sTe, _oC],
-      [[0, 1], [() => Messages, 0], [() => SystemContentBlocks, 0], () => InferenceConfiguration$, () => ToolConfiguration$, () => GuardrailStreamConfiguration$, 15, [() => PromptVariableMap, 0], 64 | 0, [() => RequestMetadata, 0], () => PerformanceConfiguration$, () => ServiceTier$, [() => OutputConfig$, 0]],
-      1
-    ];
-    var ConverseStreamResponse$ = [
-      3,
-      n05,
-      _CSRo,
-      0,
-      [_str],
-      [[() => ConverseStreamOutput$, 16]]
-    ];
-    var ConverseStreamTrace$ = [
-      3,
-      n05,
-      _CST,
-      0,
-      [_g, _pR],
-      [[() => GuardrailTraceAssessment$, 0], () => PromptRouterTrace$]
-    ];
-    var ConverseTokensRequest$ = [
-      3,
-      n05,
-      _CTR2,
-      0,
-      [_me, _sy, _tC, _aMRF],
-      [[() => Messages, 0], [() => SystemContentBlocks, 0], () => ToolConfiguration$, 15]
-    ];
-    var ConverseTrace$ = [
-      3,
-      n05,
-      _CT2,
-      0,
-      [_g, _pR],
-      [[() => GuardrailTraceAssessment$, 0], () => PromptRouterTrace$]
-    ];
-    var CountTokensRequest$ = [
-      3,
-      n05,
-      _CTRo,
-      0,
-      [_mI, _i],
-      [[0, 1], [() => CountTokensInput$, 0]],
-      2
-    ];
-    var CountTokensResponse$ = [
-      3,
-      n05,
-      _CTRou,
-      0,
-      [_iT3],
-      [1],
-      1
-    ];
-    var DocumentBlock$ = [
-      3,
-      n05,
-      _DB,
-      0,
-      [_n, _so, _f, _con, _ci],
-      [0, () => DocumentSource$, 0, 0, () => CitationsConfig$],
-      2
-    ];
-    var DocumentCharLocation$ = [
-      3,
-      n05,
-      _DCL,
-      0,
-      [_dI, _sta, _end],
-      [1, 1, 1]
-    ];
-    var DocumentChunkLocation$ = [
-      3,
-      n05,
-      _DCLo,
-      0,
-      [_dI, _sta, _end],
-      [1, 1, 1]
-    ];
-    var DocumentPageLocation$ = [
-      3,
-      n05,
-      _DPL,
-      0,
-      [_dI, _sta, _end],
-      [1, 1, 1]
-    ];
-    var ErrorBlock$ = [
-      3,
-      n05,
-      _EB,
-      8,
-      [_m4],
-      [0]
-    ];
-    var GetAsyncInvokeRequest$ = [
-      3,
-      n05,
-      _GAIR,
-      0,
-      [_iA],
-      [[0, 1]],
-      1
-    ];
-    var GetAsyncInvokeResponse$ = [
-      3,
-      n05,
-      _GAIRe,
-      0,
-      [_iA, _mA, _st, _sT3, _oDC, _cRT, _fM, _lMT, _eT],
-      [0, 0, 0, 5, () => AsyncInvokeOutputDataConfig$, 0, [() => AsyncInvokeMessage, 0], 5, 5],
-      5
-    ];
-    var GuardrailAssessment$ = [
-      3,
-      n05,
-      _GA,
-      0,
-      [_tP, _cP, _wP, _sIP, _cGP, _aRP, _iM, _aGD],
-      [() => GuardrailTopicPolicyAssessment$, () => GuardrailContentPolicyAssessment$, () => GuardrailWordPolicyAssessment$, () => GuardrailSensitiveInformationPolicyAssessment$, () => GuardrailContextualGroundingPolicyAssessment$, [() => GuardrailAutomatedReasoningPolicyAssessment$, 0], () => GuardrailInvocationMetrics$, () => AppliedGuardrailDetails$]
-    ];
-    var GuardrailAutomatedReasoningImpossibleFinding$ = [
-      3,
-      n05,
-      _GARIF,
-      0,
-      [_tra, _cR, _lW],
-      [[() => GuardrailAutomatedReasoningTranslation$, 0], () => GuardrailAutomatedReasoningRuleList, [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
-    ];
-    var GuardrailAutomatedReasoningInputTextReference$ = [
-      3,
-      n05,
-      _GARITR,
-      0,
-      [_te],
-      [[() => GuardrailAutomatedReasoningStatementNaturalLanguageContent, 0]]
-    ];
-    var GuardrailAutomatedReasoningInvalidFinding$ = [
-      3,
-      n05,
-      _GARIFu,
-      0,
-      [_tra, _cR, _lW],
-      [[() => GuardrailAutomatedReasoningTranslation$, 0], () => GuardrailAutomatedReasoningRuleList, [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
-    ];
-    var GuardrailAutomatedReasoningLogicWarning$ = [
-      3,
-      n05,
-      _GARLW,
-      0,
-      [_ty, _p, _cl],
-      [0, [() => GuardrailAutomatedReasoningStatementList, 0], [() => GuardrailAutomatedReasoningStatementList, 0]]
-    ];
-    var GuardrailAutomatedReasoningNoTranslationsFinding$ = [
-      3,
-      n05,
-      _GARNTF,
-      0,
-      [],
-      []
-    ];
-    var GuardrailAutomatedReasoningPolicyAssessment$ = [
-      3,
-      n05,
-      _GARPA,
-      0,
-      [_fi],
-      [[() => GuardrailAutomatedReasoningFindingList, 0]]
-    ];
-    var GuardrailAutomatedReasoningRule$ = [
-      3,
-      n05,
-      _GARR,
-      0,
-      [_id, _pVA],
-      [0, 0]
-    ];
-    var GuardrailAutomatedReasoningSatisfiableFinding$ = [
-      3,
-      n05,
-      _GARSF,
-      0,
-      [_tra, _cTS, _cFS, _lW],
-      [[() => GuardrailAutomatedReasoningTranslation$, 0], [() => GuardrailAutomatedReasoningScenario$, 0], [() => GuardrailAutomatedReasoningScenario$, 0], [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
-    ];
-    var GuardrailAutomatedReasoningScenario$ = [
-      3,
-      n05,
-      _GARS,
-      0,
-      [_stat],
-      [[() => GuardrailAutomatedReasoningStatementList, 0]]
-    ];
-    var GuardrailAutomatedReasoningStatement$ = [
-      3,
-      n05,
-      _GARSu,
-      0,
-      [_lo, _nL],
-      [[() => GuardrailAutomatedReasoningStatementLogicContent, 0], [() => GuardrailAutomatedReasoningStatementNaturalLanguageContent, 0]]
-    ];
-    var GuardrailAutomatedReasoningTooComplexFinding$ = [
-      3,
-      n05,
-      _GARTCF,
-      0,
-      [],
-      []
-    ];
-    var GuardrailAutomatedReasoningTranslation$ = [
-      3,
-      n05,
-      _GART,
-      0,
-      [_p, _cl, _uP, _uC, _conf],
-      [[() => GuardrailAutomatedReasoningStatementList, 0], [() => GuardrailAutomatedReasoningStatementList, 0], [() => GuardrailAutomatedReasoningInputTextReferenceList, 0], [() => GuardrailAutomatedReasoningInputTextReferenceList, 0], 1]
-    ];
-    var GuardrailAutomatedReasoningTranslationAmbiguousFinding$ = [
-      3,
-      n05,
-      _GARTAF,
-      0,
-      [_op, _dS],
-      [[() => GuardrailAutomatedReasoningTranslationOptionList, 0], [() => GuardrailAutomatedReasoningDifferenceScenarioList, 0]]
-    ];
-    var GuardrailAutomatedReasoningTranslationOption$ = [
-      3,
-      n05,
-      _GARTO,
-      0,
-      [_tran],
-      [[() => GuardrailAutomatedReasoningTranslationList, 0]]
-    ];
-    var GuardrailAutomatedReasoningValidFinding$ = [
-      3,
-      n05,
-      _GARVF,
-      0,
-      [_tra, _cTS, _sRu, _lW],
-      [[() => GuardrailAutomatedReasoningTranslation$, 0], [() => GuardrailAutomatedReasoningScenario$, 0], () => GuardrailAutomatedReasoningRuleList, [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
-    ];
-    var GuardrailChecksConfig$ = [
-      3,
-      n05,
-      _GCC,
-      0,
-      [_cF, _pA, _sI],
-      [() => GuardrailChecksContentFilterConfig$, () => GuardrailChecksPromptAttackConfig$, () => GuardrailChecksSensitiveInformationConfig$]
-    ];
-    var GuardrailChecksContentFilterCategoryConfig$ = [
-      3,
-      n05,
-      _GCCFCC,
-      0,
-      [_ca],
-      [0],
-      1
-    ];
-    var GuardrailChecksContentFilterConfig$ = [
-      3,
-      n05,
-      _GCCFC,
-      0,
-      [_cat],
-      [() => GuardrailChecksContentFilterCategoryConfigList],
-      1
-    ];
-    var GuardrailChecksContentFilterResult$ = [
-      3,
-      n05,
-      _GCCFR,
-      0,
-      [_r3],
-      [() => GuardrailChecksContentFilterResultList],
-      1
-    ];
-    var GuardrailChecksContentFilterResultEntry$ = [
-      3,
-      n05,
-      _GCCFRE,
-      0,
-      [_ca, _sS],
-      [0, 1],
-      2
-    ];
-    var GuardrailChecksContentFilterUsage$ = [
-      3,
-      n05,
-      _GCCFU,
-      0,
-      [_tU],
-      [1],
-      1
-    ];
-    var GuardrailChecksMessage$ = [
-      3,
-      n05,
-      _GCM,
-      0,
-      [_ro, _co3],
-      [0, [() => GuardrailChecksContentBlockList, 0]],
-      2
-    ];
-    var GuardrailChecksPromptAttackCategoryConfig$ = [
-      3,
-      n05,
-      _GCPACC,
-      0,
-      [_ca],
-      [0],
-      1
-    ];
-    var GuardrailChecksPromptAttackConfig$ = [
-      3,
-      n05,
-      _GCPAC,
-      0,
-      [_cat],
-      [() => GuardrailChecksPromptAttackCategoryConfigList],
-      1
-    ];
-    var GuardrailChecksPromptAttackResult$ = [
-      3,
-      n05,
-      _GCPAR,
-      0,
-      [_r3],
-      [() => GuardrailChecksPromptAttackResultList],
-      1
-    ];
-    var GuardrailChecksPromptAttackResultEntry$ = [
-      3,
-      n05,
-      _GCPARE,
-      0,
-      [_ca, _sS],
-      [0, 1],
-      2
-    ];
-    var GuardrailChecksPromptAttackUsage$ = [
-      3,
-      n05,
-      _GCPAU,
-      0,
-      [_tU],
-      [1],
-      1
-    ];
-    var GuardrailChecksResults$ = [
-      3,
-      n05,
-      _GCR,
-      0,
-      [_cF, _pA, _sI],
-      [() => GuardrailChecksContentFilterResult$, () => GuardrailChecksPromptAttackResult$, () => GuardrailChecksSensitiveInformationResult$]
-    ];
-    var GuardrailChecksSensitiveInformationConfig$ = [
-      3,
-      n05,
-      _GCSIC,
-      0,
-      [_ent],
-      [() => GuardrailChecksSensitiveInformationEntityConfigList],
-      1
-    ];
-    var GuardrailChecksSensitiveInformationEntityConfig$ = [
-      3,
-      n05,
-      _GCSIEC,
-      0,
-      [_ty],
-      [0],
-      1
-    ];
-    var GuardrailChecksSensitiveInformationResult$ = [
-      3,
-      n05,
-      _GCSIR,
-      0,
-      [_r3, _tru],
-      [() => GuardrailChecksSensitiveInformationResultList, 2],
-      1
-    ];
-    var GuardrailChecksSensitiveInformationResultEntry$ = [
-      3,
-      n05,
-      _GCSIRE,
-      0,
-      [_ty, _cS2, _bOe, _eO, _mIe, _cI3],
-      [0, 1, 1, 1, 1, 1],
-      6
-    ];
-    var GuardrailChecksSensitiveInformationUsage$ = [
-      3,
-      n05,
-      _GCSIU,
-      0,
-      [_tU],
-      [1],
-      1
-    ];
-    var GuardrailChecksUsageResults$ = [
-      3,
-      n05,
-      _GCUR,
-      0,
-      [_cF, _pA, _sI],
-      [() => GuardrailChecksContentFilterUsage$, () => GuardrailChecksPromptAttackUsage$, () => GuardrailChecksSensitiveInformationUsage$]
-    ];
-    var GuardrailConfiguration$ = [
-      3,
-      n05,
-      _GC,
-      0,
-      [_gIu, _gV, _tr],
-      [0, 0, 0]
-    ];
-    var GuardrailContentFilter$ = [
-      3,
-      n05,
-      _GCF,
-      0,
-      [_ty, _conf, _a2, _fS, _de],
-      [0, 0, 0, 0, 2],
-      3
-    ];
-    var GuardrailContentPolicyAssessment$ = [
-      3,
-      n05,
-      _GCPA,
-      0,
-      [_fil],
-      [() => GuardrailContentFilterList],
-      1
-    ];
-    var GuardrailContextualGroundingFilter$ = [
-      3,
-      n05,
-      _GCGF,
-      0,
-      [_ty, _th, _sc2, _a2, _de],
-      [0, 1, 1, 0, 2],
-      4
-    ];
-    var GuardrailContextualGroundingPolicyAssessment$ = [
-      3,
-      n05,
-      _GCGPA,
-      0,
-      [_fil],
-      [() => GuardrailContextualGroundingFilters]
-    ];
-    var GuardrailConverseImageBlock$ = [
-      3,
-      n05,
-      _GCIB,
-      8,
-      [_f, _so],
-      [0, [() => GuardrailConverseImageSource$, 0]],
-      2
-    ];
-    var GuardrailConverseTextBlock$ = [
-      3,
-      n05,
-      _GCTB,
-      0,
-      [_te, _q],
-      [0, 64 | 0],
-      1
-    ];
-    var GuardrailCoverage$ = [
-      3,
-      n05,
-      _GCu,
-      0,
-      [_tCe, _im],
-      [() => GuardrailTextCharactersCoverage$, () => GuardrailImageCoverage$]
-    ];
-    var GuardrailCustomWord$ = [
-      3,
-      n05,
-      _GCW,
-      0,
-      [_ma, _a2, _de],
-      [0, 0, 2],
-      2
-    ];
-    var GuardrailImageBlock$ = [
-      3,
-      n05,
-      _GIB,
-      8,
-      [_f, _so],
-      [0, [() => GuardrailImageSource$, 0]],
-      2
-    ];
-    var GuardrailImageCoverage$ = [
-      3,
-      n05,
-      _GIC,
-      0,
-      [_gu, _to],
-      [1, 1]
-    ];
-    var GuardrailInvocationMetrics$ = [
-      3,
-      n05,
-      _GIM,
-      0,
-      [_gPL, _u, _gC],
-      [1, () => GuardrailUsage$, () => GuardrailCoverage$]
-    ];
-    var GuardrailManagedWord$ = [
-      3,
-      n05,
-      _GMW,
-      0,
-      [_ma, _ty, _a2, _de],
-      [0, 0, 0, 2],
-      3
-    ];
-    var GuardrailOutputContent$ = [
-      3,
-      n05,
-      _GOC,
-      0,
-      [_te],
-      [0]
-    ];
-    var GuardrailPiiEntityFilter$ = [
-      3,
-      n05,
-      _GPEF,
-      0,
-      [_ma, _ty, _a2, _de],
-      [0, 0, 0, 2],
-      3
-    ];
-    var GuardrailRegexFilter$ = [
-      3,
-      n05,
-      _GRF,
-      0,
-      [_a2, _n, _ma, _re, _de],
-      [0, 0, 0, 0, 2],
-      1
-    ];
-    var GuardrailSensitiveInformationPolicyAssessment$ = [
-      3,
-      n05,
-      _GSIPA,
-      0,
-      [_pE, _reg],
-      [() => GuardrailPiiEntityFilterList, () => GuardrailRegexFilterList],
-      2
-    ];
-    var GuardrailStreamConfiguration$ = [
-      3,
-      n05,
-      _GSC,
-      0,
-      [_gIu, _gV, _tr, _sPM],
-      [0, 0, 0, 0]
-    ];
-    var GuardrailTextBlock$ = [
-      3,
-      n05,
-      _GTB,
-      0,
-      [_te, _q],
-      [0, 64 | 0],
-      1
-    ];
-    var GuardrailTextCharactersCoverage$ = [
-      3,
-      n05,
-      _GTCC,
-      0,
-      [_gu, _to],
-      [1, 1]
-    ];
-    var GuardrailTopic$ = [
-      3,
-      n05,
-      _GT,
-      0,
-      [_n, _ty, _a2, _de],
-      [0, 0, 0, 2],
-      3
-    ];
-    var GuardrailTopicPolicyAssessment$ = [
-      3,
-      n05,
-      _GTPA,
-      0,
-      [_top],
-      [() => GuardrailTopicList],
-      1
-    ];
-    var GuardrailTraceAssessment$ = [
-      3,
-      n05,
-      _GTA,
-      0,
-      [_mO, _iAn, _oA, _aR],
-      [64 | 0, [() => GuardrailAssessmentMap, 0], [() => GuardrailAssessmentListMap, 0], 0]
-    ];
-    var GuardrailUsage$ = [
-      3,
-      n05,
-      _GU,
-      0,
-      [_tPU, _cPU, _wPU, _sIPU, _sIPFU, _cGPU, _cPIU, _aRPU, _aRPu],
-      [1, 1, 1, 1, 1, 1, 1, 1, 1],
-      6
-    ];
-    var GuardrailWordPolicyAssessment$ = [
-      3,
-      n05,
-      _GWPA,
-      0,
-      [_cW, _mWL],
-      [() => GuardrailCustomWordList, () => GuardrailManagedWordList],
-      2
-    ];
-    var ImageBlock$ = [
-      3,
-      n05,
-      _IB,
-      0,
-      [_f, _so, _e5],
-      [0, [() => ImageSource$, 0], [() => ErrorBlock$, 0]],
-      2
-    ];
-    var ImageBlockDelta$ = [
-      3,
-      n05,
-      _IBD,
-      0,
-      [_so, _e5],
-      [[() => ImageSource$, 0], [() => ErrorBlock$, 0]]
-    ];
-    var ImageBlockStart$ = [
-      3,
-      n05,
-      _IBS,
-      0,
-      [_f],
-      [0],
-      1
-    ];
-    var InferenceConfiguration$ = [
-      3,
-      n05,
-      _IC,
-      0,
-      [_mT, _tem, _tPo, _sSt],
-      [1, 1, 1, 64 | 0]
-    ];
-    var InvokeGuardrailChecksRequest$ = [
-      3,
-      n05,
-      _IGCR,
-      0,
-      [_me, _ch],
-      [[() => GuardrailChecksMessageList, 0], () => GuardrailChecksConfig$],
-      2
-    ];
-    var InvokeGuardrailChecksResponse$ = [
-      3,
-      n05,
-      _IGCRn,
-      0,
-      [_r3, _u],
-      [() => GuardrailChecksResults$, () => GuardrailChecksUsageResults$],
-      2
-    ];
-    var InvokeModelRequest$ = [
-      3,
-      n05,
-      _IMR,
-      0,
-      [_mI, _bo, _cT, _ac, _tr, _gIu, _gV, _pCL, _sTe, _rM],
-      [[0, 1], [() => Body, 16], [0, { [_hH2]: _CT_ }], [0, { [_hH2]: _A2 }], [0, { [_hH2]: _XABT }], [0, { [_hH2]: _XABG }], [0, { [_hH2]: _XABG_ }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }], [() => RequestMetadataJson, { [_hH2]: _XABRM }]],
-      1
-    ];
-    var InvokeModelResponse$ = [
-      3,
-      n05,
-      _IMRn,
-      0,
-      [_bo, _cT, _pCL, _sTe],
-      [[() => Body, 16], [0, { [_hH2]: _CT_ }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }]],
-      2
-    ];
-    var InvokeModelTokensRequest$ = [
-      3,
-      n05,
-      _IMTR,
-      0,
-      [_bo],
-      [[() => Body, 0]],
-      1
-    ];
-    var InvokeModelWithBidirectionalStreamRequest$ = [
-      3,
-      n05,
-      _IMWBSR,
-      0,
-      [_mI, _bo],
-      [[0, 1], [() => InvokeModelWithBidirectionalStreamInput$, 16]],
-      2
-    ];
-    var InvokeModelWithBidirectionalStreamResponse$ = [
-      3,
-      n05,
-      _IMWBSRn,
-      0,
-      [_bo],
-      [[() => InvokeModelWithBidirectionalStreamOutput$, 16]],
-      1
-    ];
-    var InvokeModelWithResponseStreamRequest$ = [
-      3,
-      n05,
-      _IMWRSR,
-      0,
-      [_mI, _bo, _cT, _ac, _tr, _gIu, _gV, _pCL, _sTe, _rM],
-      [[0, 1], [() => Body, 16], [0, { [_hH2]: _CT_ }], [0, { [_hH2]: _XABA }], [0, { [_hH2]: _XABT }], [0, { [_hH2]: _XABG }], [0, { [_hH2]: _XABG_ }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }], [() => RequestMetadataJson, { [_hH2]: _XABRM }]],
-      1
-    ];
-    var InvokeModelWithResponseStreamResponse$ = [
-      3,
-      n05,
-      _IMWRSRn,
-      0,
-      [_bo, _cT, _pCL, _sTe],
-      [[() => ResponseStream$, 16], [0, { [_hH2]: _XABCT }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }]],
-      2
-    ];
-    var JsonSchemaDefinition$ = [
-      3,
-      n05,
-      _JSD,
-      0,
-      [_sch, _n, _des],
-      [0, 0, 0],
-      1
-    ];
-    var ListAsyncInvokesRequest$ = [
-      3,
-      n05,
-      _LAIR,
-      0,
-      [_sTA, _sTB, _sE, _mR, _nT, _sB, _sO],
-      [[5, { [_hQ2]: _sTA }], [5, { [_hQ2]: _sTB }], [0, { [_hQ2]: _sE }], [1, { [_hQ2]: _mR }], [0, { [_hQ2]: _nT }], [0, { [_hQ2]: _sB }], [0, { [_hQ2]: _sO }]]
-    ];
-    var ListAsyncInvokesResponse$ = [
-      3,
-      n05,
-      _LAIRi,
-      0,
-      [_nT, _aIS],
-      [0, [() => AsyncInvokeSummaries, 0]]
-    ];
-    var Message$ = [
-      3,
-      n05,
-      _M,
-      0,
-      [_ro, _co3],
-      [0, [() => ContentBlocks, 0]],
-      2
-    ];
-    var MessageStartEvent$ = [
-      3,
-      n05,
-      _MSE,
-      0,
-      [_ro],
-      [0],
-      1
-    ];
-    var MessageStopEvent$ = [
-      3,
-      n05,
-      _MSEe,
-      0,
-      [_sR, _aMRFd],
-      [0, 15],
-      1
-    ];
-    var OutputConfig$ = [
-      3,
-      n05,
-      _OC,
-      0,
-      [_tF, _ef],
-      [[() => OutputFormat$, 0], 0]
-    ];
-    var OutputFormat$ = [
-      3,
-      n05,
-      _OF,
-      0,
-      [_ty, _stru],
-      [0, [() => OutputFormatStructure$, 0]],
-      2
-    ];
-    var PayloadPart$ = [
-      3,
-      n05,
-      _PP,
-      8,
-      [_b],
-      [[() => PartBody, 0]]
-    ];
-    var PerformanceConfiguration$ = [
-      3,
-      n05,
-      _PC2,
-      0,
-      [_la],
-      [0]
-    ];
-    var PromptRouterTrace$ = [
-      3,
-      n05,
-      _PRT,
-      0,
-      [_iMI],
-      [0]
-    ];
-    var ReasoningTextBlock$ = [
-      3,
-      n05,
-      _RTB,
-      8,
-      [_te, _si],
-      [0, 0],
-      1
-    ];
-    var S3Location$ = [
-      3,
-      n05,
-      _SL,
-      0,
-      [_ur, _bO],
-      [0, 0],
-      1
-    ];
-    var SearchResultBlock$ = [
-      3,
-      n05,
-      _SRB,
-      0,
-      [_so, _ti, _co3, _ci],
-      [0, 0, () => SearchResultContentBlocks, () => CitationsConfig$],
-      3
-    ];
-    var SearchResultContentBlock$ = [
-      3,
-      n05,
-      _SRCB,
-      0,
-      [_te],
-      [0],
-      1
-    ];
-    var SearchResultLocation$ = [
-      3,
-      n05,
-      _SRL,
-      0,
-      [_sRI, _sta, _end],
-      [1, 1, 1]
-    ];
-    var ServiceTier$ = [
-      3,
-      n05,
-      _ST2,
-      0,
-      [_ty],
-      [0],
-      1
-    ];
-    var SpecificToolChoice$ = [
-      3,
-      n05,
-      _STC,
-      0,
-      [_n],
-      [0],
-      1
-    ];
-    var StartAsyncInvokeRequest$ = [
-      3,
-      n05,
-      _SAIR,
-      0,
-      [_mI, _mIo, _oDC, _cRT, _ta],
-      [0, [() => ModelInputPayload, 0], () => AsyncInvokeOutputDataConfig$, [0, 4], () => TagList],
-      3
-    ];
-    var StartAsyncInvokeResponse$ = [
-      3,
-      n05,
-      _SAIRt,
-      0,
-      [_iA],
-      [0],
-      1
-    ];
-    var SystemTool$ = [
-      3,
-      n05,
-      _STy,
-      0,
-      [_n],
-      [0],
-      1
-    ];
-    var Tag$2 = [
-      3,
-      n05,
-      _T2,
-      0,
-      [_k, _v],
-      [0, 0],
-      2
-    ];
-    var TokenUsage$ = [
-      3,
-      n05,
-      _TU,
-      0,
-      [_iT3, _oT, _tT3, _cRIT, _cWIT, _cD],
-      [1, 1, 1, 1, 1, () => CacheDetailsList],
-      3
-    ];
-    var ToolAdditionBlock$ = [
-      3,
-      n05,
-      _TAB,
-      0,
-      [_too],
-      [() => ToolReference$],
-      1
-    ];
-    var ToolConfiguration$ = [
-      3,
-      n05,
-      _TC2,
-      0,
-      [_tool, _tCo],
-      [() => Tools, () => ToolChoice$],
-      1
-    ];
-    var ToolReference$ = [
-      3,
-      n05,
-      _TR,
-      0,
-      [_ty, _n, _sN],
-      [0, 0, 0]
-    ];
-    var ToolRemovalBlock$ = [
-      3,
-      n05,
-      _TRB,
-      0,
-      [_too],
-      [() => ToolReference$],
-      1
-    ];
-    var ToolResultBlock$ = [
-      3,
-      n05,
-      _TRBo,
-      0,
-      [_tUI, _co3, _st, _ty],
-      [0, [() => ToolResultContentBlocks, 0], 0, 0],
-      2
-    ];
-    var ToolResultBlockStart$ = [
-      3,
-      n05,
-      _TRBS,
-      0,
-      [_tUI, _ty, _st],
-      [0, 0, 0],
-      1
-    ];
-    var ToolSpecification$ = [
-      3,
-      n05,
-      _TS,
-      0,
-      [_n, _iS, _des, _stri],
-      [0, () => ToolInputSchema$, 0, 2],
-      2
-    ];
-    var ToolUseBlock$ = [
-      3,
-      n05,
-      _TUB,
-      0,
-      [_tUI, _n, _i, _ty],
-      [0, 0, 15, 0],
-      3
-    ];
-    var ToolUseBlockDelta$ = [
-      3,
-      n05,
-      _TUBD,
-      0,
-      [_i],
-      [0],
-      1
-    ];
-    var ToolUseBlockStart$ = [
-      3,
-      n05,
-      _TUBS,
-      0,
-      [_tUI, _n, _ty],
-      [0, 0, 0],
-      2
-    ];
-    var VideoBlock$ = [
-      3,
-      n05,
-      _VB,
-      0,
-      [_f, _so],
-      [0, () => VideoSource$],
-      2
-    ];
-    var WebLocation$ = [
-      3,
-      n05,
-      _WL,
-      0,
-      [_url, _do],
-      [0, 0]
-    ];
-    var AsyncInvokeSummaries = [
-      1,
-      n05,
-      _AISs,
-      0,
-      [
-        () => AsyncInvokeSummary$,
-        0
-      ]
-    ];
-    var CacheDetailsList = [
-      1,
-      n05,
-      _CDL,
-      0,
-      () => CacheDetail$
-    ];
-    var CitationGeneratedContentList = [
-      1,
-      n05,
-      _CGCL,
-      0,
-      () => CitationGeneratedContent$
-    ];
-    var Citations = [
-      1,
-      n05,
-      _Ci,
-      0,
-      () => Citation$
-    ];
-    var CitationSourceContentList = [
-      1,
-      n05,
-      _CSCL,
-      0,
-      () => CitationSourceContent$
-    ];
-    var CitationSourceContentListDelta = [
-      1,
-      n05,
-      _CSCLD,
-      0,
-      () => CitationSourceContentDelta$
-    ];
-    var ContentBlocks = [
-      1,
-      n05,
-      _CB,
-      0,
-      [
-        () => ContentBlock$,
-        0
-      ]
-    ];
-    var DocumentContentBlocks = [
-      1,
-      n05,
-      _DCB,
-      0,
-      () => DocumentContentBlock$
-    ];
-    var GuardrailAssessmentList = [
-      1,
-      n05,
-      _GAL,
-      0,
-      [
-        () => GuardrailAssessment$,
-        0
-      ]
-    ];
-    var GuardrailAutomatedReasoningDifferenceScenarioList = [
-      1,
-      n05,
-      _GARDSL,
-      0,
-      [
-        () => GuardrailAutomatedReasoningScenario$,
-        0
-      ]
-    ];
-    var GuardrailAutomatedReasoningFindingList = [
-      1,
-      n05,
-      _GARFL,
-      0,
-      [
-        () => GuardrailAutomatedReasoningFinding$,
-        0
-      ]
-    ];
-    var GuardrailAutomatedReasoningInputTextReferenceList = [
-      1,
-      n05,
-      _GARITRL,
-      0,
-      [
-        () => GuardrailAutomatedReasoningInputTextReference$,
-        0
-      ]
-    ];
-    var GuardrailAutomatedReasoningRuleList = [
-      1,
-      n05,
-      _GARRL,
-      0,
-      () => GuardrailAutomatedReasoningRule$
-    ];
-    var GuardrailAutomatedReasoningStatementList = [
-      1,
-      n05,
-      _GARSL,
-      0,
-      [
-        () => GuardrailAutomatedReasoningStatement$,
-        0
-      ]
-    ];
-    var GuardrailAutomatedReasoningTranslationList = [
-      1,
-      n05,
-      _GARTL,
-      0,
-      [
-        () => GuardrailAutomatedReasoningTranslation$,
-        0
-      ]
-    ];
-    var GuardrailAutomatedReasoningTranslationOptionList = [
-      1,
-      n05,
-      _GARTOL,
-      0,
-      [
-        () => GuardrailAutomatedReasoningTranslationOption$,
-        0
-      ]
-    ];
-    var GuardrailChecksContentBlockList = [
-      1,
-      n05,
-      _GCCBL,
-      0,
-      [
-        () => GuardrailChecksContentBlock$,
-        0
-      ]
-    ];
-    var GuardrailChecksContentFilterCategoryConfigList = [
-      1,
-      n05,
-      _GCCFCCL,
-      0,
-      () => GuardrailChecksContentFilterCategoryConfig$
-    ];
-    var GuardrailChecksContentFilterResultList = [
-      1,
-      n05,
-      _GCCFRL,
-      0,
-      () => GuardrailChecksContentFilterResultEntry$
-    ];
-    var GuardrailChecksMessageList = [
-      1,
-      n05,
-      _GCML,
-      0,
-      [
-        () => GuardrailChecksMessage$,
-        0
-      ]
-    ];
-    var GuardrailChecksPromptAttackCategoryConfigList = [
-      1,
-      n05,
-      _GCPACCL,
-      0,
-      () => GuardrailChecksPromptAttackCategoryConfig$
-    ];
-    var GuardrailChecksPromptAttackResultList = [
-      1,
-      n05,
-      _GCPARL,
-      0,
-      () => GuardrailChecksPromptAttackResultEntry$
-    ];
-    var GuardrailChecksSensitiveInformationEntityConfigList = [
-      1,
-      n05,
-      _GCSIECL,
-      0,
-      () => GuardrailChecksSensitiveInformationEntityConfig$
-    ];
-    var GuardrailChecksSensitiveInformationResultList = [
-      1,
-      n05,
-      _GCSIRL,
-      0,
-      () => GuardrailChecksSensitiveInformationResultEntry$
-    ];
-    var GuardrailContentBlockList = [
-      1,
-      n05,
-      _GCBL,
-      0,
-      [
-        () => GuardrailContentBlock$,
-        0
-      ]
-    ];
-    var GuardrailContentFilterList = [
-      1,
-      n05,
-      _GCFL,
-      0,
-      () => GuardrailContentFilter$
-    ];
-    var GuardrailContextualGroundingFilters = [
-      1,
-      n05,
-      _GCGFu,
-      0,
-      () => GuardrailContextualGroundingFilter$
-    ];
-    var GuardrailCustomWordList = [
-      1,
-      n05,
-      _GCWL,
-      0,
-      () => GuardrailCustomWord$
-    ];
-    var GuardrailManagedWordList = [
-      1,
-      n05,
-      _GMWL,
-      0,
-      () => GuardrailManagedWord$
-    ];
-    var GuardrailOutputContentList = [
-      1,
-      n05,
-      _GOCL,
-      0,
-      () => GuardrailOutputContent$
-    ];
-    var GuardrailPiiEntityFilterList = [
-      1,
-      n05,
-      _GPEFL,
-      0,
-      () => GuardrailPiiEntityFilter$
-    ];
-    var GuardrailRegexFilterList = [
-      1,
-      n05,
-      _GRFL,
-      0,
-      () => GuardrailRegexFilter$
-    ];
-    var GuardrailTopicList = [
-      1,
-      n05,
-      _GTL,
-      0,
-      () => GuardrailTopic$
-    ];
-    var Messages = [
-      1,
-      n05,
-      _Me,
-      0,
-      [
-        () => Message$,
-        0
-      ]
-    ];
-    var SearchResultContentBlocks = [
-      1,
-      n05,
-      _SRCBe,
-      0,
-      () => SearchResultContentBlock$
-    ];
-    var SystemContentBlocks = [
-      1,
-      n05,
-      _SCB,
-      0,
-      [
-        () => SystemContentBlock$,
-        0
-      ]
-    ];
-    var TagList = [
-      1,
-      n05,
-      _TL,
-      0,
-      () => Tag$2
-    ];
-    var ToolResultBlocksDelta = [
-      1,
-      n05,
-      _TRBD,
-      0,
-      () => ToolResultBlockDelta$
-    ];
-    var ToolResultContentBlocks = [
-      1,
-      n05,
-      _TRCB,
-      0,
-      [
-        () => ToolResultContentBlock$,
-        0
-      ]
-    ];
-    var Tools = [
-      1,
-      n05,
-      _To,
-      0,
-      () => Tool$
-    ];
-    var GuardrailAssessmentListMap = [
-      2,
-      n05,
-      _GALM,
-      0,
-      [
-        0,
-        0
-      ],
-      [
-        () => GuardrailAssessmentList,
-        0
-      ]
-    ];
-    var GuardrailAssessmentMap = [
-      2,
-      n05,
-      _GAM,
-      0,
-      [
-        0,
-        0
-      ],
-      [
-        () => GuardrailAssessment$,
-        0
-      ]
-    ];
-    var PromptVariableMap = [
-      2,
-      n05,
-      _PVM,
-      8,
-      0,
-      () => PromptVariableValues$
-    ];
-    var RequestMetadata = [
-      2,
-      n05,
-      _RM,
-      8,
-      0,
-      0
-    ];
-    var AsyncInvokeOutputDataConfig$ = [
-      4,
-      n05,
-      _AIODC,
-      0,
-      [_sODC],
-      [() => AsyncInvokeS3OutputDataConfig$]
-    ];
-    var AudioSource$ = [
-      4,
-      n05,
-      _AS,
-      8,
-      [_b, _sL],
-      [21, () => S3Location$]
-    ];
-    var CitationGeneratedContent$ = [
-      4,
-      n05,
-      _CGC,
-      0,
-      [_te],
-      [0]
-    ];
-    var CitationLocation$ = [
-      4,
-      n05,
-      _CL,
-      0,
-      [_w, _dC2, _dP, _dCo, _sRL],
-      [() => WebLocation$, () => DocumentCharLocation$, () => DocumentPageLocation$, () => DocumentChunkLocation$, () => SearchResultLocation$]
-    ];
-    var CitationSourceContent$ = [
-      4,
-      n05,
-      _CSC,
-      0,
-      [_te],
-      [0]
-    ];
-    var ContentBlock$ = [
-      4,
-      n05,
-      _CBo,
-      0,
-      [_te, _ima, _doc, _vi, _au, _tUo, _tR, _gCua, _cPa, _rC2, _cC, _sRe, _tA, _tRo],
-      [0, [() => ImageBlock$, 0], () => DocumentBlock$, () => VideoBlock$, [() => AudioBlock$, 0], () => ToolUseBlock$, [() => ToolResultBlock$, 0], [() => GuardrailConverseContentBlock$, 0], () => CachePointBlock$, [() => ReasoningContentBlock$, 0], () => CitationsContentBlock$, () => SearchResultBlock$, () => ToolAdditionBlock$, () => ToolRemovalBlock$]
-    ];
-    var ContentBlockDelta$ = [
-      4,
-      n05,
-      _CBD,
-      0,
-      [_te, _tUo, _tR, _rC2, _cit, _ima],
-      [0, () => ToolUseBlockDelta$, () => ToolResultBlocksDelta, [() => ReasoningContentBlockDelta$, 0], () => CitationsDelta$, [() => ImageBlockDelta$, 0]]
-    ];
-    var ContentBlockStart$ = [
-      4,
-      n05,
-      _CBS,
-      0,
-      [_tUo, _tR, _ima],
-      [() => ToolUseBlockStart$, () => ToolResultBlockStart$, () => ImageBlockStart$]
-    ];
-    var ConverseOutput$ = [
-      4,
-      n05,
-      _CO,
-      0,
-      [_m4],
-      [[() => Message$, 0]]
-    ];
-    var ConverseStreamOutput$ = [
-      4,
-      n05,
-      _CSO,
-      { [_stre]: 1 },
-      [_mS, _cBS, _cBD, _cBSo, _mSe, _meta, _iSE, _mSEE, _vE, _tE, _sUE],
-      [() => MessageStartEvent$, () => ContentBlockStartEvent$, [() => ContentBlockDeltaEvent$, 0], () => ContentBlockStopEvent$, () => MessageStopEvent$, [() => ConverseStreamMetadataEvent$, 0], [() => InternalServerException$3, 0], [() => ModelStreamErrorException$, 0], [() => ValidationException$2, 0], [() => ThrottlingException$, 0], [() => ServiceUnavailableException$, 0]]
-    ];
-    var CountTokensInput$ = [
-      4,
-      n05,
-      _CTI,
-      0,
-      [_iMn, _conv],
-      [[() => InvokeModelTokensRequest$, 0], [() => ConverseTokensRequest$, 0]]
-    ];
-    var DocumentContentBlock$ = [
-      4,
-      n05,
-      _DCBo,
-      0,
-      [_te],
-      [0]
-    ];
-    var DocumentSource$ = [
-      4,
-      n05,
-      _DS2,
-      0,
-      [_b, _sL, _te, _co3],
-      [21, () => S3Location$, 0, () => DocumentContentBlocks]
-    ];
-    var GuardrailAutomatedReasoningFinding$ = [
-      4,
-      n05,
-      _GARF,
-      0,
-      [_va, _in, _sa, _imp, _tAr, _tCoo, _nTo],
-      [[() => GuardrailAutomatedReasoningValidFinding$, 0], [() => GuardrailAutomatedReasoningInvalidFinding$, 0], [() => GuardrailAutomatedReasoningSatisfiableFinding$, 0], [() => GuardrailAutomatedReasoningImpossibleFinding$, 0], [() => GuardrailAutomatedReasoningTranslationAmbiguousFinding$, 0], () => GuardrailAutomatedReasoningTooComplexFinding$, () => GuardrailAutomatedReasoningNoTranslationsFinding$]
-    ];
-    var GuardrailChecksContentBlock$ = [
-      4,
-      n05,
-      _GCCB,
-      0,
-      [_te],
-      [[() => GuardrailChecksTextContent, 0]]
-    ];
-    var GuardrailContentBlock$ = [
-      4,
-      n05,
-      _GCB,
-      0,
-      [_te, _ima],
-      [() => GuardrailTextBlock$, [() => GuardrailImageBlock$, 0]]
-    ];
-    var GuardrailConverseContentBlock$ = [
-      4,
-      n05,
-      _GCCBu,
-      0,
-      [_te, _ima],
-      [() => GuardrailConverseTextBlock$, [() => GuardrailConverseImageBlock$, 0]]
-    ];
-    var GuardrailConverseImageSource$ = [
-      4,
-      n05,
-      _GCIS,
-      8,
-      [_b],
-      [21]
-    ];
-    var GuardrailImageSource$ = [
-      4,
-      n05,
-      _GIS,
-      8,
-      [_b],
-      [21]
-    ];
-    var ImageSource$ = [
-      4,
-      n05,
-      _IS,
-      8,
-      [_b, _sL],
-      [21, () => S3Location$]
-    ];
-    var InvokeModelWithBidirectionalStreamInput$ = [
-      4,
-      n05,
-      _IMWBSI,
-      { [_stre]: 1 },
-      [_chu],
-      [[() => BidirectionalInputPayloadPart$, 0]]
-    ];
-    var InvokeModelWithBidirectionalStreamOutput$ = [
-      4,
-      n05,
-      _IMWBSO,
-      { [_stre]: 1 },
-      [_chu, _iSE, _mSEE, _vE, _tE, _mTE, _sUE],
-      [[() => BidirectionalOutputPayloadPart$, 0], [() => InternalServerException$3, 0], [() => ModelStreamErrorException$, 0], [() => ValidationException$2, 0], [() => ThrottlingException$, 0], [() => ModelTimeoutException$, 0], [() => ServiceUnavailableException$, 0]]
-    ];
-    var OutputFormatStructure$ = [
-      4,
-      n05,
-      _OFS,
-      8,
-      [_jS],
-      [() => JsonSchemaDefinition$]
-    ];
-    var PromptVariableValues$ = [
-      4,
-      n05,
-      _PVV,
-      0,
-      [_te],
-      [0]
-    ];
-    var ReasoningContentBlock$ = [
-      4,
-      n05,
-      _RCB,
-      8,
-      [_rT3, _rCe],
-      [[() => ReasoningTextBlock$, 0], 21]
-    ];
-    var ReasoningContentBlockDelta$ = [
-      4,
-      n05,
-      _RCBD,
-      8,
-      [_te, _rCe, _si],
-      [0, 21, 0]
-    ];
-    var ResponseStream$ = [
-      4,
-      n05,
-      _RS,
-      { [_stre]: 1 },
-      [_chu, _iSE, _mSEE, _vE, _tE, _mTE, _sUE],
-      [[() => PayloadPart$, 0], [() => InternalServerException$3, 0], [() => ModelStreamErrorException$, 0], [() => ValidationException$2, 0], [() => ThrottlingException$, 0], [() => ModelTimeoutException$, 0], [() => ServiceUnavailableException$, 0]]
-    ];
-    var SystemContentBlock$ = [
-      4,
-      n05,
-      _SCBy,
-      0,
-      [_te, _gCua, _cPa],
-      [0, [() => GuardrailConverseContentBlock$, 0], () => CachePointBlock$]
-    ];
-    var Tool$ = [
-      4,
-      n05,
-      _Too,
-      0,
-      [_tS, _sTy, _cPa],
-      [() => ToolSpecification$, () => SystemTool$, () => CachePointBlock$]
-    ];
-    var ToolChoice$ = [
-      4,
-      n05,
-      _TCo,
-      0,
-      [_aut, _an, _too],
-      [() => AutoToolChoice$, () => AnyToolChoice$, () => SpecificToolChoice$]
-    ];
-    var ToolInputSchema$ = [
-      4,
-      n05,
-      _TIS,
-      0,
-      [_j],
-      [15]
-    ];
-    var ToolResultBlockDelta$ = [
-      4,
-      n05,
-      _TRBDo,
-      0,
-      [_te, _j],
-      [0, 15]
-    ];
-    var ToolResultContentBlock$ = [
-      4,
-      n05,
-      _TRCBo,
-      0,
-      [_j, _te, _ima, _doc, _vi, _sRe],
-      [15, 0, [() => ImageBlock$, 0], () => DocumentBlock$, () => VideoBlock$, () => SearchResultBlock$]
-    ];
-    var VideoSource$ = [
-      4,
-      n05,
-      _VS,
-      0,
-      [_b, _sL],
-      [21, () => S3Location$]
-    ];
-    var ApplyGuardrail$ = [
-      9,
-      n05,
-      _AG,
-      { [_h4]: ["POST", "/guardrail/{guardrailIdentifier}/version/{guardrailVersion}/apply", 200] },
-      () => ApplyGuardrailRequest$,
-      () => ApplyGuardrailResponse$
-    ];
-    var Converse$ = [
-      9,
-      n05,
-      _Co,
-      { [_h4]: ["POST", "/model/{modelId}/converse", 200] },
-      () => ConverseRequest$,
-      () => ConverseResponse$
-    ];
-    var ConverseStream$ = [
-      9,
-      n05,
-      _CS2,
-      { [_h4]: ["POST", "/model/{modelId}/converse-stream", 200] },
-      () => ConverseStreamRequest$,
-      () => ConverseStreamResponse$
-    ];
-    var CountTokens$ = [
-      9,
-      n05,
-      _CTo,
-      { [_h4]: ["POST", "/model/{modelId}/count-tokens", 200] },
-      () => CountTokensRequest$,
-      () => CountTokensResponse$
-    ];
-    var GetAsyncInvoke$ = [
-      9,
-      n05,
-      _GAI,
-      { [_h4]: ["GET", "/async-invoke/{invocationArn}", 200] },
-      () => GetAsyncInvokeRequest$,
-      () => GetAsyncInvokeResponse$
-    ];
-    var InvokeGuardrailChecks$ = [
-      9,
-      n05,
-      _IGC,
-      { [_h4]: ["POST", "/guardrail-checks/invoke", 200] },
-      () => InvokeGuardrailChecksRequest$,
-      () => InvokeGuardrailChecksResponse$
-    ];
-    var InvokeModel$ = [
-      9,
-      n05,
-      _IM,
-      { [_h4]: ["POST", "/model/{modelId}/invoke", 200] },
-      () => InvokeModelRequest$,
-      () => InvokeModelResponse$
-    ];
-    var InvokeModelWithBidirectionalStream$ = [
-      9,
-      n05,
-      _IMWBS,
-      { [_h4]: ["POST", "/model/{modelId}/invoke-with-bidirectional-stream", 200] },
-      () => InvokeModelWithBidirectionalStreamRequest$,
-      () => InvokeModelWithBidirectionalStreamResponse$
-    ];
-    var InvokeModelWithResponseStream$ = [
-      9,
-      n05,
-      _IMWRS,
-      { [_h4]: ["POST", "/model/{modelId}/invoke-with-response-stream", 200] },
-      () => InvokeModelWithResponseStreamRequest$,
-      () => InvokeModelWithResponseStreamResponse$
-    ];
-    var ListAsyncInvokes$ = [
-      9,
-      n05,
-      _LAI,
-      { [_h4]: ["GET", "/async-invoke", 200] },
-      () => ListAsyncInvokesRequest$,
-      () => ListAsyncInvokesResponse$
-    ];
-    var StartAsyncInvoke$ = [
-      9,
-      n05,
-      _SAI,
-      { [_h4]: ["POST", "/async-invoke", 200] },
-      () => StartAsyncInvokeRequest$,
-      () => StartAsyncInvokeResponse$
-    ];
-    var getRuntimeConfig$1 = (config) => {
-      return {
-        apiVersion: "2023-09-30",
-        base64Decoder: config?.base64Decoder ?? fromBase642,
-        base64Encoder: config?.base64Encoder ?? toBase643,
-        disableHostPrefix: config?.disableHostPrefix ?? false,
-        endpointProvider: config?.endpointProvider ?? defaultEndpointResolver5,
-        extensions: config?.extensions ?? [],
-        httpAuthSchemeProvider: config?.httpAuthSchemeProvider ?? defaultBedrockRuntimeHttpAuthSchemeProvider,
-        httpAuthSchemes: config?.httpAuthSchemes ?? [
-          {
-            schemeId: "aws.auth#sigv4",
-            identityProvider: (ipc) => ipc.getIdentityProvider("aws.auth#sigv4"),
-            signer: new AwsSdkSigV4Signer2()
-          },
-          {
-            schemeId: "smithy.api#httpBearerAuth",
-            identityProvider: (ipc) => ipc.getIdentityProvider("smithy.api#httpBearerAuth"),
-            signer: new HttpBearerAuthSigner2()
-          }
-        ],
-        logger: config?.logger ?? new NoOpLogger2(),
-        protocol: config?.protocol ?? AwsRestJsonProtocol2,
-        protocolSettings: config?.protocolSettings ?? {
-          defaultNamespace: "com.amazonaws.bedrockruntime",
-          errorTypeRegistries: errorTypeRegistries5,
-          version: "2023-09-30",
-          serviceTarget: "AmazonBedrockFrontendService"
-        },
-        serviceId: config?.serviceId ?? "Bedrock Runtime",
-        sha256: config?.sha256 ?? Sha256,
-        urlParser: config?.urlParser ?? parseUrl2,
-        utf8Decoder: config?.utf8Decoder ?? fromUtf83,
-        utf8Encoder: config?.utf8Encoder ?? toUtf83
-      };
-    };
-    var getRuntimeConfig9 = (config) => {
-      emitWarningIfUnsupportedVersion3(process.version);
-      const defaultsMode = resolveDefaultsModeConfig2(config);
-      const defaultConfigProvider = () => defaultsMode().then(loadConfigsForDefaultMode2);
-      const clientSharedValues = getRuntimeConfig$1(config);
-      emitWarningIfUnsupportedVersion$1(process.version);
-      const loaderConfig = {
-        profile: config?.profile,
-        logger: clientSharedValues.logger,
-        signingName: "bedrock"
-      };
-      return {
-        ...clientSharedValues,
-        ...config,
-        runtime: "node",
-        defaultsMode,
-        authSchemePreference: config?.authSchemePreference ?? loadConfig2(NODE_AUTH_SCHEME_PREFERENCE_OPTIONS2, loaderConfig),
-        bodyLengthChecker: config?.bodyLengthChecker ?? calculateBodyLength2,
-        credentialDefaultProvider: config?.credentialDefaultProvider ?? defaultProvider,
-        defaultUserAgentProvider: config?.defaultUserAgentProvider ?? createDefaultUserAgentProvider2({ serviceId: clientSharedValues.serviceId, clientVersion: packageInfo.version }),
-        eventStreamPayloadHandlerProvider: config?.eventStreamPayloadHandlerProvider ?? eventStreamPayloadHandlerProvider,
-        eventStreamSerdeProvider: config?.eventStreamSerdeProvider ?? eventStreamSerdeProvider3,
-        httpAuthSchemes: config?.httpAuthSchemes ?? [
-          {
-            schemeId: "aws.auth#sigv4",
-            identityProvider: (ipc) => ipc.getIdentityProvider("aws.auth#sigv4"),
-            signer: new AwsSdkSigV4Signer2()
-          },
-          {
-            schemeId: "smithy.api#httpBearerAuth",
-            identityProvider: (ipc) => ipc.getIdentityProvider("smithy.api#httpBearerAuth") || (async (idProps) => {
-              try {
-                return await fromEnvSigningName({ signingName: "bedrock" })();
-              } catch (error2) {
-                return await nodeProvider(idProps)(idProps);
-              }
-            }),
-            signer: new HttpBearerAuthSigner2()
-          }
-        ],
-        maxAttempts: config?.maxAttempts ?? loadConfig2(NODE_MAX_ATTEMPT_CONFIG_OPTIONS2, config),
-        region: config?.region ?? loadConfig2(NODE_REGION_CONFIG_OPTIONS2, { ...NODE_REGION_CONFIG_FILE_OPTIONS2, ...loaderConfig }),
-        requestHandler: NodeHttp2Handler.create(config?.requestHandler ?? (async () => ({
-          ...await defaultConfigProvider(),
-          disableConcurrentStreams: true
-        }))),
-        retryMode: config?.retryMode ?? loadConfig2({
-          ...NODE_RETRY_MODE_CONFIG_OPTIONS2,
-          default: async () => (await defaultConfigProvider()).retryMode || DEFAULT_RETRY_MODE2
-        }, config),
-        streamCollector: config?.streamCollector ?? streamCollector7,
-        useDualstackEndpoint: config?.useDualstackEndpoint ?? loadConfig2(NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS2, loaderConfig),
-        useFipsEndpoint: config?.useFipsEndpoint ?? loadConfig2(NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS2, loaderConfig),
-        userAgentAppId: config?.userAgentAppId ?? loadConfig2(NODE_APP_ID_CONFIG_OPTIONS2, loaderConfig)
-      };
-    };
-    var getHttpAuthExtensionConfiguration5 = (runtimeConfig) => {
-      const _httpAuthSchemes = runtimeConfig.httpAuthSchemes;
-      let _httpAuthSchemeProvider = runtimeConfig.httpAuthSchemeProvider;
-      let _credentials = runtimeConfig.credentials;
-      let _token = runtimeConfig.token;
-      return {
-        setHttpAuthScheme(httpAuthScheme) {
-          const index = _httpAuthSchemes.findIndex((scheme) => scheme.schemeId === httpAuthScheme.schemeId);
-          if (index === -1) {
-            _httpAuthSchemes.push(httpAuthScheme);
-          } else {
-            _httpAuthSchemes.splice(index, 1, httpAuthScheme);
-          }
-        },
-        httpAuthSchemes() {
-          return _httpAuthSchemes;
-        },
-        setHttpAuthSchemeProvider(httpAuthSchemeProvider) {
-          _httpAuthSchemeProvider = httpAuthSchemeProvider;
-        },
-        httpAuthSchemeProvider() {
-          return _httpAuthSchemeProvider;
-        },
-        setCredentials(credentials) {
-          _credentials = credentials;
-        },
-        credentials() {
-          return _credentials;
-        },
-        setToken(token) {
-          _token = token;
-        },
-        token() {
-          return _token;
-        }
-      };
-    };
-    var resolveHttpAuthRuntimeConfig5 = (config) => {
-      return {
-        httpAuthSchemes: config.httpAuthSchemes(),
-        httpAuthSchemeProvider: config.httpAuthSchemeProvider(),
-        credentials: config.credentials(),
-        token: config.token()
-      };
-    };
-    var resolveRuntimeExtensions5 = (runtimeConfig, extensions) => {
-      const extensionConfiguration = Object.assign(getAwsRegionExtensionConfiguration2(runtimeConfig), getDefaultExtensionConfiguration2(runtimeConfig), getHttpHandlerExtensionConfiguration2(runtimeConfig), getHttpAuthExtensionConfiguration5(runtimeConfig));
-      extensions.forEach((extension) => extension.configure(extensionConfiguration));
-      return Object.assign(runtimeConfig, resolveAwsRegionExtensionConfiguration2(extensionConfiguration), resolveDefaultRuntimeConfig2(extensionConfiguration), resolveHttpHandlerRuntimeConfig2(extensionConfiguration), resolveHttpAuthRuntimeConfig5(extensionConfiguration));
-    };
-    var BedrockRuntimeClient2 = class extends Client2 {
-      config;
-      constructor(...[configuration]) {
-        const _config_0 = getRuntimeConfig9(configuration || {});
-        super(_config_0);
-        this.initConfig = _config_0;
-        const _config_1 = resolveClientEndpointParameters5(_config_0);
-        const _config_2 = resolveUserAgentConfig2(_config_1);
-        const _config_3 = resolveRetryConfig2(_config_2);
-        const _config_4 = resolveRegionConfig2(_config_3);
-        const _config_5 = resolveHostHeaderConfig2(_config_4);
-        const _config_6 = resolveEndpointConfig2(_config_5);
-        const _config_7 = resolveEventStreamSerdeConfig2(_config_6);
-        const _config_8 = resolveHttpAuthSchemeConfig5(_config_7);
-        const _config_9 = resolveEventStreamConfig(_config_8);
-        const _config_10 = resolveWebSocketConfig(_config_9);
-        const _config_11 = resolveRuntimeExtensions5(_config_10, configuration?.extensions || []);
-        this.config = _config_11;
-        this.middlewareStack.use(getSchemaSerdePlugin2(this.config));
-        this.middlewareStack.use(getUserAgentPlugin2(this.config));
-        this.middlewareStack.use(getRetryPlugin2(this.config));
-        this.middlewareStack.use(getContentLengthPlugin2(this.config));
-        this.middlewareStack.use(getHostHeaderPlugin2(this.config));
-        this.middlewareStack.use(getLoggerPlugin2(this.config));
-        this.middlewareStack.use(getRecursionDetectionPlugin2(this.config));
-        this.middlewareStack.use(getHttpAuthSchemeEndpointRuleSetPlugin2(this.config, {
-          httpAuthSchemeParametersProvider: defaultBedrockRuntimeHttpAuthSchemeParametersProvider,
-          identityProviderConfigProvider: async (config) => new DefaultIdentityProviderConfig2({
-            "aws.auth#sigv4": config.credentials,
-            "smithy.api#httpBearerAuth": config.token
-          })
-        }));
-        this.middlewareStack.use(getHttpSigningPlugin2(this.config));
-      }
-      destroy() {
-        super.destroy();
-      }
-    };
-    var command5 = makeBuilder2(commonParams5, "AmazonBedrockFrontendService", "BedrockRuntimeClient", getEndpointPlugin2);
-    var _ep05 = {};
-    var _mw05 = (Command2, cs, config, o3) => [];
-    var _mw1 = (Command2, cs, config, o3) => [
-      getEventStreamPlugin(config),
-      getWebSocketPlugin(config, {
-        headerPrefix: "x-amz-bedrock-"
-      })
-    ];
-    var ApplyGuardrailCommand = class extends command5(_ep05, _mw05, "ApplyGuardrail", ApplyGuardrail$) {
-    };
-    var ConverseCommand = class extends command5(_ep05, _mw05, "Converse", Converse$) {
-    };
-    var ConverseStreamCommand = class extends command5(_ep05, _mw05, "ConverseStream", ConverseStream$) {
-    };
-    var CountTokensCommand = class extends command5(_ep05, _mw05, "CountTokens", CountTokens$) {
-    };
-    var GetAsyncInvokeCommand = class extends command5(_ep05, _mw05, "GetAsyncInvoke", GetAsyncInvoke$) {
-    };
-    var InvokeGuardrailChecksCommand = class extends command5(_ep05, _mw05, "InvokeGuardrailChecks", InvokeGuardrailChecks$) {
-    };
-    var InvokeModelCommand2 = class extends command5(_ep05, _mw05, "InvokeModel", InvokeModel$) {
-    };
-    var InvokeModelWithBidirectionalStreamCommand = class extends command5(_ep05, _mw1, "InvokeModelWithBidirectionalStream", InvokeModelWithBidirectionalStream$) {
-    };
-    var InvokeModelWithResponseStreamCommand = class extends command5(_ep05, _mw05, "InvokeModelWithResponseStream", InvokeModelWithResponseStream$) {
-    };
-    var ListAsyncInvokesCommand = class extends command5(_ep05, _mw05, "ListAsyncInvokes", ListAsyncInvokes$) {
-    };
-    var StartAsyncInvokeCommand = class extends command5(_ep05, _mw05, "StartAsyncInvoke", StartAsyncInvoke$) {
-    };
-    var paginateListAsyncInvokes = createPaginator2(BedrockRuntimeClient2, ListAsyncInvokesCommand, "nextToken", "nextToken", "maxResults");
-    var commands5 = {
-      ApplyGuardrailCommand,
-      ConverseCommand,
-      ConverseStreamCommand,
-      CountTokensCommand,
-      GetAsyncInvokeCommand,
-      InvokeGuardrailChecksCommand,
-      InvokeModelCommand: InvokeModelCommand2,
-      InvokeModelWithBidirectionalStreamCommand,
-      InvokeModelWithResponseStreamCommand,
-      ListAsyncInvokesCommand,
-      StartAsyncInvokeCommand
-    };
-    var paginators = {
-      paginateListAsyncInvokes
-    };
-    var BedrockRuntime = class extends BedrockRuntimeClient2 {
-    };
-    createAggregatedClient2(commands5, BedrockRuntime, { paginators });
-    var AsyncInvokeStatus = {
-      COMPLETED: "Completed",
-      FAILED: "Failed",
-      IN_PROGRESS: "InProgress"
-    };
-    var SortAsyncInvocationBy = {
-      SUBMISSION_TIME: "SubmissionTime"
-    };
-    var SortOrder = {
-      ASCENDING: "Ascending",
-      DESCENDING: "Descending"
-    };
-    var GuardrailImageFormat = {
-      JPEG: "jpeg",
-      PNG: "png"
-    };
-    var GuardrailContentQualifier = {
-      GROUNDING_SOURCE: "grounding_source",
-      GUARD_CONTENT: "guard_content",
-      QUERY: "query"
-    };
-    var GuardrailOutputScope = {
-      FULL: "FULL",
-      INTERVENTIONS: "INTERVENTIONS"
-    };
-    var GuardrailContentSource = {
-      INPUT: "INPUT",
-      OUTPUT: "OUTPUT"
-    };
-    var GuardrailAction = {
-      GUARDRAIL_INTERVENED: "GUARDRAIL_INTERVENED",
-      NONE: "NONE"
-    };
-    var GuardrailOrigin = {
-      ACCOUNT_ENFORCED: "ACCOUNT_ENFORCED",
-      ORGANIZATION_ENFORCED: "ORGANIZATION_ENFORCED",
-      REQUEST: "REQUEST"
-    };
-    var GuardrailOwnership = {
-      CROSS_ACCOUNT: "CROSS_ACCOUNT",
-      SELF: "SELF"
-    };
-    var GuardrailAutomatedReasoningLogicWarningType = {
-      ALWAYS_FALSE: "ALWAYS_FALSE",
-      ALWAYS_TRUE: "ALWAYS_TRUE"
-    };
-    var GuardrailContentPolicyAction = {
-      BLOCKED: "BLOCKED",
-      NONE: "NONE"
-    };
-    var GuardrailContentFilterConfidence = {
-      HIGH: "HIGH",
-      LOW: "LOW",
-      MEDIUM: "MEDIUM",
-      NONE: "NONE"
-    };
-    var GuardrailContentFilterStrength = {
-      HIGH: "HIGH",
-      LOW: "LOW",
-      MEDIUM: "MEDIUM",
-      NONE: "NONE"
-    };
-    var GuardrailContentFilterType = {
-      HATE: "HATE",
-      INSULTS: "INSULTS",
-      MISCONDUCT: "MISCONDUCT",
-      PROMPT_ATTACK: "PROMPT_ATTACK",
-      SEXUAL: "SEXUAL",
-      VIOLENCE: "VIOLENCE"
-    };
-    var GuardrailContextualGroundingPolicyAction = {
-      BLOCKED: "BLOCKED",
-      NONE: "NONE"
-    };
-    var GuardrailContextualGroundingFilterType = {
-      GROUNDING: "GROUNDING",
-      RELEVANCE: "RELEVANCE"
-    };
-    var GuardrailSensitiveInformationPolicyAction = {
-      ANONYMIZED: "ANONYMIZED",
-      BLOCKED: "BLOCKED",
-      NONE: "NONE"
-    };
-    var GuardrailPiiEntityType = {
-      ADDRESS: "ADDRESS",
-      AGE: "AGE",
-      AWS_ACCESS_KEY: "AWS_ACCESS_KEY",
-      AWS_SECRET_KEY: "AWS_SECRET_KEY",
-      CA_HEALTH_NUMBER: "CA_HEALTH_NUMBER",
-      CA_SOCIAL_INSURANCE_NUMBER: "CA_SOCIAL_INSURANCE_NUMBER",
-      CREDIT_DEBIT_CARD_CVV: "CREDIT_DEBIT_CARD_CVV",
-      CREDIT_DEBIT_CARD_EXPIRY: "CREDIT_DEBIT_CARD_EXPIRY",
-      CREDIT_DEBIT_CARD_NUMBER: "CREDIT_DEBIT_CARD_NUMBER",
-      DRIVER_ID: "DRIVER_ID",
-      EMAIL: "EMAIL",
-      INTERNATIONAL_BANK_ACCOUNT_NUMBER: "INTERNATIONAL_BANK_ACCOUNT_NUMBER",
-      IP_ADDRESS: "IP_ADDRESS",
-      LICENSE_PLATE: "LICENSE_PLATE",
-      MAC_ADDRESS: "MAC_ADDRESS",
-      NAME: "NAME",
-      PASSWORD: "PASSWORD",
-      PHONE: "PHONE",
-      PIN: "PIN",
-      SWIFT_CODE: "SWIFT_CODE",
-      UK_NATIONAL_HEALTH_SERVICE_NUMBER: "UK_NATIONAL_HEALTH_SERVICE_NUMBER",
-      UK_NATIONAL_INSURANCE_NUMBER: "UK_NATIONAL_INSURANCE_NUMBER",
-      UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER: "UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER",
-      URL: "URL",
-      USERNAME: "USERNAME",
-      US_BANK_ACCOUNT_NUMBER: "US_BANK_ACCOUNT_NUMBER",
-      US_BANK_ROUTING_NUMBER: "US_BANK_ROUTING_NUMBER",
-      US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER: "US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER",
-      US_PASSPORT_NUMBER: "US_PASSPORT_NUMBER",
-      US_SOCIAL_SECURITY_NUMBER: "US_SOCIAL_SECURITY_NUMBER",
-      VEHICLE_IDENTIFICATION_NUMBER: "VEHICLE_IDENTIFICATION_NUMBER"
-    };
-    var GuardrailTopicPolicyAction = {
-      BLOCKED: "BLOCKED",
-      NONE: "NONE"
-    };
-    var GuardrailTopicType = {
-      DENY: "DENY"
-    };
-    var GuardrailWordPolicyAction = {
-      BLOCKED: "BLOCKED",
-      NONE: "NONE"
-    };
-    var GuardrailManagedWordType = {
-      PROFANITY: "PROFANITY"
-    };
-    var GuardrailChecksContentFilterCategory = {
-      HATE: "HATE",
-      INSULTS: "INSULTS",
-      MISCONDUCT: "MISCONDUCT",
-      SEXUAL: "SEXUAL",
-      VIOLENCE: "VIOLENCE"
-    };
-    var GuardrailChecksPromptAttackCategory = {
-      JAILBREAK: "JAILBREAK",
-      PROMPT_INJECTION: "PROMPT_INJECTION",
-      PROMPT_LEAKAGE: "PROMPT_LEAKAGE"
-    };
-    var GuardrailChecksSensitiveInformationEntityType = {
-      ADDRESS: "ADDRESS",
-      AGE: "AGE",
-      AWS_ACCESS_KEY: "AWS_ACCESS_KEY",
-      AWS_SECRET_KEY: "AWS_SECRET_KEY",
-      CA_HEALTH_NUMBER: "CA_HEALTH_NUMBER",
-      CA_SOCIAL_INSURANCE_NUMBER: "CA_SOCIAL_INSURANCE_NUMBER",
-      CREDIT_DEBIT_CARD_CVV: "CREDIT_DEBIT_CARD_CVV",
-      CREDIT_DEBIT_CARD_EXPIRY: "CREDIT_DEBIT_CARD_EXPIRY",
-      CREDIT_DEBIT_CARD_NUMBER: "CREDIT_DEBIT_CARD_NUMBER",
-      DRIVER_ID: "DRIVER_ID",
-      EMAIL: "EMAIL",
-      INTERNATIONAL_BANK_ACCOUNT_NUMBER: "INTERNATIONAL_BANK_ACCOUNT_NUMBER",
-      IP_ADDRESS: "IP_ADDRESS",
-      LICENSE_PLATE: "LICENSE_PLATE",
-      MAC_ADDRESS: "MAC_ADDRESS",
-      NAME: "NAME",
-      PASSWORD: "PASSWORD",
-      PHONE: "PHONE",
-      PIN: "PIN",
-      SWIFT_CODE: "SWIFT_CODE",
-      UK_NATIONAL_HEALTH_SERVICE_NUMBER: "UK_NATIONAL_HEALTH_SERVICE_NUMBER",
-      UK_NATIONAL_INSURANCE_NUMBER: "UK_NATIONAL_INSURANCE_NUMBER",
-      UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER: "UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER",
-      URL: "URL",
-      USERNAME: "USERNAME",
-      US_BANK_ACCOUNT_NUMBER: "US_BANK_ACCOUNT_NUMBER",
-      US_BANK_ROUTING_NUMBER: "US_BANK_ROUTING_NUMBER",
-      US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER: "US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER",
-      US_PASSPORT_NUMBER: "US_PASSPORT_NUMBER",
-      US_SOCIAL_SECURITY_NUMBER: "US_SOCIAL_SECURITY_NUMBER",
-      VEHICLE_IDENTIFICATION_NUMBER: "VEHICLE_IDENTIFICATION_NUMBER"
-    };
-    var GuardrailChecksRole = {
-      ASSISTANT: "assistant",
-      SYSTEM: "system",
-      USER: "user"
-    };
-    var GuardrailTrace = {
-      DISABLED: "disabled",
-      ENABLED: "enabled",
-      ENABLED_FULL: "enabled_full"
-    };
-    var AudioFormat = {
-      AAC: "aac",
-      FLAC: "flac",
-      M4A: "m4a",
-      MKA: "mka",
-      MKV: "mkv",
-      MP3: "mp3",
-      MP4: "mp4",
-      MPEG: "mpeg",
-      MPGA: "mpga",
-      OGG: "ogg",
-      OPUS: "opus",
-      PCM: "pcm",
-      WAV: "wav",
-      WEBM: "webm",
-      X_AAC: "x-aac"
-    };
-    var CacheTTL = {
-      FIVE_MINUTES: "5m",
-      ONE_HOUR: "1h"
-    };
-    var CachePointType = {
-      DEFAULT: "default"
-    };
-    var DocumentFormat = {
-      CSV: "csv",
-      DOC: "doc",
-      DOCX: "docx",
-      HTML: "html",
-      MD: "md",
-      PDF: "pdf",
-      TXT: "txt",
-      XLS: "xls",
-      XLSX: "xlsx"
-    };
-    var GuardrailConverseImageFormat = {
-      JPEG: "jpeg",
-      PNG: "png"
-    };
-    var GuardrailConverseContentQualifier = {
-      GROUNDING_SOURCE: "grounding_source",
-      GUARD_CONTENT: "guard_content",
-      QUERY: "query"
-    };
-    var ImageFormat = {
-      GIF: "gif",
-      JPEG: "jpeg",
-      PNG: "png",
-      WEBP: "webp"
-    };
-    var VideoFormat = {
-      FLV: "flv",
-      MKV: "mkv",
-      MOV: "mov",
-      MP4: "mp4",
-      MPEG: "mpeg",
-      MPG: "mpg",
-      THREE_GP: "three_gp",
-      WEBM: "webm",
-      WMV: "wmv"
-    };
-    var ToolResultStatus = {
-      ERROR: "error",
-      SUCCESS: "success"
-    };
-    var ToolUseType = {
-      SERVER_TOOL_USE: "server_tool_use"
-    };
-    var ConversationRole = {
-      ASSISTANT: "assistant",
-      SYSTEM: "system",
-      USER: "user"
-    };
-    var OutputFormatType = {
-      JSON_SCHEMA: "json_schema"
-    };
-    var PerformanceConfigLatency = {
-      OPTIMIZED: "optimized",
-      STANDARD: "standard"
-    };
-    var ServiceTierType = {
-      DEFAULT: "default",
-      FLEX: "flex",
-      PRIORITY: "priority",
-      RESERVED: "reserved"
-    };
-    var StopReason = {
-      CONTENT_FILTERED: "content_filtered",
-      END_TURN: "end_turn",
-      GUARDRAIL_INTERVENED: "guardrail_intervened",
-      MALFORMED_MODEL_OUTPUT: "malformed_model_output",
-      MALFORMED_TOOL_USE: "malformed_tool_use",
-      MAX_TOKENS: "max_tokens",
-      MODEL_CONTEXT_WINDOW_EXCEEDED: "model_context_window_exceeded",
-      STOP_SEQUENCE: "stop_sequence",
-      TOOL_USE: "tool_use"
-    };
-    var GuardrailStreamProcessingMode = {
-      ASYNC: "async",
-      SYNC: "sync"
-    };
-    var Trace = {
-      DISABLED: "DISABLED",
-      ENABLED: "ENABLED",
-      ENABLED_FULL: "ENABLED_FULL"
-    };
-    exports2.AccessDeniedException = AccessDeniedException3;
-    exports2.AccessDeniedException$ = AccessDeniedException$3;
-    exports2.AnyToolChoice$ = AnyToolChoice$;
-    exports2.AppliedGuardrailDetails$ = AppliedGuardrailDetails$;
-    exports2.ApplyGuardrail$ = ApplyGuardrail$;
-    exports2.ApplyGuardrailCommand = ApplyGuardrailCommand;
-    exports2.ApplyGuardrailRequest$ = ApplyGuardrailRequest$;
-    exports2.ApplyGuardrailResponse$ = ApplyGuardrailResponse$;
-    exports2.AsyncInvokeOutputDataConfig$ = AsyncInvokeOutputDataConfig$;
-    exports2.AsyncInvokeS3OutputDataConfig$ = AsyncInvokeS3OutputDataConfig$;
-    exports2.AsyncInvokeStatus = AsyncInvokeStatus;
-    exports2.AsyncInvokeSummary$ = AsyncInvokeSummary$;
-    exports2.AudioBlock$ = AudioBlock$;
-    exports2.AudioFormat = AudioFormat;
-    exports2.AudioSource$ = AudioSource$;
-    exports2.AutoToolChoice$ = AutoToolChoice$;
-    exports2.BedrockRuntime = BedrockRuntime;
-    exports2.BedrockRuntimeClient = BedrockRuntimeClient2;
-    exports2.BedrockRuntimeServiceException = BedrockRuntimeServiceException;
-    exports2.BedrockRuntimeServiceException$ = BedrockRuntimeServiceException$;
-    exports2.BidirectionalInputPayloadPart$ = BidirectionalInputPayloadPart$;
-    exports2.BidirectionalOutputPayloadPart$ = BidirectionalOutputPayloadPart$;
-    exports2.CacheDetail$ = CacheDetail$;
-    exports2.CachePointBlock$ = CachePointBlock$;
-    exports2.CachePointType = CachePointType;
-    exports2.CacheTTL = CacheTTL;
-    exports2.Citation$ = Citation$;
-    exports2.CitationGeneratedContent$ = CitationGeneratedContent$;
-    exports2.CitationLocation$ = CitationLocation$;
-    exports2.CitationSourceContent$ = CitationSourceContent$;
-    exports2.CitationSourceContentDelta$ = CitationSourceContentDelta$;
-    exports2.CitationsConfig$ = CitationsConfig$;
-    exports2.CitationsContentBlock$ = CitationsContentBlock$;
-    exports2.CitationsDelta$ = CitationsDelta$;
-    exports2.ConflictException = ConflictException;
-    exports2.ConflictException$ = ConflictException$;
-    exports2.ContentBlock$ = ContentBlock$;
-    exports2.ContentBlockDelta$ = ContentBlockDelta$;
-    exports2.ContentBlockDeltaEvent$ = ContentBlockDeltaEvent$;
-    exports2.ContentBlockStart$ = ContentBlockStart$;
-    exports2.ContentBlockStartEvent$ = ContentBlockStartEvent$;
-    exports2.ContentBlockStopEvent$ = ContentBlockStopEvent$;
-    exports2.ConversationRole = ConversationRole;
-    exports2.Converse$ = Converse$;
-    exports2.ConverseCommand = ConverseCommand;
-    exports2.ConverseMetrics$ = ConverseMetrics$;
-    exports2.ConverseOutput$ = ConverseOutput$;
-    exports2.ConverseRequest$ = ConverseRequest$;
-    exports2.ConverseResponse$ = ConverseResponse$;
-    exports2.ConverseStream$ = ConverseStream$;
-    exports2.ConverseStreamCommand = ConverseStreamCommand;
-    exports2.ConverseStreamMetadataEvent$ = ConverseStreamMetadataEvent$;
-    exports2.ConverseStreamMetrics$ = ConverseStreamMetrics$;
-    exports2.ConverseStreamOutput$ = ConverseStreamOutput$;
-    exports2.ConverseStreamRequest$ = ConverseStreamRequest$;
-    exports2.ConverseStreamResponse$ = ConverseStreamResponse$;
-    exports2.ConverseStreamTrace$ = ConverseStreamTrace$;
-    exports2.ConverseTokensRequest$ = ConverseTokensRequest$;
-    exports2.ConverseTrace$ = ConverseTrace$;
-    exports2.CountTokens$ = CountTokens$;
-    exports2.CountTokensCommand = CountTokensCommand;
-    exports2.CountTokensInput$ = CountTokensInput$;
-    exports2.CountTokensRequest$ = CountTokensRequest$;
-    exports2.CountTokensResponse$ = CountTokensResponse$;
-    exports2.DocumentBlock$ = DocumentBlock$;
-    exports2.DocumentCharLocation$ = DocumentCharLocation$;
-    exports2.DocumentChunkLocation$ = DocumentChunkLocation$;
-    exports2.DocumentContentBlock$ = DocumentContentBlock$;
-    exports2.DocumentFormat = DocumentFormat;
-    exports2.DocumentPageLocation$ = DocumentPageLocation$;
-    exports2.DocumentSource$ = DocumentSource$;
-    exports2.ErrorBlock$ = ErrorBlock$;
-    exports2.GetAsyncInvoke$ = GetAsyncInvoke$;
-    exports2.GetAsyncInvokeCommand = GetAsyncInvokeCommand;
-    exports2.GetAsyncInvokeRequest$ = GetAsyncInvokeRequest$;
-    exports2.GetAsyncInvokeResponse$ = GetAsyncInvokeResponse$;
-    exports2.GuardrailAction = GuardrailAction;
-    exports2.GuardrailAssessment$ = GuardrailAssessment$;
-    exports2.GuardrailAutomatedReasoningFinding$ = GuardrailAutomatedReasoningFinding$;
-    exports2.GuardrailAutomatedReasoningImpossibleFinding$ = GuardrailAutomatedReasoningImpossibleFinding$;
-    exports2.GuardrailAutomatedReasoningInputTextReference$ = GuardrailAutomatedReasoningInputTextReference$;
-    exports2.GuardrailAutomatedReasoningInvalidFinding$ = GuardrailAutomatedReasoningInvalidFinding$;
-    exports2.GuardrailAutomatedReasoningLogicWarning$ = GuardrailAutomatedReasoningLogicWarning$;
-    exports2.GuardrailAutomatedReasoningLogicWarningType = GuardrailAutomatedReasoningLogicWarningType;
-    exports2.GuardrailAutomatedReasoningNoTranslationsFinding$ = GuardrailAutomatedReasoningNoTranslationsFinding$;
-    exports2.GuardrailAutomatedReasoningPolicyAssessment$ = GuardrailAutomatedReasoningPolicyAssessment$;
-    exports2.GuardrailAutomatedReasoningRule$ = GuardrailAutomatedReasoningRule$;
-    exports2.GuardrailAutomatedReasoningSatisfiableFinding$ = GuardrailAutomatedReasoningSatisfiableFinding$;
-    exports2.GuardrailAutomatedReasoningScenario$ = GuardrailAutomatedReasoningScenario$;
-    exports2.GuardrailAutomatedReasoningStatement$ = GuardrailAutomatedReasoningStatement$;
-    exports2.GuardrailAutomatedReasoningTooComplexFinding$ = GuardrailAutomatedReasoningTooComplexFinding$;
-    exports2.GuardrailAutomatedReasoningTranslation$ = GuardrailAutomatedReasoningTranslation$;
-    exports2.GuardrailAutomatedReasoningTranslationAmbiguousFinding$ = GuardrailAutomatedReasoningTranslationAmbiguousFinding$;
-    exports2.GuardrailAutomatedReasoningTranslationOption$ = GuardrailAutomatedReasoningTranslationOption$;
-    exports2.GuardrailAutomatedReasoningValidFinding$ = GuardrailAutomatedReasoningValidFinding$;
-    exports2.GuardrailChecksConfig$ = GuardrailChecksConfig$;
-    exports2.GuardrailChecksContentBlock$ = GuardrailChecksContentBlock$;
-    exports2.GuardrailChecksContentFilterCategory = GuardrailChecksContentFilterCategory;
-    exports2.GuardrailChecksContentFilterCategoryConfig$ = GuardrailChecksContentFilterCategoryConfig$;
-    exports2.GuardrailChecksContentFilterConfig$ = GuardrailChecksContentFilterConfig$;
-    exports2.GuardrailChecksContentFilterResult$ = GuardrailChecksContentFilterResult$;
-    exports2.GuardrailChecksContentFilterResultEntry$ = GuardrailChecksContentFilterResultEntry$;
-    exports2.GuardrailChecksContentFilterUsage$ = GuardrailChecksContentFilterUsage$;
-    exports2.GuardrailChecksMessage$ = GuardrailChecksMessage$;
-    exports2.GuardrailChecksPromptAttackCategory = GuardrailChecksPromptAttackCategory;
-    exports2.GuardrailChecksPromptAttackCategoryConfig$ = GuardrailChecksPromptAttackCategoryConfig$;
-    exports2.GuardrailChecksPromptAttackConfig$ = GuardrailChecksPromptAttackConfig$;
-    exports2.GuardrailChecksPromptAttackResult$ = GuardrailChecksPromptAttackResult$;
-    exports2.GuardrailChecksPromptAttackResultEntry$ = GuardrailChecksPromptAttackResultEntry$;
-    exports2.GuardrailChecksPromptAttackUsage$ = GuardrailChecksPromptAttackUsage$;
-    exports2.GuardrailChecksResults$ = GuardrailChecksResults$;
-    exports2.GuardrailChecksRole = GuardrailChecksRole;
-    exports2.GuardrailChecksSensitiveInformationConfig$ = GuardrailChecksSensitiveInformationConfig$;
-    exports2.GuardrailChecksSensitiveInformationEntityConfig$ = GuardrailChecksSensitiveInformationEntityConfig$;
-    exports2.GuardrailChecksSensitiveInformationEntityType = GuardrailChecksSensitiveInformationEntityType;
-    exports2.GuardrailChecksSensitiveInformationResult$ = GuardrailChecksSensitiveInformationResult$;
-    exports2.GuardrailChecksSensitiveInformationResultEntry$ = GuardrailChecksSensitiveInformationResultEntry$;
-    exports2.GuardrailChecksSensitiveInformationUsage$ = GuardrailChecksSensitiveInformationUsage$;
-    exports2.GuardrailChecksUsageResults$ = GuardrailChecksUsageResults$;
-    exports2.GuardrailConfiguration$ = GuardrailConfiguration$;
-    exports2.GuardrailContentBlock$ = GuardrailContentBlock$;
-    exports2.GuardrailContentFilter$ = GuardrailContentFilter$;
-    exports2.GuardrailContentFilterConfidence = GuardrailContentFilterConfidence;
-    exports2.GuardrailContentFilterStrength = GuardrailContentFilterStrength;
-    exports2.GuardrailContentFilterType = GuardrailContentFilterType;
-    exports2.GuardrailContentPolicyAction = GuardrailContentPolicyAction;
-    exports2.GuardrailContentPolicyAssessment$ = GuardrailContentPolicyAssessment$;
-    exports2.GuardrailContentQualifier = GuardrailContentQualifier;
-    exports2.GuardrailContentSource = GuardrailContentSource;
-    exports2.GuardrailContextualGroundingFilter$ = GuardrailContextualGroundingFilter$;
-    exports2.GuardrailContextualGroundingFilterType = GuardrailContextualGroundingFilterType;
-    exports2.GuardrailContextualGroundingPolicyAction = GuardrailContextualGroundingPolicyAction;
-    exports2.GuardrailContextualGroundingPolicyAssessment$ = GuardrailContextualGroundingPolicyAssessment$;
-    exports2.GuardrailConverseContentBlock$ = GuardrailConverseContentBlock$;
-    exports2.GuardrailConverseContentQualifier = GuardrailConverseContentQualifier;
-    exports2.GuardrailConverseImageBlock$ = GuardrailConverseImageBlock$;
-    exports2.GuardrailConverseImageFormat = GuardrailConverseImageFormat;
-    exports2.GuardrailConverseImageSource$ = GuardrailConverseImageSource$;
-    exports2.GuardrailConverseTextBlock$ = GuardrailConverseTextBlock$;
-    exports2.GuardrailCoverage$ = GuardrailCoverage$;
-    exports2.GuardrailCustomWord$ = GuardrailCustomWord$;
-    exports2.GuardrailImageBlock$ = GuardrailImageBlock$;
-    exports2.GuardrailImageCoverage$ = GuardrailImageCoverage$;
-    exports2.GuardrailImageFormat = GuardrailImageFormat;
-    exports2.GuardrailImageSource$ = GuardrailImageSource$;
-    exports2.GuardrailInvocationMetrics$ = GuardrailInvocationMetrics$;
-    exports2.GuardrailManagedWord$ = GuardrailManagedWord$;
-    exports2.GuardrailManagedWordType = GuardrailManagedWordType;
-    exports2.GuardrailOrigin = GuardrailOrigin;
-    exports2.GuardrailOutputContent$ = GuardrailOutputContent$;
-    exports2.GuardrailOutputScope = GuardrailOutputScope;
-    exports2.GuardrailOwnership = GuardrailOwnership;
-    exports2.GuardrailPiiEntityFilter$ = GuardrailPiiEntityFilter$;
-    exports2.GuardrailPiiEntityType = GuardrailPiiEntityType;
-    exports2.GuardrailRegexFilter$ = GuardrailRegexFilter$;
-    exports2.GuardrailSensitiveInformationPolicyAction = GuardrailSensitiveInformationPolicyAction;
-    exports2.GuardrailSensitiveInformationPolicyAssessment$ = GuardrailSensitiveInformationPolicyAssessment$;
-    exports2.GuardrailStreamConfiguration$ = GuardrailStreamConfiguration$;
-    exports2.GuardrailStreamProcessingMode = GuardrailStreamProcessingMode;
-    exports2.GuardrailTextBlock$ = GuardrailTextBlock$;
-    exports2.GuardrailTextCharactersCoverage$ = GuardrailTextCharactersCoverage$;
-    exports2.GuardrailTopic$ = GuardrailTopic$;
-    exports2.GuardrailTopicPolicyAction = GuardrailTopicPolicyAction;
-    exports2.GuardrailTopicPolicyAssessment$ = GuardrailTopicPolicyAssessment$;
-    exports2.GuardrailTopicType = GuardrailTopicType;
-    exports2.GuardrailTrace = GuardrailTrace;
-    exports2.GuardrailTraceAssessment$ = GuardrailTraceAssessment$;
-    exports2.GuardrailUsage$ = GuardrailUsage$;
-    exports2.GuardrailWordPolicyAction = GuardrailWordPolicyAction;
-    exports2.GuardrailWordPolicyAssessment$ = GuardrailWordPolicyAssessment$;
-    exports2.ImageBlock$ = ImageBlock$;
-    exports2.ImageBlockDelta$ = ImageBlockDelta$;
-    exports2.ImageBlockStart$ = ImageBlockStart$;
-    exports2.ImageFormat = ImageFormat;
-    exports2.ImageSource$ = ImageSource$;
-    exports2.InferenceConfiguration$ = InferenceConfiguration$;
-    exports2.InternalServerException = InternalServerException3;
-    exports2.InternalServerException$ = InternalServerException$3;
-    exports2.InvokeGuardrailChecks$ = InvokeGuardrailChecks$;
-    exports2.InvokeGuardrailChecksCommand = InvokeGuardrailChecksCommand;
-    exports2.InvokeGuardrailChecksRequest$ = InvokeGuardrailChecksRequest$;
-    exports2.InvokeGuardrailChecksResponse$ = InvokeGuardrailChecksResponse$;
-    exports2.InvokeModel$ = InvokeModel$;
-    exports2.InvokeModelCommand = InvokeModelCommand2;
-    exports2.InvokeModelRequest$ = InvokeModelRequest$;
-    exports2.InvokeModelResponse$ = InvokeModelResponse$;
-    exports2.InvokeModelTokensRequest$ = InvokeModelTokensRequest$;
-    exports2.InvokeModelWithBidirectionalStream$ = InvokeModelWithBidirectionalStream$;
-    exports2.InvokeModelWithBidirectionalStreamCommand = InvokeModelWithBidirectionalStreamCommand;
-    exports2.InvokeModelWithBidirectionalStreamInput$ = InvokeModelWithBidirectionalStreamInput$;
-    exports2.InvokeModelWithBidirectionalStreamOutput$ = InvokeModelWithBidirectionalStreamOutput$;
-    exports2.InvokeModelWithBidirectionalStreamRequest$ = InvokeModelWithBidirectionalStreamRequest$;
-    exports2.InvokeModelWithBidirectionalStreamResponse$ = InvokeModelWithBidirectionalStreamResponse$;
-    exports2.InvokeModelWithResponseStream$ = InvokeModelWithResponseStream$;
-    exports2.InvokeModelWithResponseStreamCommand = InvokeModelWithResponseStreamCommand;
-    exports2.InvokeModelWithResponseStreamRequest$ = InvokeModelWithResponseStreamRequest$;
-    exports2.InvokeModelWithResponseStreamResponse$ = InvokeModelWithResponseStreamResponse$;
-    exports2.JsonSchemaDefinition$ = JsonSchemaDefinition$;
-    exports2.ListAsyncInvokes$ = ListAsyncInvokes$;
-    exports2.ListAsyncInvokesCommand = ListAsyncInvokesCommand;
-    exports2.ListAsyncInvokesRequest$ = ListAsyncInvokesRequest$;
-    exports2.ListAsyncInvokesResponse$ = ListAsyncInvokesResponse$;
-    exports2.Message$ = Message$;
-    exports2.MessageStartEvent$ = MessageStartEvent$;
-    exports2.MessageStopEvent$ = MessageStopEvent$;
-    exports2.ModelErrorException = ModelErrorException;
-    exports2.ModelErrorException$ = ModelErrorException$;
-    exports2.ModelNotReadyException = ModelNotReadyException;
-    exports2.ModelNotReadyException$ = ModelNotReadyException$;
-    exports2.ModelStreamErrorException = ModelStreamErrorException;
-    exports2.ModelStreamErrorException$ = ModelStreamErrorException$;
-    exports2.ModelTimeoutException = ModelTimeoutException;
-    exports2.ModelTimeoutException$ = ModelTimeoutException$;
-    exports2.OutputConfig$ = OutputConfig$;
-    exports2.OutputFormat$ = OutputFormat$;
-    exports2.OutputFormatStructure$ = OutputFormatStructure$;
-    exports2.OutputFormatType = OutputFormatType;
-    exports2.PayloadPart$ = PayloadPart$;
-    exports2.PerformanceConfigLatency = PerformanceConfigLatency;
-    exports2.PerformanceConfiguration$ = PerformanceConfiguration$;
-    exports2.PromptRouterTrace$ = PromptRouterTrace$;
-    exports2.PromptVariableValues$ = PromptVariableValues$;
-    exports2.ReasoningContentBlock$ = ReasoningContentBlock$;
-    exports2.ReasoningContentBlockDelta$ = ReasoningContentBlockDelta$;
-    exports2.ReasoningTextBlock$ = ReasoningTextBlock$;
-    exports2.ResourceNotFoundException = ResourceNotFoundException2;
-    exports2.ResourceNotFoundException$ = ResourceNotFoundException$2;
-    exports2.ResponseStream$ = ResponseStream$;
-    exports2.S3Location$ = S3Location$;
-    exports2.SearchResultBlock$ = SearchResultBlock$;
-    exports2.SearchResultContentBlock$ = SearchResultContentBlock$;
-    exports2.SearchResultLocation$ = SearchResultLocation$;
-    exports2.ServiceQuotaExceededException = ServiceQuotaExceededException;
-    exports2.ServiceQuotaExceededException$ = ServiceQuotaExceededException$;
-    exports2.ServiceTier$ = ServiceTier$;
-    exports2.ServiceTierType = ServiceTierType;
-    exports2.ServiceUnavailableException = ServiceUnavailableException;
-    exports2.ServiceUnavailableException$ = ServiceUnavailableException$;
-    exports2.SortAsyncInvocationBy = SortAsyncInvocationBy;
-    exports2.SortOrder = SortOrder;
-    exports2.SpecificToolChoice$ = SpecificToolChoice$;
-    exports2.StartAsyncInvoke$ = StartAsyncInvoke$;
-    exports2.StartAsyncInvokeCommand = StartAsyncInvokeCommand;
-    exports2.StartAsyncInvokeRequest$ = StartAsyncInvokeRequest$;
-    exports2.StartAsyncInvokeResponse$ = StartAsyncInvokeResponse$;
-    exports2.StopReason = StopReason;
-    exports2.SystemContentBlock$ = SystemContentBlock$;
-    exports2.SystemTool$ = SystemTool$;
-    exports2.Tag$ = Tag$2;
-    exports2.ThrottlingException = ThrottlingException;
-    exports2.ThrottlingException$ = ThrottlingException$;
-    exports2.TokenUsage$ = TokenUsage$;
-    exports2.Tool$ = Tool$;
-    exports2.ToolAdditionBlock$ = ToolAdditionBlock$;
-    exports2.ToolChoice$ = ToolChoice$;
-    exports2.ToolConfiguration$ = ToolConfiguration$;
-    exports2.ToolInputSchema$ = ToolInputSchema$;
-    exports2.ToolReference$ = ToolReference$;
-    exports2.ToolRemovalBlock$ = ToolRemovalBlock$;
-    exports2.ToolResultBlock$ = ToolResultBlock$;
-    exports2.ToolResultBlockDelta$ = ToolResultBlockDelta$;
-    exports2.ToolResultBlockStart$ = ToolResultBlockStart$;
-    exports2.ToolResultContentBlock$ = ToolResultContentBlock$;
-    exports2.ToolResultStatus = ToolResultStatus;
-    exports2.ToolSpecification$ = ToolSpecification$;
-    exports2.ToolUseBlock$ = ToolUseBlock$;
-    exports2.ToolUseBlockDelta$ = ToolUseBlockDelta$;
-    exports2.ToolUseBlockStart$ = ToolUseBlockStart$;
-    exports2.ToolUseType = ToolUseType;
-    exports2.Trace = Trace;
-    exports2.ValidationException = ValidationException2;
-    exports2.ValidationException$ = ValidationException$2;
-    exports2.VideoBlock$ = VideoBlock$;
-    exports2.VideoFormat = VideoFormat;
-    exports2.VideoSource$ = VideoSource$;
-    exports2.WebLocation$ = WebLocation$;
-    exports2.errorTypeRegistries = errorTypeRegistries5;
-    exports2.paginateListAsyncInvokes = paginateListAsyncInvokes;
-  }
-});
-
-// node_modules/@aws-sdk/util-dynamodb/dist-cjs/index.js
-var require_dist_cjs22 = __commonJS({
-  "node_modules/@aws-sdk/util-dynamodb/dist-cjs/index.js"(exports2) {
-    var NumberValue = class _NumberValue {
-      value;
-      constructor(value) {
-        if (typeof value === "object" && "N" in value) {
-          this.value = String(value.N);
-        } else {
-          this.value = String(value);
-        }
-        const valueOf = typeof value.valueOf() === "number" ? value.valueOf() : 0;
-        const imprecise = valueOf > Number.MAX_SAFE_INTEGER || valueOf < Number.MIN_SAFE_INTEGER || Math.abs(valueOf) === Infinity || Number.isNaN(valueOf);
-        if (imprecise) {
-          throw new Error(`NumberValue should not be initialized with an imprecise number=${valueOf}. Use a string instead.`);
-        }
-      }
-      static from(value) {
-        return new _NumberValue(value);
-      }
-      toAttributeValue() {
-        return {
-          N: this.toString()
-        };
-      }
-      toBigInt() {
-        const stringValue = this.toString();
-        return BigInt(stringValue);
-      }
-      toString() {
-        return String(this.value);
-      }
-      valueOf() {
-        return this.toString();
-      }
-    };
-    var convertToAttr = (data, options) => {
-      if (data === void 0) {
-        throw new Error(`Pass options.removeUndefinedValues=true to remove undefined values from map/array/set.`);
-      } else if (data === null && typeof data === "object") {
-        return convertToNullAttr();
-      } else if (Array.isArray(data)) {
-        return convertToListAttr(data, options);
-      } else if (data?.constructor?.name === "Set") {
-        return convertToSetAttr(data, options);
-      } else if (data?.constructor?.name === "Map") {
-        return convertToMapAttrFromIterable(data, options);
-      } else if (data?.constructor?.name === "Object" || !data.constructor && typeof data === "object") {
-        return convertToMapAttrFromEnumerableProps(data, options);
-      } else if (isBinary(data)) {
-        if (data.length === 0 && options?.convertEmptyValues) {
-          return convertToNullAttr();
-        }
-        return convertToBinaryAttr(data);
-      } else if (typeof data === "boolean" || data?.constructor?.name === "Boolean") {
-        return { BOOL: data.valueOf() };
-      } else if (typeof data === "number" || data?.constructor?.name === "Number") {
-        return convertToNumberAttr(data, options);
-      } else if (data instanceof NumberValue) {
-        return data.toAttributeValue();
-      } else if (typeof data === "bigint") {
-        return convertToBigIntAttr(data);
-      } else if (typeof data === "string" || data?.constructor?.name === "String") {
-        if (data.length === 0 && options?.convertEmptyValues) {
-          return convertToNullAttr();
-        }
-        return convertToStringAttr(data);
-      } else if (options?.convertClassInstanceToMap && typeof data === "object") {
-        return convertToMapAttrFromEnumerableProps(data, options);
-      }
-      throw new Error(`Unsupported type passed: ${data}. Pass options.convertClassInstanceToMap=true to marshall typeof object as map attribute.`);
-    };
-    var convertToListAttr = (data, options) => ({
-      L: data.filter((item) => typeof item !== "function" && (!options?.removeUndefinedValues || options?.removeUndefinedValues && item !== void 0)).map((item) => convertToAttr(item, options))
-    });
-    var convertToSetAttr = (set, options) => {
-      const setToOperate = options?.removeUndefinedValues ? new Set([...set].filter((value) => value !== void 0)) : set;
-      if (!options?.removeUndefinedValues && setToOperate.has(void 0)) {
-        throw new Error(`Pass options.removeUndefinedValues=true to remove undefined values from map/array/set.`);
-      }
-      if (setToOperate.size === 0) {
-        if (options?.convertEmptyValues) {
-          return convertToNullAttr();
-        }
-        throw new Error(`Pass a non-empty set, or options.convertEmptyValues=true.`);
-      }
-      const item = setToOperate.values().next().value;
-      if (item instanceof NumberValue) {
-        return {
-          NS: Array.from(setToOperate).map((_) => _.toString())
-        };
-      } else if (typeof item === "number") {
-        return {
-          NS: Array.from(setToOperate).map((num) => convertToNumberAttr(num, options)).map((item2) => item2.N)
-        };
-      } else if (typeof item === "bigint") {
-        return {
-          NS: Array.from(setToOperate).map(convertToBigIntAttr).map((item2) => item2.N)
-        };
-      } else if (typeof item === "string") {
-        return {
-          SS: Array.from(setToOperate).map(convertToStringAttr).map((item2) => item2.S)
-        };
-      } else if (isBinary(item)) {
-        return {
-          BS: Array.from(setToOperate).map(convertToBinaryAttr).map((item2) => item2.B)
-        };
-      } else {
-        throw new Error(`Only Number Set (NS), Binary Set (BS) or String Set (SS) are allowed.`);
-      }
-    };
-    var convertToMapAttrFromIterable = (data, options) => ({
-      M: ((data2) => {
-        const map3 = {};
-        for (const [key, value] of data2) {
-          if (typeof value !== "function" && (value !== void 0 || !options?.removeUndefinedValues)) {
-            map3[key] = convertToAttr(value, options);
-          }
-        }
-        return map3;
-      })(data)
-    });
-    var convertToMapAttrFromEnumerableProps = (data, options) => ({
-      M: ((data2) => {
-        const map3 = {};
-        for (const key in data2) {
-          const value = data2[key];
-          if (typeof value !== "function" && (value !== void 0 || !options?.removeUndefinedValues)) {
-            map3[key] = convertToAttr(value, options);
-          }
-        }
-        return map3;
-      })(data)
-    });
-    var convertToNullAttr = () => ({ NULL: true });
-    var convertToBinaryAttr = (data) => ({ B: data });
-    var convertToStringAttr = (data) => ({ S: data.toString() });
-    var convertToBigIntAttr = (data) => ({ N: data.toString() });
-    var validateBigIntAndThrow = (errorPrefix) => {
-      throw new Error(`${errorPrefix} Use NumberValue from @aws-sdk/lib-dynamodb.`);
-    };
-    var convertToNumberAttr = (num, options) => {
-      if ([Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY].map((val) => val.toString()).includes(num.toString())) {
-        throw new Error(`Special numeric value ${num.toString()} is not allowed`);
-      } else if (!options?.allowImpreciseNumbers) {
-        if (Number(num) > Number.MAX_SAFE_INTEGER) {
-          validateBigIntAndThrow(`Number ${num.toString()} is greater than Number.MAX_SAFE_INTEGER.`);
-        } else if (Number(num) < Number.MIN_SAFE_INTEGER) {
-          validateBigIntAndThrow(`Number ${num.toString()} is lesser than Number.MIN_SAFE_INTEGER.`);
-        }
-      }
-      return { N: num.toString() };
-    };
-    var isBinary = (data) => {
-      const binaryTypes = [
-        "ArrayBuffer",
-        "Blob",
-        "Buffer",
-        "DataView",
-        "File",
-        "Int8Array",
-        "Uint8Array",
-        "Uint8ClampedArray",
-        "Int16Array",
-        "Uint16Array",
-        "Int32Array",
-        "Uint32Array",
-        "Float32Array",
-        "Float64Array",
-        "BigInt64Array",
-        "BigUint64Array"
-      ];
-      if (data?.constructor) {
-        return binaryTypes.includes(data.constructor.name);
-      }
-      return false;
-    };
-    var convertToNative = (data, options) => {
-      for (const [key, value] of Object.entries(data)) {
-        if (value !== void 0) {
-          switch (key) {
-            case "NULL":
-              return null;
-            case "BOOL":
-              return Boolean(value);
-            case "N":
-              return convertNumber(value, options);
-            case "B":
-              return convertBinary(value);
-            case "S":
-              return convertString(value);
-            case "L":
-              return convertList(value, options);
-            case "M":
-              return convertMap2(value, options);
-            case "NS":
-              return new Set(value.map((item) => convertNumber(item, options)));
-            case "BS":
-              return new Set(value.map(convertBinary));
-            case "SS":
-              return new Set(value.map(convertString));
-            default:
-              throw new Error(`Unsupported type passed: ${key}`);
-          }
-        }
-      }
-      throw new Error(`No value defined: ${JSON.stringify(data)}`);
-    };
-    var convertNumber = (numString, options) => {
-      if (typeof options?.wrapNumbers === "function") {
-        return options?.wrapNumbers(numString);
-      }
-      if (options?.wrapNumbers) {
-        return NumberValue.from(numString);
-      }
-      const num = Number(numString);
-      const infinityValues = [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
-      const isLargeFiniteNumber = (num > Number.MAX_SAFE_INTEGER || num < Number.MIN_SAFE_INTEGER) && !infinityValues.includes(num);
-      if (isLargeFiniteNumber) {
-        if (typeof BigInt === "function") {
-          try {
-            return BigInt(numString);
-          } catch (error2) {
-            throw new Error(`${numString} can't be converted to BigInt. Set options.wrapNumbers to get string value.`);
-          }
-        } else {
-          throw new Error(`${numString} is outside SAFE_INTEGER bounds. Set options.wrapNumbers to get string value.`);
-        }
-      }
-      return num;
-    };
-    var convertString = (stringValue) => stringValue;
-    var convertBinary = (binaryValue) => binaryValue;
-    var convertList = (list2, options) => list2.map((item) => convertToNative(item, options));
-    var convertMap2 = (map3, options) => Object.entries(map3).reduce((acc, [key, value]) => (acc[key] = convertToNative(value, options), acc), {});
-    function marshall(data, options) {
-      const attributeValue = convertToAttr(data, options);
-      const [key, value] = Object.entries(attributeValue)[0];
-      switch (key) {
-        case "M":
-        case "L":
-          return options?.convertTopLevelContainer ? attributeValue : value;
-        case "SS":
-        case "NS":
-        case "BS":
-        case "S":
-        case "N":
-        case "B":
-        case "NULL":
-        case "BOOL":
-        case "$unknown":
-        default:
-          return attributeValue;
-      }
-    }
-    var unmarshall = (data, options) => {
-      if (options?.convertWithoutMapWrapper) {
-        return convertToNative(data, options);
-      }
-      return convertToNative({ M: data }, options);
-    };
-    exports2.NumberValueImpl = NumberValue;
-    exports2.convertToAttr = convertToAttr;
-    exports2.convertToNative = convertToNative;
-    exports2.marshall = marshall;
-    exports2.unmarshall = unmarshall;
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConstants.js
-function validateAccountIdEndpointMode(value) {
-  return ACCOUNT_ID_ENDPOINT_MODE_VALUES.includes(value);
-}
-var DEFAULT_ACCOUNT_ID_ENDPOINT_MODE, ACCOUNT_ID_ENDPOINT_MODE_VALUES;
-var init_AccountIdEndpointModeConstants = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConstants.js"() {
-    DEFAULT_ACCOUNT_ID_ENDPOINT_MODE = "preferred";
-    ACCOUNT_ID_ENDPOINT_MODE_VALUES = ["disabled", "preferred", "required"];
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConfigResolver.js
-var resolveAccountIdEndpointModeConfig;
-var init_AccountIdEndpointModeConfigResolver = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/AccountIdEndpointModeConfigResolver.js"() {
-    init_client2();
-    init_AccountIdEndpointModeConstants();
-    resolveAccountIdEndpointModeConfig = (input) => {
-      const { accountIdEndpointMode } = input;
-      const accountIdEndpointModeProvider = normalizeProvider(accountIdEndpointMode ?? DEFAULT_ACCOUNT_ID_ENDPOINT_MODE);
-      return Object.assign(input, {
-        accountIdEndpointMode: async () => {
-          const accIdMode = await accountIdEndpointModeProvider();
-          if (!validateAccountIdEndpointMode(accIdMode)) {
-            throw new Error(`Invalid value for accountIdEndpointMode: ${accIdMode}. Valid values are: "required", "preferred", "disabled".`);
-          }
-          return accIdMode;
-        }
-      });
-    };
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/NodeAccountIdEndpointModeConfigOptions.js
-var err, _throw, ENV_ACCOUNT_ID_ENDPOINT_MODE, CONFIG_ACCOUNT_ID_ENDPOINT_MODE, NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS;
-var init_NodeAccountIdEndpointModeConfigOptions = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/NodeAccountIdEndpointModeConfigOptions.js"() {
-    init_AccountIdEndpointModeConstants();
-    err = "Invalid AccountIdEndpointMode value";
-    _throw = (message) => {
-      throw new Error(message);
-    };
-    ENV_ACCOUNT_ID_ENDPOINT_MODE = "AWS_ACCOUNT_ID_ENDPOINT_MODE";
-    CONFIG_ACCOUNT_ID_ENDPOINT_MODE = "account_id_endpoint_mode";
-    NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS = {
-      environmentVariableSelector: (env2) => {
-        const value = env2[ENV_ACCOUNT_ID_ENDPOINT_MODE];
-        if (value && !validateAccountIdEndpointMode(value)) {
-          _throw(err);
-        }
-        return value;
-      },
-      configFileSelector: (profile) => {
-        const value = profile[CONFIG_ACCOUNT_ID_ENDPOINT_MODE];
-        if (value && !validateAccountIdEndpointMode(value)) {
-          _throw(err);
-        }
-        return value;
-      },
-      default: DEFAULT_ACCOUNT_ID_ENDPOINT_MODE
-    };
-  }
-});
-
-// node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/index.js
-var account_id_endpoint_exports = {};
-__export(account_id_endpoint_exports, {
-  ACCOUNT_ID_ENDPOINT_MODE_VALUES: () => ACCOUNT_ID_ENDPOINT_MODE_VALUES,
-  CONFIG_ACCOUNT_ID_ENDPOINT_MODE: () => CONFIG_ACCOUNT_ID_ENDPOINT_MODE,
-  DEFAULT_ACCOUNT_ID_ENDPOINT_MODE: () => DEFAULT_ACCOUNT_ID_ENDPOINT_MODE,
-  ENV_ACCOUNT_ID_ENDPOINT_MODE: () => ENV_ACCOUNT_ID_ENDPOINT_MODE,
-  NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS: () => NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS,
-  resolveAccountIdEndpointModeConfig: () => resolveAccountIdEndpointModeConfig,
-  validateAccountIdEndpointMode: () => validateAccountIdEndpointMode
-});
-var init_account_id_endpoint = __esm({
-  "node_modules/@aws-sdk/core/dist-es/submodules/account-id-endpoint/index.js"() {
-    init_AccountIdEndpointModeConfigResolver();
-    init_AccountIdEndpointModeConstants();
-    init_NodeAccountIdEndpointModeConfigOptions();
-  }
-});
-
-// node_modules/obliterator/iterator.js
-var require_iterator = __commonJS({
-  "node_modules/obliterator/iterator.js"(exports2, module2) {
-    function Iterator(next) {
-      Object.defineProperty(this, "_next", {
-        writable: false,
-        enumerable: false,
-        value: next
-      });
-      this.done = false;
-    }
-    Iterator.prototype.next = function() {
-      if (this.done)
-        return { done: true };
-      var step = this._next();
-      if (step.done)
-        this.done = true;
-      return step;
-    };
-    if (typeof Symbol !== "undefined")
-      Iterator.prototype[Symbol.iterator] = function() {
-        return this;
-      };
-    Iterator.of = function() {
-      var args = arguments, l3 = args.length, i5 = 0;
-      return new Iterator(function() {
-        if (i5 >= l3)
-          return { done: true };
-        return { done: false, value: args[i5++] };
-      });
-    };
-    Iterator.empty = function() {
-      var iterator = new Iterator(null);
-      iterator.done = true;
-      return iterator;
-    };
-    Iterator.is = function(value) {
-      if (value instanceof Iterator)
-        return true;
-      return typeof value === "object" && value !== null && typeof value.next === "function";
-    };
-    module2.exports = Iterator;
-  }
-});
-
-// node_modules/obliterator/foreach.js
-var require_foreach = __commonJS({
-  "node_modules/obliterator/foreach.js"(exports2, module2) {
-    var ARRAY_BUFFER_SUPPORT = typeof ArrayBuffer !== "undefined";
-    var SYMBOL_SUPPORT = typeof Symbol !== "undefined";
-    function forEach(iterable, callback) {
-      var iterator, k5, i5, l3, s2;
-      if (!iterable)
-        throw new Error("obliterator/forEach: invalid iterable.");
-      if (typeof callback !== "function")
-        throw new Error("obliterator/forEach: expecting a callback.");
-      if (Array.isArray(iterable) || ARRAY_BUFFER_SUPPORT && ArrayBuffer.isView(iterable) || typeof iterable === "string" || iterable.toString() === "[object Arguments]") {
-        for (i5 = 0, l3 = iterable.length; i5 < l3; i5++)
-          callback(iterable[i5], i5);
-        return;
-      }
-      if (typeof iterable.forEach === "function") {
-        iterable.forEach(callback);
-        return;
-      }
-      if (SYMBOL_SUPPORT && Symbol.iterator in iterable && typeof iterable.next !== "function") {
-        iterable = iterable[Symbol.iterator]();
-      }
-      if (typeof iterable.next === "function") {
-        iterator = iterable;
-        i5 = 0;
-        while (s2 = iterator.next(), s2.done !== true) {
-          callback(s2.value, i5);
-          i5++;
-        }
-        return;
-      }
-      for (k5 in iterable) {
-        if (iterable.hasOwnProperty(k5)) {
-          callback(iterable[k5], k5);
-        }
-      }
-      return;
-    }
-    forEach.forEachWithNullKeys = function(iterable, callback) {
-      var iterator, k5, i5, l3, s2;
-      if (!iterable)
-        throw new Error("obliterator/forEachWithNullKeys: invalid iterable.");
-      if (typeof callback !== "function")
-        throw new Error("obliterator/forEachWithNullKeys: expecting a callback.");
-      if (Array.isArray(iterable) || ARRAY_BUFFER_SUPPORT && ArrayBuffer.isView(iterable) || typeof iterable === "string" || iterable.toString() === "[object Arguments]") {
-        for (i5 = 0, l3 = iterable.length; i5 < l3; i5++)
-          callback(iterable[i5], null);
-        return;
-      }
-      if (iterable instanceof Set) {
-        iterable.forEach(function(value) {
-          callback(value, null);
-        });
-        return;
-      }
-      if (typeof iterable.forEach === "function") {
-        iterable.forEach(callback);
-        return;
-      }
-      if (SYMBOL_SUPPORT && Symbol.iterator in iterable && typeof iterable.next !== "function") {
-        iterable = iterable[Symbol.iterator]();
-      }
-      if (typeof iterable.next === "function") {
-        iterator = iterable;
-        i5 = 0;
-        while (s2 = iterator.next(), s2.done !== true) {
-          callback(s2.value, null);
-          i5++;
-        }
-        return;
-      }
-      for (k5 in iterable) {
-        if (iterable.hasOwnProperty(k5)) {
-          callback(iterable[k5], k5);
-        }
-      }
-      return;
-    };
-    module2.exports = forEach;
-  }
-});
-
-// node_modules/mnemonist/utils/typed-arrays.js
-var require_typed_arrays = __commonJS({
-  "node_modules/mnemonist/utils/typed-arrays.js"(exports2) {
-    var MAX_8BIT_INTEGER = Math.pow(2, 8) - 1;
-    var MAX_16BIT_INTEGER = Math.pow(2, 16) - 1;
-    var MAX_32BIT_INTEGER = Math.pow(2, 32) - 1;
-    var MAX_SIGNED_8BIT_INTEGER = Math.pow(2, 7) - 1;
-    var MAX_SIGNED_16BIT_INTEGER = Math.pow(2, 15) - 1;
-    var MAX_SIGNED_32BIT_INTEGER = Math.pow(2, 31) - 1;
-    exports2.getPointerArray = function(size) {
-      var maxIndex = size - 1;
-      if (maxIndex <= MAX_8BIT_INTEGER)
-        return Uint8Array;
-      if (maxIndex <= MAX_16BIT_INTEGER)
-        return Uint16Array;
-      if (maxIndex <= MAX_32BIT_INTEGER)
-        return Uint32Array;
-      return Float64Array;
-    };
-    exports2.getSignedPointerArray = function(size) {
-      var maxIndex = size - 1;
-      if (maxIndex <= MAX_SIGNED_8BIT_INTEGER)
-        return Int8Array;
-      if (maxIndex <= MAX_SIGNED_16BIT_INTEGER)
-        return Int16Array;
-      if (maxIndex <= MAX_SIGNED_32BIT_INTEGER)
-        return Int32Array;
-      return Float64Array;
-    };
-    exports2.getNumberType = function(value) {
-      if (value === (value | 0)) {
-        if (Math.sign(value) === -1) {
-          if (value <= 127 && value >= -128)
-            return Int8Array;
-          if (value <= 32767 && value >= -32768)
-            return Int16Array;
-          return Int32Array;
-        } else {
-          if (value <= 255)
-            return Uint8Array;
-          if (value <= 65535)
-            return Uint16Array;
-          return Uint32Array;
-        }
-      }
-      return Float64Array;
-    };
-    var TYPE_PRIORITY = {
-      Uint8Array: 1,
-      Int8Array: 2,
-      Uint16Array: 3,
-      Int16Array: 4,
-      Uint32Array: 5,
-      Int32Array: 6,
-      Float32Array: 7,
-      Float64Array: 8
-    };
-    exports2.getMinimalRepresentation = function(array, getter) {
-      var maxType = null, maxPriority = 0, p3, t, v, i5, l3;
-      for (i5 = 0, l3 = array.length; i5 < l3; i5++) {
-        v = getter ? getter(array[i5]) : array[i5];
-        t = exports2.getNumberType(v);
-        p3 = TYPE_PRIORITY[t.name];
-        if (p3 > maxPriority) {
-          maxPriority = p3;
-          maxType = t;
-        }
-      }
-      return maxType;
-    };
-    exports2.isTypedArray = function(value) {
-      return typeof ArrayBuffer !== "undefined" && ArrayBuffer.isView(value);
-    };
-    exports2.concat = function() {
-      var length = 0, i5, o3, l3;
-      for (i5 = 0, l3 = arguments.length; i5 < l3; i5++)
-        length += arguments[i5].length;
-      var array = new arguments[0].constructor(length);
-      for (i5 = 0, o3 = 0; i5 < l3; i5++) {
-        array.set(arguments[i5], o3);
-        o3 += arguments[i5].length;
-      }
-      return array;
-    };
-    exports2.indices = function(length) {
-      var PointerArray = exports2.getPointerArray(length);
-      var array = new PointerArray(length);
-      for (var i5 = 0; i5 < length; i5++)
-        array[i5] = i5;
-      return array;
-    };
-  }
-});
-
-// node_modules/mnemonist/utils/iterables.js
-var require_iterables = __commonJS({
-  "node_modules/mnemonist/utils/iterables.js"(exports2) {
-    var forEach = require_foreach();
-    var typed = require_typed_arrays();
-    function isArrayLike(target) {
-      return Array.isArray(target) || typed.isTypedArray(target);
-    }
-    function guessLength(target) {
-      if (typeof target.length === "number")
-        return target.length;
-      if (typeof target.size === "number")
-        return target.size;
-      return;
-    }
-    function toArray(target) {
-      var l3 = guessLength(target);
-      var array = typeof l3 === "number" ? new Array(l3) : [];
-      var i5 = 0;
-      forEach(target, function(value) {
-        array[i5++] = value;
-      });
-      return array;
-    }
-    function toArrayWithIndices(target) {
-      var l3 = guessLength(target);
-      var IndexArray = typeof l3 === "number" ? typed.getPointerArray(l3) : Array;
-      var array = typeof l3 === "number" ? new Array(l3) : [];
-      var indices = typeof l3 === "number" ? new IndexArray(l3) : [];
-      var i5 = 0;
-      forEach(target, function(value) {
-        array[i5] = value;
-        indices[i5] = i5++;
-      });
-      return [array, indices];
-    }
-    exports2.isArrayLike = isArrayLike;
-    exports2.guessLength = guessLength;
-    exports2.toArray = toArray;
-    exports2.toArrayWithIndices = toArrayWithIndices;
-  }
-});
-
-// node_modules/mnemonist/lru-cache.js
-var require_lru_cache = __commonJS({
-  "node_modules/mnemonist/lru-cache.js"(exports2, module2) {
-    var Iterator = require_iterator();
-    var forEach = require_foreach();
-    var typed = require_typed_arrays();
-    var iterables = require_iterables();
-    function LRUCache(Keys, Values, capacity) {
-      if (arguments.length < 2) {
-        capacity = Keys;
-        Keys = null;
-        Values = null;
-      }
-      this.capacity = capacity;
-      if (typeof this.capacity !== "number" || this.capacity <= 0)
-        throw new Error("mnemonist/lru-cache: capacity should be positive number.");
-      var PointerArray = typed.getPointerArray(capacity);
-      this.forward = new PointerArray(capacity);
-      this.backward = new PointerArray(capacity);
-      this.K = typeof Keys === "function" ? new Keys(capacity) : new Array(capacity);
-      this.V = typeof Values === "function" ? new Values(capacity) : new Array(capacity);
-      this.size = 0;
-      this.head = 0;
-      this.tail = 0;
-      this.items = {};
-    }
-    LRUCache.prototype.clear = function() {
-      this.size = 0;
-      this.head = 0;
-      this.tail = 0;
-      this.items = {};
-    };
-    LRUCache.prototype.splayOnTop = function(pointer) {
-      var oldHead = this.head;
-      if (this.head === pointer)
-        return this;
-      var previous = this.backward[pointer], next = this.forward[pointer];
-      if (this.tail === pointer) {
-        this.tail = previous;
-      } else {
-        this.backward[next] = previous;
-      }
-      this.forward[previous] = next;
-      this.backward[oldHead] = pointer;
-      this.head = pointer;
-      this.forward[pointer] = oldHead;
-      return this;
-    };
-    LRUCache.prototype.set = function(key, value) {
-      var pointer = this.items[key];
-      if (typeof pointer !== "undefined") {
-        this.splayOnTop(pointer);
-        this.V[pointer] = value;
-        return;
-      }
-      if (this.size < this.capacity) {
-        pointer = this.size++;
-      } else {
-        pointer = this.tail;
-        this.tail = this.backward[pointer];
-        delete this.items[this.K[pointer]];
-      }
-      this.items[key] = pointer;
-      this.K[pointer] = key;
-      this.V[pointer] = value;
-      this.forward[pointer] = this.head;
-      this.backward[this.head] = pointer;
-      this.head = pointer;
-    };
-    LRUCache.prototype.setpop = function(key, value) {
-      var oldValue = null;
-      var oldKey = null;
-      var pointer = this.items[key];
-      if (typeof pointer !== "undefined") {
-        this.splayOnTop(pointer);
-        oldValue = this.V[pointer];
-        this.V[pointer] = value;
-        return { evicted: false, key, value: oldValue };
-      }
-      if (this.size < this.capacity) {
-        pointer = this.size++;
-      } else {
-        pointer = this.tail;
-        this.tail = this.backward[pointer];
-        oldValue = this.V[pointer];
-        oldKey = this.K[pointer];
-        delete this.items[this.K[pointer]];
-      }
-      this.items[key] = pointer;
-      this.K[pointer] = key;
-      this.V[pointer] = value;
-      this.forward[pointer] = this.head;
-      this.backward[this.head] = pointer;
-      this.head = pointer;
-      if (oldKey) {
-        return { evicted: true, key: oldKey, value: oldValue };
-      } else {
-        return null;
-      }
-    };
-    LRUCache.prototype.has = function(key) {
-      return key in this.items;
-    };
-    LRUCache.prototype.get = function(key) {
-      var pointer = this.items[key];
-      if (typeof pointer === "undefined")
-        return;
-      this.splayOnTop(pointer);
-      return this.V[pointer];
-    };
-    LRUCache.prototype.peek = function(key) {
-      var pointer = this.items[key];
-      if (typeof pointer === "undefined")
-        return;
-      return this.V[pointer];
-    };
-    LRUCache.prototype.forEach = function(callback, scope) {
-      scope = arguments.length > 1 ? scope : this;
-      var i5 = 0, l3 = this.size;
-      var pointer = this.head, keys = this.K, values = this.V, forward = this.forward;
-      while (i5 < l3) {
-        callback.call(scope, values[pointer], keys[pointer], this);
-        pointer = forward[pointer];
-        i5++;
-      }
-    };
-    LRUCache.prototype.keys = function() {
-      var i5 = 0, l3 = this.size;
-      var pointer = this.head, keys = this.K, forward = this.forward;
-      return new Iterator(function() {
-        if (i5 >= l3)
-          return { done: true };
-        var key = keys[pointer];
-        i5++;
-        if (i5 < l3)
-          pointer = forward[pointer];
-        return {
-          done: false,
-          value: key
-        };
-      });
-    };
-    LRUCache.prototype.values = function() {
-      var i5 = 0, l3 = this.size;
-      var pointer = this.head, values = this.V, forward = this.forward;
-      return new Iterator(function() {
-        if (i5 >= l3)
-          return { done: true };
-        var value = values[pointer];
-        i5++;
-        if (i5 < l3)
-          pointer = forward[pointer];
-        return {
-          done: false,
-          value
-        };
-      });
-    };
-    LRUCache.prototype.entries = function() {
-      var i5 = 0, l3 = this.size;
-      var pointer = this.head, keys = this.K, values = this.V, forward = this.forward;
-      return new Iterator(function() {
-        if (i5 >= l3)
-          return { done: true };
-        var key = keys[pointer], value = values[pointer];
-        i5++;
-        if (i5 < l3)
-          pointer = forward[pointer];
-        return {
-          done: false,
-          value: [key, value]
-        };
-      });
-    };
-    if (typeof Symbol !== "undefined")
-      LRUCache.prototype[Symbol.iterator] = LRUCache.prototype.entries;
-    LRUCache.prototype.inspect = function() {
-      var proxy = /* @__PURE__ */ new Map();
-      var iterator = this.entries(), step;
-      while (step = iterator.next(), !step.done)
-        proxy.set(step.value[0], step.value[1]);
-      Object.defineProperty(proxy, "constructor", {
-        value: LRUCache,
-        enumerable: false
-      });
-      return proxy;
-    };
-    if (typeof Symbol !== "undefined")
-      LRUCache.prototype[/* @__PURE__ */ Symbol.for("nodejs.util.inspect.custom")] = LRUCache.prototype.inspect;
-    LRUCache.from = function(iterable, Keys, Values, capacity) {
-      if (arguments.length < 2) {
-        capacity = iterables.guessLength(iterable);
-        if (typeof capacity !== "number")
-          throw new Error("mnemonist/lru-cache.from: could not guess iterable length. Please provide desired capacity as last argument.");
-      } else if (arguments.length === 2) {
-        capacity = Keys;
-        Keys = null;
-        Values = null;
-      }
-      var cache5 = new LRUCache(Keys, Values, capacity);
-      forEach(iterable, function(value, key) {
-        cache5.set(key, value);
-      });
-      return cache5;
-    };
-    module2.exports = LRUCache;
-  }
-});
-
-// node_modules/@aws-sdk/endpoint-cache/dist-cjs/index.js
-var require_dist_cjs23 = __commonJS({
-  "node_modules/@aws-sdk/endpoint-cache/dist-cjs/index.js"(exports2) {
-    var LRUCache = require_lru_cache();
-    var EndpointCache2 = class {
-      cache;
-      constructor(capacity) {
-        this.cache = new LRUCache(capacity);
-      }
-      getEndpoint(key) {
-        const endpointsWithExpiry = this.get(key);
-        if (!endpointsWithExpiry || endpointsWithExpiry.length === 0) {
-          return void 0;
-        }
-        const endpoints = endpointsWithExpiry.map((endpoint) => endpoint.Address);
-        return endpoints[Math.floor(Math.random() * endpoints.length)];
-      }
-      get(key) {
-        if (!this.has(key)) {
-          return;
-        }
-        const value = this.cache.get(key);
-        if (!value) {
-          return;
-        }
-        const now = Date.now();
-        const endpointsWithExpiry = value.filter((endpoint) => now < endpoint.Expires);
-        if (endpointsWithExpiry.length === 0) {
-          this.delete(key);
-          return void 0;
-        }
-        return endpointsWithExpiry;
-      }
-      set(key, endpoints) {
-        const now = Date.now();
-        this.cache.set(key, endpoints.map(({ Address, CachePeriodInMinutes }) => ({
-          Address,
-          Expires: now + CachePeriodInMinutes * 60 * 1e3
-        })));
-      }
-      delete(key) {
-        this.cache.set(key, []);
-      }
-      has(key) {
-        if (!this.cache.has(key)) {
-          return false;
-        }
-        const endpoints = this.cache.peek(key);
-        if (!endpoints) {
-          return false;
-        }
-        return endpoints.length > 0;
-      }
-      clear() {
-        this.cache.clear();
-      }
-    };
-    exports2.EndpointCache = EndpointCache2;
-  }
-});
-
-// node_modules/@aws-sdk/middleware-endpoint-discovery/dist-cjs/index.js
-var require_dist_cjs24 = __commonJS({
-  "node_modules/@aws-sdk/middleware-endpoint-discovery/dist-cjs/index.js"(exports2) {
-    var { HttpRequest: HttpRequest2 } = (init_protocols(), __toCommonJS(protocols_exports));
-    var { EndpointCache: EndpointCache2 } = require_dist_cjs23();
-    var ENV_ENDPOINT_DISCOVERY = ["AWS_ENABLE_ENDPOINT_DISCOVERY", "AWS_ENDPOINT_DISCOVERY_ENABLED"];
-    var CONFIG_ENDPOINT_DISCOVERY = "endpoint_discovery_enabled";
-    var isFalsy = (value) => ["false", "0"].indexOf(value) >= 0;
-    var NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS = {
-      environmentVariableSelector: (env2) => {
-        for (let i5 = 0; i5 < ENV_ENDPOINT_DISCOVERY.length; i5++) {
-          const envKey = ENV_ENDPOINT_DISCOVERY[i5];
-          if (envKey in env2) {
-            const value = env2[envKey];
-            if (value === "") {
-              throw Error(`Environment variable ${envKey} can't be empty of undefined, got "${value}"`);
-            }
-            return !isFalsy(value);
-          }
-        }
-      },
-      configFileSelector: (profile) => {
-        if (CONFIG_ENDPOINT_DISCOVERY in profile) {
-          const value = profile[CONFIG_ENDPOINT_DISCOVERY];
-          if (value === void 0) {
-            throw Error(`Shared config entry ${CONFIG_ENDPOINT_DISCOVERY} can't be undefined, got "${value}"`);
-          }
-          return !isFalsy(value);
-        }
-      },
-      default: void 0
-    };
-    var getCacheKey = async (commandName, config, options) => {
-      const { accessKeyId } = await config.credentials();
-      const { identifiers } = options;
-      return JSON.stringify({
-        ...accessKeyId && { accessKeyId },
-        ...identifiers && {
-          commandName,
-          identifiers: Object.entries(identifiers).sort().reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
-        }
-      });
-    };
-    var requestQueue = {};
-    var updateDiscoveredEndpointInCache = async (config, options) => new Promise((resolve, reject) => {
-      const { endpointCache } = config;
-      const { cacheKey, commandName, identifiers } = options;
-      const endpoints = endpointCache.get(cacheKey);
-      if (endpoints && endpoints.length === 1 && endpoints[0].Address === "") {
-        if (options.isDiscoveredEndpointRequired) {
-          if (!requestQueue[cacheKey])
-            requestQueue[cacheKey] = [];
-          requestQueue[cacheKey].push({ resolve, reject });
-        } else {
-          resolve();
-        }
-      } else if (endpoints && endpoints.length > 0) {
-        resolve();
-      } else {
-        const placeholderEndpoints = [{ Address: "", CachePeriodInMinutes: 1 }];
-        endpointCache.set(cacheKey, placeholderEndpoints);
-        const command5 = new options.endpointDiscoveryCommandCtor({
-          Operation: commandName.slice(0, -7),
-          Identifiers: identifiers
-        });
-        const handler2 = command5.resolveMiddleware(options.clientStack, config, options.options);
-        handler2(command5).then((result) => {
-          endpointCache.set(cacheKey, result.output.Endpoints);
-          if (requestQueue[cacheKey]) {
-            requestQueue[cacheKey].forEach(({ resolve: resolve2 }) => {
-              resolve2();
-            });
-            delete requestQueue[cacheKey];
-          }
-          resolve();
-        }).catch((error2) => {
-          endpointCache.delete(cacheKey);
-          const errorToThrow = Object.assign(new Error(`The operation to discover endpoint failed. Please retry, or provide a custom endpoint and disable endpoint discovery to proceed.`), { reason: error2 });
-          if (requestQueue[cacheKey]) {
-            requestQueue[cacheKey].forEach(({ reject: reject2 }) => {
-              reject2(errorToThrow);
-            });
-            delete requestQueue[cacheKey];
-          }
-          if (options.isDiscoveredEndpointRequired) {
-            reject(errorToThrow);
-          } else {
-            endpointCache.set(cacheKey, placeholderEndpoints);
-            resolve();
-          }
-        });
-      }
-    });
-    var endpointDiscoveryMiddleware = (config, middlewareConfig) => (next, context) => async (args) => {
-      if (config.isCustomEndpoint) {
-        if (config.isClientEndpointDiscoveryEnabled) {
-          throw new Error(`Custom endpoint is supplied; endpointDiscoveryEnabled must not be true.`);
-        }
-        return next(args);
-      }
-      const { endpointDiscoveryCommandCtor } = config;
-      const { isDiscoveredEndpointRequired, identifiers } = middlewareConfig;
-      const clientName = context.clientName;
-      const commandName = context.commandName;
-      const isEndpointDiscoveryEnabled = await config.endpointDiscoveryEnabled();
-      const cacheKey = await getCacheKey(commandName, config, { identifiers });
-      if (isDiscoveredEndpointRequired) {
-        if (isEndpointDiscoveryEnabled === false) {
-          throw new Error(`Endpoint Discovery is disabled but ${commandName} on ${clientName} requires it. Please check your configurations.`);
-        }
-        await updateDiscoveredEndpointInCache(config, {
-          ...middlewareConfig,
-          commandName,
-          cacheKey,
-          endpointDiscoveryCommandCtor
-        });
-      } else if (isEndpointDiscoveryEnabled) {
-        updateDiscoveredEndpointInCache(config, {
-          ...middlewareConfig,
-          commandName,
-          cacheKey,
-          endpointDiscoveryCommandCtor
-        });
-      }
-      const { request } = args;
-      if (cacheKey && HttpRequest2.isInstance(request)) {
-        const endpoint = config.endpointCache.getEndpoint(cacheKey);
-        if (endpoint) {
-          request.hostname = endpoint;
-        }
-      }
-      return next(args);
-    };
-    var endpointDiscoveryMiddlewareOptions = {
-      name: "endpointDiscoveryMiddleware",
-      step: "build",
-      tags: ["ENDPOINT_DISCOVERY"],
-      override: true
-    };
-    var getEndpointDiscoveryPlugin = (pluginConfig, middlewareConfig) => ({
-      applyToStack: (commandStack) => {
-        commandStack.add(endpointDiscoveryMiddleware(pluginConfig, middlewareConfig), endpointDiscoveryMiddlewareOptions);
-      }
-    });
-    var getEndpointDiscoveryRequiredPlugin = (pluginConfig, middlewareConfig) => ({
-      applyToStack: (commandStack) => {
-        commandStack.add(endpointDiscoveryMiddleware(pluginConfig, { ...middlewareConfig, isDiscoveredEndpointRequired: true }), endpointDiscoveryMiddlewareOptions);
-      }
-    });
-    var getEndpointDiscoveryOptionalPlugin = (pluginConfig, middlewareConfig) => ({
-      applyToStack: (commandStack) => {
-        commandStack.add(endpointDiscoveryMiddleware(pluginConfig, { ...middlewareConfig, isDiscoveredEndpointRequired: false }), endpointDiscoveryMiddlewareOptions);
-      }
-    });
-    var resolveEndpointDiscoveryConfig = (input, { endpointDiscoveryCommandCtor }) => {
-      const { endpointCacheSize, endpointDiscoveryEnabled, endpointDiscoveryEnabledProvider } = input;
-      return Object.assign(input, {
-        endpointDiscoveryCommandCtor,
-        endpointCache: new EndpointCache2(endpointCacheSize ?? 1e3),
-        endpointDiscoveryEnabled: endpointDiscoveryEnabled !== void 0 ? () => Promise.resolve(endpointDiscoveryEnabled) : endpointDiscoveryEnabledProvider,
-        isClientEndpointDiscoveryEnabled: endpointDiscoveryEnabled !== void 0
-      });
-    };
-    exports2.NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS = NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS;
-    exports2.endpointDiscoveryMiddlewareOptions = endpointDiscoveryMiddlewareOptions;
-    exports2.getEndpointDiscoveryOptionalPlugin = getEndpointDiscoveryOptionalPlugin;
-    exports2.getEndpointDiscoveryPlugin = getEndpointDiscoveryPlugin;
-    exports2.getEndpointDiscoveryRequiredPlugin = getEndpointDiscoveryRequiredPlugin;
-    exports2.resolveEndpointDiscoveryConfig = resolveEndpointDiscoveryConfig;
-  }
-});
-
 // node_modules/@aws-sdk/dynamodb-codec/dist-cjs/index.js
-var require_dist_cjs25 = __commonJS({
+var require_dist_cjs19 = __commonJS({
   "node_modules/@aws-sdk/dynamodb-codec/dist-cjs/index.js"(exports2) {
     var { JsonCodec: JsonCodec3, JsonShapeSerializer: JsonShapeSerializer3, JsonShapeDeserializer: JsonShapeDeserializer3, JsonCodec2: JsonCodec22, JsonShapeSerializer2: JsonShapeSerializer22, JsonShapeDeserializer2: JsonShapeDeserializer22 } = (init_protocols2(), __toCommonJS(protocols_exports2));
     var { NormalizedSchema: NormalizedSchema2 } = (init_schema(), __toCommonJS(schema_exports));
@@ -31818,11 +27066,11 @@ var require_dist_cjs25 = __commonJS({
 });
 
 // node_modules/@aws-sdk/client-dynamodb/dist-cjs/index.js
-var require_dist_cjs26 = __commonJS({
+var require_dist_cjs20 = __commonJS({
   "node_modules/@aws-sdk/client-dynamodb/dist-cjs/index.js"(exports2) {
     var { NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS: NODE_ACCOUNT_ID_ENDPOINT_MODE_CONFIG_OPTIONS2, resolveAccountIdEndpointModeConfig: resolveAccountIdEndpointModeConfig2 } = (init_account_id_endpoint(), __toCommonJS(account_id_endpoint_exports));
     var { awsEndpointFunctions: awsEndpointFunctions2, emitWarningIfUnsupportedVersion: emitWarningIfUnsupportedVersion$1, createDefaultUserAgentProvider: createDefaultUserAgentProvider2, NODE_APP_ID_CONFIG_OPTIONS: NODE_APP_ID_CONFIG_OPTIONS2, getAwsRegionExtensionConfiguration: getAwsRegionExtensionConfiguration2, resolveAwsRegionExtensionConfiguration: resolveAwsRegionExtensionConfiguration2, resolveUserAgentConfig: resolveUserAgentConfig2, resolveHostHeaderConfig: resolveHostHeaderConfig2, getUserAgentPlugin: getUserAgentPlugin2, getHostHeaderPlugin: getHostHeaderPlugin2, getLoggerPlugin: getLoggerPlugin2, getRecursionDetectionPlugin: getRecursionDetectionPlugin2 } = (init_client3(), __toCommonJS(client_exports2));
-    var { NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS, resolveEndpointDiscoveryConfig } = require_dist_cjs24();
+    var { NODE_ENDPOINT_DISCOVERY_CONFIG_OPTIONS, resolveEndpointDiscoveryConfig } = require_dist_cjs4();
     var { getHttpAuthSchemeEndpointRuleSetPlugin: getHttpAuthSchemeEndpointRuleSetPlugin2, DefaultIdentityProviderConfig: DefaultIdentityProviderConfig2, getHttpSigningPlugin: getHttpSigningPlugin2, createPaginator: createPaginator2 } = (init_dist_es(), __toCommonJS(dist_es_exports));
     var { normalizeProvider: normalizeProvider3, getSmithyContext: getSmithyContext2, makeBuilder: makeBuilder2, ServiceException: ServiceException2, NoOpLogger: NoOpLogger2, emitWarningIfUnsupportedVersion: emitWarningIfUnsupportedVersion3, loadConfigsForDefaultMode: loadConfigsForDefaultMode2, getDefaultExtensionConfiguration: getDefaultExtensionConfiguration2, resolveDefaultRuntimeConfig: resolveDefaultRuntimeConfig2, Client: Client2, createWaiter: createWaiter2, checkExceptions: checkExceptions2, WaiterState: WaiterState2, createAggregatedClient: createAggregatedClient2 } = (init_client2(), __toCommonJS(client_exports));
     var { Command: $Command } = (init_client2(), __toCommonJS(client_exports));
@@ -31838,7 +27086,7 @@ var require_dist_cjs26 = __commonJS({
     var { toUtf8: toUtf83, fromUtf8: fromUtf83, toBase64: toBase643, fromBase64: fromBase642, calculateBodyLength: calculateBodyLength2 } = (init_serde(), __toCommonJS(serde_exports));
     var { streamCollector: streamCollector7, NodeHttpHandler } = require_dist_cjs8();
     var { AwsJson1_0Protocol: AwsJson1_0Protocol2 } = (init_protocols2(), __toCommonJS(protocols_exports2));
-    var { DynamoDBJsonCodec } = require_dist_cjs25();
+    var { DynamoDBJsonCodec } = require_dist_cjs19();
     var { Sha256 } = (init_checksum2(), __toCommonJS(checksum_exports));
     var defaultDynamoDBHttpAuthSchemeParametersProvider = async (config, context, input) => {
       return {
@@ -36740,13 +31988,13 @@ var require_dist_cjs26 = __commonJS({
     };
     var PutResourcePolicyCommand = class extends command5(_ep5, _mw05, "PutResourcePolicy", PutResourcePolicy$) {
     };
-    var QueryCommand2 = class extends command5(_ep2, _mw05, "Query", Query$) {
+    var QueryCommand = class extends command5(_ep2, _mw05, "Query", Query$) {
     };
     var RestoreTableFromBackupCommand = class extends command5(_ep10, _mw05, "RestoreTableFromBackup", RestoreTableFromBackup$) {
     };
     var RestoreTableToPointInTimeCommand = class extends command5(_ep10, _mw05, "RestoreTableToPointInTime", RestoreTableToPointInTime$) {
     };
-    var ScanCommand = class extends command5(_ep2, _mw05, "Scan", Scan$) {
+    var ScanCommand3 = class extends command5(_ep2, _mw05, "Scan", Scan$) {
     };
     var TagResourceCommand = class extends command5(_ep5, _mw05, "TagResource", TagResource$) {
     };
@@ -36778,12 +32026,12 @@ var require_dist_cjs26 = __commonJS({
     var paginateListExports = createPaginator2(DynamoDBClient2, ListExportsCommand, "NextToken", "NextToken", "MaxResults");
     var paginateListImports = createPaginator2(DynamoDBClient2, ListImportsCommand, "NextToken", "NextToken", "PageSize");
     var paginateListTables = createPaginator2(DynamoDBClient2, ListTablesCommand, "ExclusiveStartTableName", "LastEvaluatedTableName", "Limit");
-    var paginateQuery = createPaginator2(DynamoDBClient2, QueryCommand2, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
-    var paginateScan = createPaginator2(DynamoDBClient2, ScanCommand, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
-    var checkState$5 = async (client3, input) => {
+    var paginateQuery = createPaginator2(DynamoDBClient2, QueryCommand, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
+    var paginateScan = createPaginator2(DynamoDBClient2, ScanCommand3, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
+    var checkState$5 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeContributorInsightsCommand(input));
+        let result = await client4.send(new DescribeContributorInsightsCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36817,10 +32065,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$5);
       return checkExceptions2(result);
     };
-    var checkState$4 = async (client3, input) => {
+    var checkState$4 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeExportCommand(input));
+        let result = await client4.send(new DescribeExportCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36854,10 +32102,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$4);
       return checkExceptions2(result);
     };
-    var checkState$3 = async (client3, input) => {
+    var checkState$3 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeImportCommand(input));
+        let result = await client4.send(new DescribeImportCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36900,10 +32148,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$3);
       return checkExceptions2(result);
     };
-    var checkState$2 = async (client3, input) => {
+    var checkState$2 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeKinesisStreamingDestinationCommand(input));
+        let result = await client4.send(new DescribeKinesisStreamingDestinationCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36946,10 +32194,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$2);
       return checkExceptions2(result);
     };
-    var checkState$1 = async (client3, input) => {
+    var checkState$1 = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeTableCommand(input));
+        let result = await client4.send(new DescribeTableCommand(input));
         reason = result;
         try {
           const returnComparator = () => {
@@ -36977,10 +32225,10 @@ var require_dist_cjs26 = __commonJS({
       const result = await createWaiter2({ ...serviceDefaults, ...params }, input, checkState$1);
       return checkExceptions2(result);
     };
-    var checkState = async (client3, input) => {
+    var checkState = async (client4, input) => {
       let reason;
       try {
-        let result = await client3.send(new DescribeTableCommand(input));
+        let result = await client4.send(new DescribeTableCommand(input));
         reason = result;
       } catch (exception) {
         reason = exception;
@@ -37040,10 +32288,10 @@ var require_dist_cjs26 = __commonJS({
       ListTagsOfResourceCommand,
       PutItemCommand,
       PutResourcePolicyCommand,
-      QueryCommand: QueryCommand2,
+      QueryCommand,
       RestoreTableFromBackupCommand,
       RestoreTableToPointInTimeCommand,
-      ScanCommand,
+      ScanCommand: ScanCommand3,
       TagResourceCommand,
       TransactGetItemsCommand,
       TransactWriteItemsCommand,
@@ -37633,7 +32881,7 @@ var require_dist_cjs26 = __commonJS({
     exports2.PutResourcePolicyInput$ = PutResourcePolicyInput$;
     exports2.PutResourcePolicyOutput$ = PutResourcePolicyOutput$;
     exports2.Query$ = Query$;
-    exports2.QueryCommand = QueryCommand2;
+    exports2.QueryCommand = QueryCommand;
     exports2.QueryInput$ = QueryInput$;
     exports2.QueryOutput$ = QueryOutput$;
     exports2.Replica$ = Replica$;
@@ -37684,7 +32932,7 @@ var require_dist_cjs26 = __commonJS({
     exports2.SSEType = SSEType;
     exports2.ScalarAttributeType = ScalarAttributeType;
     exports2.Scan$ = Scan$;
-    exports2.ScanCommand = ScanCommand;
+    exports2.ScanCommand = ScanCommand3;
     exports2.ScanInput$ = ScanInput$;
     exports2.ScanOutput$ = ScanOutput$;
     exports2.Select = Select;
@@ -37800,16 +33048,16 @@ var require_dist_cjs26 = __commonJS({
 });
 
 // node_modules/@aws-sdk/lib-dynamodb/dist-cjs/index.js
-var require_dist_cjs27 = __commonJS({
+var require_dist_cjs21 = __commonJS({
   "node_modules/@aws-sdk/lib-dynamodb/dist-cjs/index.js"(exports2) {
     var { Command: Command2, Client: Client2 } = (init_client2(), __toCommonJS(client_exports));
     exports2.$Command = Command2;
     exports2.__Client = Client2;
     var { setFeature: setFeature4 } = (init_client3(), __toCommonJS(client_exports2));
-    var { marshall, unmarshall } = require_dist_cjs22();
-    var { NumberValueImpl: NumberValue } = require_dist_cjs22();
+    var { marshall, unmarshall } = require_dist_cjs2();
+    var { NumberValueImpl: NumberValue } = require_dist_cjs2();
     exports2.NumberValue = NumberValue;
-    var { BatchExecuteStatementCommand: BatchExecuteStatementCommand$1, BatchGetItemCommand, BatchWriteItemCommand, DeleteItemCommand, ExecuteStatementCommand: ExecuteStatementCommand$1, ExecuteTransactionCommand: ExecuteTransactionCommand$1, GetItemCommand, PutItemCommand, QueryCommand: QueryCommand$1, ScanCommand: ScanCommand$1, TransactGetItemsCommand, TransactWriteItemsCommand, UpdateItemCommand } = require_dist_cjs26();
+    var { BatchExecuteStatementCommand: BatchExecuteStatementCommand$1, BatchGetItemCommand, BatchWriteItemCommand, DeleteItemCommand, ExecuteStatementCommand: ExecuteStatementCommand$1, ExecuteTransactionCommand: ExecuteTransactionCommand$1, GetItemCommand, PutItemCommand, QueryCommand: QueryCommand$1, ScanCommand: ScanCommand$1, TransactGetItemsCommand, TransactWriteItemsCommand, UpdateItemCommand } = require_dist_cjs20();
     var { createPaginator: createPaginator2 } = (init_dist_es(), __toCommonJS(dist_es_exports));
     var SELF = null;
     var ALL_VALUES = {};
@@ -38187,7 +33435,7 @@ var require_dist_cjs27 = __commonJS({
         return async () => handler2(this.clientCommand);
       }
     };
-    var QueryCommand2 = class extends DynamoDBDocumentClientCommand {
+    var QueryCommand = class extends DynamoDBDocumentClientCommand {
       input;
       inputKeyNodes = {
         KeyConditions: {
@@ -38224,7 +33472,7 @@ var require_dist_cjs27 = __commonJS({
         return async () => handler2(this.clientCommand);
       }
     };
-    var ScanCommand = class extends DynamoDBDocumentClientCommand {
+    var ScanCommand3 = class extends DynamoDBDocumentClientCommand {
       input;
       inputKeyNodes = {
         ScanFilter: {
@@ -38377,26 +33625,26 @@ var require_dist_cjs27 = __commonJS({
     };
     var DynamoDBDocumentClient2 = class _DynamoDBDocumentClient extends Client2 {
       config;
-      constructor(client3, translateConfig) {
-        super(client3.config);
-        this.config = client3.config;
+      constructor(client4, translateConfig) {
+        super(client4.config);
+        this.config = client4.config;
         this.config.translateConfig = translateConfig;
-        this.middlewareStack = client3.middlewareStack;
+        this.middlewareStack = client4.middlewareStack;
         if (this.config?.cacheMiddleware) {
           throw new Error("@aws-sdk/lib-dynamodb - cacheMiddleware=true is not compatible with the DynamoDBDocumentClient. This option must be set to false.");
         }
       }
-      static from(client3, translateConfig) {
-        return new _DynamoDBDocumentClient(client3, translateConfig);
+      static from(client4, translateConfig) {
+        return new _DynamoDBDocumentClient(client4, translateConfig);
       }
       destroy() {
       }
     };
-    var paginateQuery = createPaginator2(DynamoDBDocumentClient2, QueryCommand2, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
-    var paginateScan = createPaginator2(DynamoDBDocumentClient2, ScanCommand, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
+    var paginateQuery = createPaginator2(DynamoDBDocumentClient2, QueryCommand, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
+    var paginateScan = createPaginator2(DynamoDBDocumentClient2, ScanCommand3, "ExclusiveStartKey", "LastEvaluatedKey", "Limit");
     var DynamoDBDocument = class _DynamoDBDocument extends DynamoDBDocumentClient2 {
-      static from(client3, translateConfig) {
-        return new _DynamoDBDocument(client3, translateConfig);
+      static from(client4, translateConfig) {
+        return new _DynamoDBDocument(client4, translateConfig);
       }
       batchExecuteStatement(args, optionsOrCb, cb) {
         const command5 = new BatchExecuteStatementCommand(args);
@@ -38503,7 +33751,7 @@ var require_dist_cjs27 = __commonJS({
         }
       }
       query(args, optionsOrCb, cb) {
-        const command5 = new QueryCommand2(args);
+        const command5 = new QueryCommand(args);
         if (typeof optionsOrCb === "function") {
           this.send(command5, optionsOrCb);
         } else if (typeof cb === "function") {
@@ -38516,7 +33764,7 @@ var require_dist_cjs27 = __commonJS({
         }
       }
       scan(args, optionsOrCb, cb) {
-        const command5 = new ScanCommand(args);
+        const command5 = new ScanCommand3(args);
         if (typeof optionsOrCb === "function") {
           this.send(command5, optionsOrCb);
         } else if (typeof cb === "function") {
@@ -38579,8 +33827,8 @@ var require_dist_cjs27 = __commonJS({
     exports2.ExecuteTransactionCommand = ExecuteTransactionCommand;
     exports2.GetCommand = GetCommand;
     exports2.PutCommand = PutCommand;
-    exports2.QueryCommand = QueryCommand2;
-    exports2.ScanCommand = ScanCommand;
+    exports2.QueryCommand = QueryCommand;
+    exports2.ScanCommand = ScanCommand3;
     exports2.TransactGetCommand = TransactGetCommand;
     exports2.TransactWriteCommand = TransactWriteCommand;
     exports2.UpdateCommand = UpdateCommand;
@@ -38993,53 +34241,4765 @@ var require_cli_options = __commonJS({
   }
 });
 
+// node_modules/@aws-sdk/middleware-eventstream/dist-cjs/index.js
+var require_dist_cjs22 = __commonJS({
+  "node_modules/@aws-sdk/middleware-eventstream/dist-cjs/index.js"(exports2) {
+    var { HttpRequest: HttpRequest2 } = (init_protocols(), __toCommonJS(protocols_exports));
+    function resolveEventStreamConfig(input) {
+      const eventSigner = input.signer;
+      const messageSigner = input.signer;
+      const newInput = Object.assign(input, {
+        eventSigner,
+        messageSigner
+      });
+      const eventStreamPayloadHandler = newInput.eventStreamPayloadHandlerProvider(newInput);
+      return Object.assign(newInput, {
+        eventStreamPayloadHandler
+      });
+    }
+    var eventStreamHandlingMiddleware = (options) => (next, context) => async (args) => {
+      const { request } = args;
+      if (!HttpRequest2.isInstance(request))
+        return next(args);
+      return options.eventStreamPayloadHandler.handle(next, args, context);
+    };
+    var eventStreamHandlingMiddlewareOptions = {
+      tags: ["EVENT_STREAM", "SIGNATURE", "HANDLE"],
+      name: "eventStreamHandlingMiddleware",
+      relation: "after",
+      toMiddleware: "awsAuthMiddleware",
+      override: true
+    };
+    var eventStreamHeaderMiddleware = (next) => async (args) => {
+      const { request } = args;
+      if (!HttpRequest2.isInstance(request))
+        return next(args);
+      request.headers = {
+        ...request.headers,
+        "content-type": "application/vnd.amazon.eventstream",
+        "x-amz-content-sha256": "STREAMING-AWS4-HMAC-SHA256-EVENTS"
+      };
+      return next({
+        ...args,
+        request
+      });
+    };
+    var eventStreamHeaderMiddlewareOptions = {
+      step: "build",
+      tags: ["EVENT_STREAM", "HEADER", "CONTENT_TYPE", "CONTENT_SHA256"],
+      name: "eventStreamHeaderMiddleware",
+      override: true
+    };
+    var getEventStreamPlugin = (options) => ({
+      applyToStack: (clientStack) => {
+        clientStack.addRelativeTo(eventStreamHandlingMiddleware(options), eventStreamHandlingMiddlewareOptions);
+        clientStack.add(eventStreamHeaderMiddleware, eventStreamHeaderMiddlewareOptions);
+      }
+    });
+    exports2.eventStreamHandlingMiddleware = eventStreamHandlingMiddleware;
+    exports2.eventStreamHandlingMiddlewareOptions = eventStreamHandlingMiddlewareOptions;
+    exports2.eventStreamHeaderMiddleware = eventStreamHeaderMiddleware;
+    exports2.eventStreamHeaderMiddlewareOptions = eventStreamHeaderMiddlewareOptions;
+    exports2.getEventStreamPlugin = getEventStreamPlugin;
+    exports2.resolveEventStreamConfig = resolveEventStreamConfig;
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/util/util-arn-parser/arn.js
+var validate, parse, build;
+var init_arn = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/util/util-arn-parser/arn.js"() {
+    validate = (str) => typeof str === "string" && str.indexOf("arn:") === 0 && str.split(":").length >= 6;
+    parse = (arn) => {
+      const segments = arn.split(":");
+      if (segments.length < 6 || segments[0] !== "arn")
+        throw new Error("Malformed ARN");
+      const [, partition2, service, region, accountId, ...resource] = segments;
+      return {
+        partition: partition2,
+        service,
+        region,
+        accountId,
+        resource: resource.join(":")
+      };
+    };
+    build = (arnObject) => {
+      const { partition: partition2 = "aws", service, region, accountId, resource } = arnObject;
+      if ([service, region, accountId, resource].some((segment) => typeof segment !== "string")) {
+        throw new Error("Input ARN object is invalid");
+      }
+      return `arn:${partition2}:${service}:${region}:${accountId}:${resource}`;
+    };
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/util/util-format-url/format-url.js
+function formatUrl(request) {
+  const { port, query } = request;
+  let { protocol, path, hostname } = request;
+  if (protocol && protocol.slice(-1) !== ":") {
+    protocol += ":";
+  }
+  if (port) {
+    hostname += `:${port}`;
+  }
+  if (path && path.charAt(0) !== "/") {
+    path = `/${path}`;
+  }
+  let queryString = query ? buildQueryString(query) : "";
+  if (queryString && queryString[0] !== "?") {
+    queryString = `?${queryString}`;
+  }
+  let auth = "";
+  if (request.username != null || request.password != null) {
+    const username = request.username ?? "";
+    const password = request.password ?? "";
+    auth = `${username}:${password}@`;
+  }
+  let fragment = "";
+  if (request.fragment) {
+    fragment = `#${request.fragment}`;
+  }
+  return `${protocol}//${auth}${hostname}${path}${queryString}${fragment}`;
+}
+var init_format_url = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/util/util-format-url/format-url.js"() {
+    init_protocols();
+  }
+});
+
+// node_modules/@aws-sdk/core/dist-es/submodules/util/index.js
+var util_exports = {};
+__export(util_exports, {
+  build: () => build,
+  formatUrl: () => formatUrl,
+  parse: () => parse,
+  validate: () => validate
+});
+var init_util2 = __esm({
+  "node_modules/@aws-sdk/core/dist-es/submodules/util/index.js"() {
+    init_arn();
+    init_format_url();
+  }
+});
+
+// node_modules/@smithy/fetch-http-handler/dist-cjs/index.js
+var require_dist_cjs23 = __commonJS({
+  "node_modules/@smithy/fetch-http-handler/dist-cjs/index.js"(exports2) {
+    var { buildQueryString: buildQueryString2, HttpResponse: HttpResponse2 } = (init_protocols(), __toCommonJS(protocols_exports));
+    var { streamCollector: streamCollector7 } = (init_serde(), __toCommonJS(serde_exports));
+    exports2.streamCollector = streamCollector7;
+    function createRequest(url, requestOptions) {
+      return new Request(url, requestOptions);
+    }
+    function requestTimeout(timeoutInMs = 0) {
+      return new Promise((resolve, reject) => {
+        if (timeoutInMs) {
+          setTimeout(() => {
+            const timeoutError = new Error(`Request did not complete within ${timeoutInMs} ms`);
+            timeoutError.name = "TimeoutError";
+            reject(timeoutError);
+          }, timeoutInMs);
+        }
+      });
+    }
+    var keepAliveSupport = {
+      supported: void 0
+    };
+    var FetchHttpHandler = class _FetchHttpHandler {
+      config;
+      configProvider;
+      static create(instanceOrOptions) {
+        if (typeof instanceOrOptions?.handle === "function") {
+          return instanceOrOptions;
+        }
+        return new _FetchHttpHandler(instanceOrOptions);
+      }
+      constructor(options) {
+        if (typeof options === "function") {
+          this.configProvider = options().then((opts) => opts || {});
+        } else {
+          this.config = options ?? {};
+          this.configProvider = Promise.resolve(this.config);
+        }
+        if (keepAliveSupport.supported === void 0) {
+          keepAliveSupport.supported = Boolean(typeof Request !== "undefined" && "keepalive" in createRequest("https://[::1]"));
+        }
+      }
+      destroy() {
+      }
+      async handle(request, { abortSignal, requestTimeout: requestTimeout$1 } = {}) {
+        if (!this.config) {
+          this.config = await this.configProvider;
+        }
+        const requestTimeoutInMs = requestTimeout$1 ?? this.config.requestTimeout;
+        const keepAlive = this.config.keepAlive === true;
+        const credentials = this.config.credentials;
+        if (abortSignal?.aborted) {
+          const abortError = buildAbortError(abortSignal);
+          return Promise.reject(abortError);
+        }
+        let path = request.path;
+        const queryString = buildQueryString2(request.query || {});
+        if (queryString) {
+          path += `?${queryString}`;
+        }
+        if (request.fragment) {
+          path += `#${request.fragment}`;
+        }
+        let auth = "";
+        if (request.username != null || request.password != null) {
+          const username = request.username ?? "";
+          const password = request.password ?? "";
+          auth = `${username}:${password}@`;
+        }
+        const { port, method } = request;
+        const url = `${request.protocol}//${auth}${request.hostname}${port ? `:${port}` : ""}${path}`;
+        const body = method === "GET" || method === "HEAD" ? void 0 : request.body;
+        const requestOptions = {
+          body,
+          headers: new Headers(request.headers),
+          method,
+          credentials
+        };
+        if (this.config?.cache) {
+          requestOptions.cache = this.config.cache;
+        }
+        if (body) {
+          requestOptions.duplex = "half";
+        }
+        if (typeof AbortController !== "undefined") {
+          requestOptions.signal = abortSignal;
+        }
+        if (keepAliveSupport.supported) {
+          requestOptions.keepalive = keepAlive;
+        }
+        if (typeof this.config.requestInit === "function") {
+          Object.assign(requestOptions, this.config.requestInit(request));
+        }
+        let removeSignalEventListener = () => {
+        };
+        const fetchRequest = createRequest(url, requestOptions);
+        const raceOfPromises = [
+          fetch(fetchRequest).then((response) => {
+            const fetchHeaders = response.headers;
+            const transformedHeaders = {};
+            for (const pair of fetchHeaders.entries()) {
+              transformedHeaders[pair[0]] = pair[1];
+            }
+            const hasReadableStream = response.body != void 0;
+            if (!hasReadableStream) {
+              return response.blob().then((body2) => ({
+                response: new HttpResponse2({
+                  headers: transformedHeaders,
+                  reason: response.statusText,
+                  statusCode: response.status,
+                  body: body2
+                })
+              }));
+            }
+            return {
+              response: new HttpResponse2({
+                headers: transformedHeaders,
+                reason: response.statusText,
+                statusCode: response.status,
+                body: response.body
+              })
+            };
+          }),
+          requestTimeout(requestTimeoutInMs)
+        ];
+        if (abortSignal) {
+          raceOfPromises.push(new Promise((resolve, reject) => {
+            const onAbort = () => {
+              const abortError = buildAbortError(abortSignal);
+              reject(abortError);
+            };
+            if (typeof abortSignal.addEventListener === "function") {
+              const signal = abortSignal;
+              signal.addEventListener("abort", onAbort, { once: true });
+              removeSignalEventListener = () => signal.removeEventListener("abort", onAbort);
+            } else {
+              abortSignal.onabort = onAbort;
+            }
+          }));
+        }
+        return Promise.race(raceOfPromises).finally(removeSignalEventListener);
+      }
+      updateHttpClientConfig(key, value) {
+        this.config = void 0;
+        this.configProvider = this.configProvider.then((config) => {
+          config[key] = value;
+          return config;
+        });
+      }
+      httpHandlerConfigs() {
+        return this.config ?? {};
+      }
+    };
+    function buildAbortError(abortSignal) {
+      const reason = abortSignal && typeof abortSignal === "object" && "reason" in abortSignal ? abortSignal.reason : void 0;
+      if (reason) {
+        if (reason instanceof Error) {
+          const abortError3 = new Error("Request aborted");
+          abortError3.name = "AbortError";
+          abortError3.cause = reason;
+          return abortError3;
+        }
+        const abortError2 = new Error(String(reason));
+        abortError2.name = "AbortError";
+        return abortError2;
+      }
+      const abortError = new Error("Request aborted");
+      abortError.name = "AbortError";
+      return abortError;
+    }
+    exports2.FetchHttpHandler = FetchHttpHandler;
+    exports2.keepAliveSupport = keepAliveSupport;
+  }
+});
+
+// node_modules/@aws-sdk/middleware-websocket/dist-cjs/index.js
+var require_dist_cjs24 = __commonJS({
+  "node_modules/@aws-sdk/middleware-websocket/dist-cjs/index.js"(exports2) {
+    var { formatUrl: formatUrl2 } = (init_util2(), __toCommonJS(util_exports));
+    var { iterableToReadableStream: iterableToReadableStream2, readableStreamToIterable: readableStreamToIterable2, EventStreamCodec: EventStreamCodec2 } = (init_event_streams(), __toCommonJS(event_streams_exports));
+    var { HttpResponse: HttpResponse2, HttpRequest: HttpRequest2 } = (init_protocols(), __toCommonJS(protocols_exports));
+    var { fromBase64: fromBase642, fromHex: fromHex2 } = (init_serde(), __toCommonJS(serde_exports));
+    var { FetchHttpHandler } = require_dist_cjs23();
+    var isWebSocketRequest = (request) => request.protocol === "ws:" || request.protocol === "wss:";
+    var DEFAULT_WS_CONNECTION_TIMEOUT_MS = 3e3;
+    var WebSocketFetchHandler = class _WebSocketFetchHandler {
+      metadata = {
+        handlerProtocol: "websocket/h1.1"
+      };
+      config = {};
+      configPromise;
+      httpHandler;
+      sockets = {};
+      static create(instanceOrOptions, httpHandler = new FetchHttpHandler()) {
+        if (typeof instanceOrOptions?.handle === "function") {
+          return instanceOrOptions;
+        }
+        return new _WebSocketFetchHandler(instanceOrOptions, httpHandler);
+      }
+      constructor(options, httpHandler = new FetchHttpHandler()) {
+        this.httpHandler = httpHandler;
+        const setConfig = (opts) => {
+          this.config = {
+            ...opts ?? {}
+          };
+          return this.config;
+        };
+        if (typeof options === "function") {
+          this.config = {};
+          this.configPromise = options().then((opts) => {
+            return setConfig(opts);
+          });
+        } else {
+          this.configPromise = Promise.resolve(setConfig(options));
+        }
+      }
+      destroy() {
+        for (const [key, sockets] of Object.entries(this.sockets)) {
+          for (const socket of sockets) {
+            socket.close(1e3, `Socket closed through destroy() call`);
+          }
+          delete this.sockets[key];
+        }
+      }
+      async handle(request) {
+        this.config = await this.configPromise;
+        const { logger: logger2 } = this.config;
+        if (!isWebSocketRequest(request)) {
+          logger2?.debug?.(`@aws-sdk - ws fetching ${request.protocol}${request.hostname}${request.path}`);
+          return this.httpHandler.handle(request);
+        }
+        const url = formatUrl2(request);
+        logger2?.debug?.(`@aws-sdk - ws connecting ${url.split("?")[0]}`);
+        const socket = new WebSocket(url);
+        if (!this.sockets[url]) {
+          this.sockets[url] = [];
+        }
+        this.sockets[url].push(socket);
+        socket.binaryType = "arraybuffer";
+        const { connectionTimeout = DEFAULT_WS_CONNECTION_TIMEOUT_MS } = this.config;
+        await this.waitForReady(socket, connectionTimeout);
+        const { body } = request;
+        const bodyStream = getIterator(body);
+        const asyncIterable = this.connect(socket, bodyStream);
+        const outputPayload = toReadableStream(asyncIterable);
+        return {
+          response: new HttpResponse2({
+            statusCode: 200,
+            body: outputPayload
+          })
+        };
+      }
+      updateHttpClientConfig(key, value) {
+        this.configPromise = this.configPromise.then((config) => {
+          config[key] = value;
+          return config;
+        });
+      }
+      httpHandlerConfigs() {
+        return this.config ?? {};
+      }
+      removeNotUsableSockets(url) {
+        this.sockets[url] = (this.sockets[url] ?? []).filter((socket) => ![WebSocket.CLOSING, WebSocket.CLOSED].includes(socket.readyState));
+      }
+      waitForReady(socket, connectionTimeout) {
+        return new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            this.removeNotUsableSockets(socket.url);
+            reject({
+              $metadata: {
+                httpStatusCode: 500,
+                websocketSynthetic500Error: true
+              }
+            });
+          }, connectionTimeout);
+          socket.onopen = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+        });
+      }
+      connect(socket, data) {
+        const messageQueue = [];
+        let pendingResolve = null;
+        let pendingReject = null;
+        const push = (item) => {
+          if (pendingResolve) {
+            if (item.error) {
+              pendingReject(item.error);
+            } else {
+              pendingResolve({ done: item.done, value: item.value });
+            }
+            pendingResolve = null;
+            pendingReject = null;
+          } else {
+            messageQueue.push(item);
+          }
+        };
+        socket.onmessage = (event) => {
+          const { data: data2 } = event;
+          if (typeof data2 === "string") {
+            push({
+              done: false,
+              value: fromBase642(data2)
+            });
+          } else {
+            push({
+              done: false,
+              value: new Uint8Array(data2)
+            });
+          }
+        };
+        socket.onerror = (event) => {
+          socket.close();
+          push({ done: true, error: event });
+        };
+        socket.onclose = () => {
+          this.removeNotUsableSockets(socket.url);
+          push({ done: true });
+        };
+        const outputStream = {
+          [Symbol.asyncIterator]: () => ({
+            async next() {
+              if (messageQueue.length > 0) {
+                const item = messageQueue.shift();
+                if (item.error) {
+                  throw item.error;
+                }
+                return { done: item.done, value: item.value };
+              }
+              return new Promise((resolve, reject) => {
+                pendingResolve = resolve;
+                pendingReject = reject;
+              });
+            }
+          })
+        };
+        const send = async () => {
+          try {
+            for await (const chunk of data) {
+              if (socket.readyState >= WebSocket.CLOSING) {
+                break;
+              } else {
+                socket.send(chunk);
+              }
+            }
+          } catch (err2) {
+            push({
+              done: true,
+              error: err2
+            });
+          } finally {
+            socket.close(1e3);
+          }
+        };
+        send();
+        return outputStream;
+      }
+    };
+    var getIterator = (stream) => {
+      if (stream[Symbol.asyncIterator]) {
+        return stream;
+      }
+      if (isReadableStream2(stream)) {
+        return readableStreamToIterable2(stream);
+      }
+      return {
+        [Symbol.asyncIterator]: async function* () {
+          yield stream;
+        }
+      };
+    };
+    var toReadableStream = (asyncIterable) => typeof ReadableStream === "function" ? iterableToReadableStream2(asyncIterable) : asyncIterable;
+    var isReadableStream2 = (payload2) => typeof ReadableStream === "function" && payload2 instanceof ReadableStream;
+    var websocketEndpointMiddleware = (config, options) => (next) => (args) => {
+      const { request } = args;
+      if (HttpRequest2.isInstance(request) && config.requestHandler.metadata?.handlerProtocol?.toLowerCase().includes("websocket")) {
+        request.protocol = "wss:";
+        request.method = "GET";
+        request.path = `${request.path}-websocket`;
+        const { headers } = request;
+        delete headers["content-type"];
+        delete headers["x-amz-content-sha256"];
+        for (const name of Object.keys(headers)) {
+          if (name.indexOf(options.headerPrefix) === 0) {
+            const chunkedName = name.replace(options.headerPrefix, "");
+            request.query[chunkedName] = headers[name];
+          }
+        }
+        if (headers["x-amz-user-agent"]) {
+          request.query["user-agent"] = headers["x-amz-user-agent"];
+        }
+        request.headers = { host: headers.host ?? request.hostname };
+      }
+      return next(args);
+    };
+    var websocketEndpointMiddlewareOptions = {
+      name: "websocketEndpointMiddleware",
+      tags: ["WEBSOCKET", "EVENT_STREAM"],
+      relation: "after",
+      toMiddleware: "eventStreamHeaderMiddleware",
+      override: true
+    };
+    var injectSessionIdMiddleware = () => (next) => async (args) => {
+      const requestParams = {
+        ...args.input
+      };
+      const response = await next(args);
+      const output = response.output;
+      if (requestParams.SessionId && output.SessionId == null) {
+        output.SessionId = requestParams.SessionId;
+      }
+      return response;
+    };
+    var injectSessionIdMiddlewareOptions = {
+      step: "initialize",
+      name: "injectSessionIdMiddleware",
+      tags: ["WEBSOCKET", "EVENT_STREAM"],
+      override: true
+    };
+    var getWebSocketPlugin = (config, options) => ({
+      applyToStack: (clientStack) => {
+        clientStack.addRelativeTo(websocketEndpointMiddleware(config, options), websocketEndpointMiddlewareOptions);
+        clientStack.add(injectSessionIdMiddleware(), injectSessionIdMiddlewareOptions);
+      }
+    });
+    var WebsocketSignatureV4 = class {
+      signer;
+      constructor(options) {
+        this.signer = options.signer;
+      }
+      presign(originalRequest, options = {}) {
+        return this.signer.presign(originalRequest, options);
+      }
+      async sign(toSign, options) {
+        if (HttpRequest2.isInstance(toSign) && isWebSocketRequest(toSign)) {
+          const signedRequest = await this.signer.presign({ ...toSign, body: "" }, {
+            ...options,
+            expiresIn: 60,
+            unsignableHeaders: new Set(Object.keys(toSign.headers).filter((header) => header !== "host"))
+          });
+          return {
+            ...signedRequest,
+            body: toSign.body
+          };
+        } else {
+          return this.signer.sign(toSign, options);
+        }
+      }
+      signMessage(message, args) {
+        return this.signer.signMessage(message, args);
+      }
+    };
+    var resolveWebSocketConfig = (input) => {
+      const { signer } = input;
+      return Object.assign(input, {
+        signer: async (authScheme) => {
+          const signerObj = await signer(authScheme);
+          if (validateSigner(signerObj)) {
+            return new WebsocketSignatureV4({ signer: signerObj });
+          }
+          throw new Error("Expected WebsocketSignatureV4 signer, please check the client constructor.");
+        }
+      });
+    };
+    var validateSigner = (signer) => !!signer;
+    var EventSigningTransformStream = class extends TransformStream {
+      constructor(initialSignature, messageSigner, eventStreamCodec, systemClockOffsetProvider, credentials) {
+        let priorSignature = initialSignature;
+        const staticCredentials = credentials?.();
+        super({
+          start() {
+          },
+          async transform(chunk, controller) {
+            try {
+              const now = new Date(Date.now() + await systemClockOffsetProvider());
+              const dateHeader = {
+                ":date": { type: "timestamp", value: now }
+              };
+              const signedMessage = await messageSigner.sign({
+                message: {
+                  body: chunk,
+                  headers: dateHeader
+                },
+                priorSignature
+              }, {
+                signingDate: now,
+                eventStreamCredentials: await staticCredentials
+              });
+              priorSignature = signedMessage.signature;
+              const serializedSigned = eventStreamCodec.encode({
+                headers: {
+                  ...dateHeader,
+                  ":chunk-signature": {
+                    type: "binary",
+                    value: fromHex2(signedMessage.signature)
+                  }
+                },
+                body: chunk
+              });
+              controller.enqueue(serializedSigned);
+            } catch (error2) {
+              controller.error(error2);
+            }
+          }
+        });
+      }
+    };
+    var EventStreamPayloadHandler = class {
+      messageSigner;
+      eventStreamCodec;
+      systemClockOffsetProvider;
+      credentials;
+      constructor(options) {
+        this.messageSigner = options.messageSigner;
+        this.eventStreamCodec = new EventStreamCodec2(options.utf8Encoder, options.utf8Decoder);
+        this.systemClockOffsetProvider = async () => options.systemClockOffset ?? 0;
+        this.credentials = options.credentials;
+      }
+      async handle(next, args, context = {}) {
+        const request = args.request;
+        const { body: payload2, headers, query } = request;
+        if (!(payload2 instanceof ReadableStream)) {
+          throw new Error("Eventstream payload must be a ReadableStream.");
+        }
+        const placeHolderStream = new TransformStream();
+        request.body = placeHolderStream.readable;
+        const match = (headers?.authorization ?? "").match(/Signature=(\w+)$/);
+        let priorSignature = (match ?? [])[1] ?? (query && query["X-Amz-Signature"]) ?? "";
+        if (context.__staticSignature) {
+          priorSignature = "";
+        }
+        const signingStream = new EventSigningTransformStream(priorSignature, await this.messageSigner(), this.eventStreamCodec, this.systemClockOffsetProvider, this.credentials);
+        payload2.pipeThrough(signingStream).pipeThrough(placeHolderStream);
+        let result;
+        try {
+          result = await next(args);
+        } catch (e5) {
+          const p3 = payload2.cancel?.();
+          if (p3 instanceof Promise) {
+            p3.catch(() => {
+            });
+          }
+          throw e5;
+        }
+        return result;
+      }
+    };
+    var eventStreamPayloadHandlerProvider = (options) => new EventStreamPayloadHandler(options);
+    exports2.WebSocketFetchHandler = WebSocketFetchHandler;
+    exports2.eventStreamPayloadHandlerProvider = eventStreamPayloadHandlerProvider;
+    exports2.getWebSocketPlugin = getWebSocketPlugin;
+    exports2.resolveWebSocketConfig = resolveWebSocketConfig;
+  }
+});
+
+// node_modules/@aws-sdk/eventstream-handler-node/dist-cjs/index.js
+var require_dist_cjs25 = __commonJS({
+  "node_modules/@aws-sdk/eventstream-handler-node/dist-cjs/index.js"(exports2) {
+    var { EventStreamCodec: EventStreamCodec2 } = (init_event_streams(), __toCommonJS(event_streams_exports));
+    var { Transform, Readable: Readable7, PassThrough: PassThrough2, pipeline } = require("node:stream");
+    var EventSigningTransformStream = class extends Transform {
+      priorSignature;
+      messageSigner;
+      eventStreamCodec;
+      systemClockOffsetProvider;
+      staticCredentials;
+      constructor(options) {
+        super({
+          autoDestroy: true,
+          readableObjectMode: true,
+          writableObjectMode: true,
+          ...options
+        });
+        this.priorSignature = options.priorSignature;
+        this.eventStreamCodec = options.eventStreamCodec;
+        this.messageSigner = options.messageSigner;
+        this.systemClockOffsetProvider = options.systemClockOffsetProvider;
+        this.staticCredentials = options.credentials?.();
+      }
+      async _transform(chunk, encoding, callback) {
+        try {
+          const now = new Date(Date.now() + await this.systemClockOffsetProvider());
+          const dateHeader = {
+            ":date": { type: "timestamp", value: now }
+          };
+          const signedMessage = await this.messageSigner.sign({
+            message: {
+              body: chunk,
+              headers: dateHeader
+            },
+            priorSignature: this.priorSignature
+          }, {
+            signingDate: now,
+            eventStreamCredentials: await this.staticCredentials
+          });
+          this.priorSignature = signedMessage.signature;
+          const serializedSigned = this.eventStreamCodec.encode({
+            headers: {
+              ...dateHeader,
+              ":chunk-signature": {
+                type: "binary",
+                value: getSignatureBinary(signedMessage.signature)
+              }
+            },
+            body: chunk
+          });
+          this.push(serializedSigned);
+          return callback();
+        } catch (err2) {
+          callback(err2);
+        }
+      }
+    };
+    function getSignatureBinary(signature) {
+      const buf2 = Buffer.from(signature, "hex");
+      return new Uint8Array(buf2.buffer, buf2.byteOffset, buf2.byteLength / Uint8Array.BYTES_PER_ELEMENT);
+    }
+    var EventStreamPayloadHandler = class {
+      messageSigner;
+      eventStreamCodec;
+      systemClockOffsetProvider;
+      credentials;
+      constructor(options) {
+        this.messageSigner = options.messageSigner;
+        this.eventStreamCodec = new EventStreamCodec2(options.utf8Encoder, options.utf8Decoder);
+        this.systemClockOffsetProvider = async () => options.systemClockOffset ?? 0;
+        this.credentials = options.credentials;
+      }
+      async handle(next, args, context = {}) {
+        const request = args.request;
+        const { body: payload2, query } = request;
+        if (!(payload2 instanceof Readable7)) {
+          throw new Error("Eventstream payload must be a Readable stream.");
+        }
+        request.body = new PassThrough2({
+          objectMode: true
+        });
+        const match = request.headers?.authorization?.match(/Signature=([\w]+)$/);
+        let priorSignature = match?.[1] ?? query?.["X-Amz-Signature"] ?? "";
+        if (context.__staticSignature) {
+          priorSignature = "";
+        }
+        const signingStream = new EventSigningTransformStream({
+          priorSignature,
+          eventStreamCodec: this.eventStreamCodec,
+          messageSigner: await this.messageSigner(),
+          systemClockOffsetProvider: this.systemClockOffsetProvider,
+          credentials: this.credentials
+        });
+        let resolvePipeline;
+        const pipelineError = new Promise((resolve, reject) => {
+          resolvePipeline = () => resolve(void 0);
+          pipeline(payload2, signingStream, request.body, (err2) => {
+            if (err2) {
+              reject(new Error(`Pipeline error in @aws-sdk/eventstream-handler-node: ${err2.message}`, { cause: err2 }));
+            }
+          });
+        });
+        let result;
+        try {
+          result = await Promise.race([next(args), pipelineError]);
+        } catch (e5) {
+          request.body.end();
+          throw e5;
+        } finally {
+          resolvePipeline();
+        }
+        return result;
+      }
+    };
+    var eventStreamPayloadHandlerProvider = (options) => new EventStreamPayloadHandler(options);
+    exports2.eventStreamPayloadHandlerProvider = eventStreamPayloadHandlerProvider;
+  }
+});
+
+// node_modules/@aws-sdk/token-providers/dist-cjs/index.js
+var require_dist_cjs26 = __commonJS({
+  "node_modules/@aws-sdk/token-providers/dist-cjs/index.js"(exports2) {
+    var { setTokenFeature: setTokenFeature2 } = (init_client3(), __toCommonJS(client_exports2));
+    var { getBearerTokenEnvKey: getBearerTokenEnvKey2 } = (init_httpAuthSchemes2(), __toCommonJS(httpAuthSchemes_exports));
+    var { TokenProviderError: TokenProviderError2, getSSOTokenFilepath: getSSOTokenFilepath2, parseKnownFiles: parseKnownFiles2, getProfileName: getProfileName2, loadSsoSessionData: loadSsoSessionData2, getSSOTokenFromFile: getSSOTokenFromFile2, memoize: memoize2, chain: chain2 } = (init_config2(), __toCommonJS(config_exports));
+    var { promises } = require("node:fs");
+    var fromEnvSigningName = ({ logger: logger2, signingName } = {}) => async () => {
+      logger2?.debug?.("@aws-sdk/token-providers - fromEnvSigningName");
+      if (!signingName) {
+        throw new TokenProviderError2("Please pass 'signingName' to compute environment variable key", { logger: logger2 });
+      }
+      const bearerTokenKey = getBearerTokenEnvKey2(signingName);
+      if (!(bearerTokenKey in process.env)) {
+        throw new TokenProviderError2(`Token not present in '${bearerTokenKey}' environment variable`, { logger: logger2 });
+      }
+      const token = { token: process.env[bearerTokenKey] };
+      setTokenFeature2(token, "BEARER_SERVICE_ENV_VARS", "3");
+      return token;
+    };
+    var EXPIRE_WINDOW_MS = 5 * 60 * 1e3;
+    var REFRESH_MESSAGE = `To refresh this SSO session run 'aws sso login' with the corresponding profile.`;
+    var getSsoOidcClient = async (ssoRegion, init = {}, callerClientConfig) => {
+      const { SSOOIDCClient: SSOOIDCClient2 } = (init_sso_oidc(), __toCommonJS(sso_oidc_exports));
+      const coalesce2 = (prop) => init.clientConfig?.[prop] ?? init.parentClientConfig?.[prop] ?? callerClientConfig?.[prop];
+      const ssoOidcClient = new SSOOIDCClient2(Object.assign({}, init.clientConfig ?? {}, {
+        region: ssoRegion ?? init.clientConfig?.region,
+        logger: coalesce2("logger"),
+        userAgentAppId: coalesce2("userAgentAppId")
+      }));
+      return ssoOidcClient;
+    };
+    var getNewSsoOidcToken = async (ssoToken, ssoRegion, init = {}, callerClientConfig) => {
+      const { CreateTokenCommand: CreateTokenCommand2 } = (init_sso_oidc(), __toCommonJS(sso_oidc_exports));
+      const ssoOidcClient = await getSsoOidcClient(ssoRegion, init, callerClientConfig);
+      return ssoOidcClient.send(new CreateTokenCommand2({
+        clientId: ssoToken.clientId,
+        clientSecret: ssoToken.clientSecret,
+        refreshToken: ssoToken.refreshToken,
+        grantType: "refresh_token"
+      }));
+    };
+    var validateTokenExpiry = (token) => {
+      if (token.expiration && token.expiration.getTime() < Date.now()) {
+        throw new TokenProviderError2(`Token is expired. ${REFRESH_MESSAGE}`, false);
+      }
+    };
+    var validateTokenKey = (key, value, forRefresh = false) => {
+      if (typeof value === "undefined") {
+        throw new TokenProviderError2(`Value not present for '${key}' in SSO Token${forRefresh ? ". Cannot refresh" : ""}. ${REFRESH_MESSAGE}`, false);
+      }
+    };
+    var { writeFile } = promises;
+    var writeSSOTokenToFile = (id, ssoToken) => {
+      const tokenFilepath = getSSOTokenFilepath2(id);
+      const tokenString = JSON.stringify(ssoToken, null, 2);
+      return writeFile(tokenFilepath, tokenString);
+    };
+    var lastRefreshAttemptTime = /* @__PURE__ */ new Date(0);
+    var fromSso = (init = {}) => async ({ callerClientConfig } = {}) => {
+      init.logger?.debug("@aws-sdk/token-providers - fromSso");
+      const profiles = await parseKnownFiles2(init);
+      const profileName = getProfileName2({
+        profile: init.profile ?? callerClientConfig?.profile
+      });
+      const profile = profiles[profileName];
+      if (!profile) {
+        throw new TokenProviderError2(`Profile '${profileName}' could not be found in shared credentials file.`, false);
+      } else if (!profile["sso_session"]) {
+        throw new TokenProviderError2(`Profile '${profileName}' is missing required property 'sso_session'.`);
+      }
+      const ssoSessionName = profile["sso_session"];
+      const ssoSessions = await loadSsoSessionData2(init);
+      const ssoSession = ssoSessions[ssoSessionName];
+      if (!ssoSession) {
+        throw new TokenProviderError2(`Sso session '${ssoSessionName}' could not be found in shared credentials file.`, false);
+      }
+      for (const ssoSessionRequiredKey of ["sso_start_url", "sso_region"]) {
+        if (!ssoSession[ssoSessionRequiredKey]) {
+          throw new TokenProviderError2(`Sso session '${ssoSessionName}' is missing required property '${ssoSessionRequiredKey}'.`, false);
+        }
+      }
+      ssoSession["sso_start_url"];
+      const ssoRegion = ssoSession["sso_region"];
+      let ssoToken;
+      try {
+        ssoToken = await getSSOTokenFromFile2(ssoSessionName);
+      } catch (e5) {
+        throw new TokenProviderError2(`The SSO session token associated with profile=${profileName} was not found or is invalid. ${REFRESH_MESSAGE}`, false);
+      }
+      validateTokenKey("accessToken", ssoToken.accessToken);
+      validateTokenKey("expiresAt", ssoToken.expiresAt);
+      const { accessToken, expiresAt } = ssoToken;
+      const existingToken = { token: accessToken, expiration: new Date(expiresAt) };
+      if (existingToken.expiration.getTime() - Date.now() > EXPIRE_WINDOW_MS) {
+        return existingToken;
+      }
+      if (Date.now() - lastRefreshAttemptTime.getTime() < 30 * 1e3) {
+        validateTokenExpiry(existingToken);
+        return existingToken;
+      }
+      validateTokenKey("clientId", ssoToken.clientId, true);
+      validateTokenKey("clientSecret", ssoToken.clientSecret, true);
+      validateTokenKey("refreshToken", ssoToken.refreshToken, true);
+      try {
+        lastRefreshAttemptTime.setTime(Date.now());
+        const newSsoOidcToken = await getNewSsoOidcToken(ssoToken, ssoRegion, init, callerClientConfig);
+        validateTokenKey("accessToken", newSsoOidcToken.accessToken);
+        validateTokenKey("expiresIn", newSsoOidcToken.expiresIn);
+        const newTokenExpiration = new Date(Date.now() + newSsoOidcToken.expiresIn * 1e3);
+        try {
+          await writeSSOTokenToFile(ssoSessionName, {
+            ...ssoToken,
+            accessToken: newSsoOidcToken.accessToken,
+            expiresAt: newTokenExpiration.toISOString(),
+            refreshToken: newSsoOidcToken.refreshToken
+          });
+        } catch (error2) {
+        }
+        return {
+          token: newSsoOidcToken.accessToken,
+          expiration: newTokenExpiration
+        };
+      } catch (error2) {
+        validateTokenExpiry(existingToken);
+        return existingToken;
+      }
+    };
+    var fromStatic2 = ({ token, logger: logger2 }) => async () => {
+      logger2?.debug("@aws-sdk/token-providers - fromStatic");
+      if (!token || !token.token) {
+        throw new TokenProviderError2(`Please pass a valid token to fromStatic`, false);
+      }
+      return token;
+    };
+    var nodeProvider = (init = {}) => memoize2(chain2(fromSso(init), async () => {
+      throw new TokenProviderError2("Could not load token from any providers", false);
+    }), (token) => token.expiration !== void 0 && token.expiration.getTime() - Date.now() < 3e5, (token) => token.expiration !== void 0);
+    exports2.fromEnvSigningName = fromEnvSigningName;
+    exports2.fromSso = fromSso;
+    exports2.fromStatic = fromStatic2;
+    exports2.nodeProvider = nodeProvider;
+  }
+});
+
+// node_modules/@aws-sdk/client-bedrock-runtime/dist-cjs/index.js
+var require_dist_cjs27 = __commonJS({
+  "node_modules/@aws-sdk/client-bedrock-runtime/dist-cjs/index.js"(exports2) {
+    var { awsEndpointFunctions: awsEndpointFunctions2, emitWarningIfUnsupportedVersion: emitWarningIfUnsupportedVersion$1, createDefaultUserAgentProvider: createDefaultUserAgentProvider2, NODE_APP_ID_CONFIG_OPTIONS: NODE_APP_ID_CONFIG_OPTIONS2, getAwsRegionExtensionConfiguration: getAwsRegionExtensionConfiguration2, resolveAwsRegionExtensionConfiguration: resolveAwsRegionExtensionConfiguration2, resolveUserAgentConfig: resolveUserAgentConfig2, resolveHostHeaderConfig: resolveHostHeaderConfig2, getUserAgentPlugin: getUserAgentPlugin2, getHostHeaderPlugin: getHostHeaderPlugin2, getLoggerPlugin: getLoggerPlugin2, getRecursionDetectionPlugin: getRecursionDetectionPlugin2 } = (init_client3(), __toCommonJS(client_exports2));
+    var { resolveEventStreamConfig, getEventStreamPlugin } = require_dist_cjs22();
+    var { resolveWebSocketConfig, getWebSocketPlugin } = require_dist_cjs24();
+    var { memoizeIdentityProvider: memoizeIdentityProvider2, isIdentityExpired: isIdentityExpired2, doesIdentityRequireRefresh: doesIdentityRequireRefresh2, HttpBearerAuthSigner: HttpBearerAuthSigner2, getHttpAuthSchemeEndpointRuleSetPlugin: getHttpAuthSchemeEndpointRuleSetPlugin2, DefaultIdentityProviderConfig: DefaultIdentityProviderConfig2, getHttpSigningPlugin: getHttpSigningPlugin2, createPaginator: createPaginator2 } = (init_dist_es(), __toCommonJS(dist_es_exports));
+    var { normalizeProvider: normalizeProvider3, getSmithyContext: getSmithyContext2, ServiceException: ServiceException2, NoOpLogger: NoOpLogger2, emitWarningIfUnsupportedVersion: emitWarningIfUnsupportedVersion3, loadConfigsForDefaultMode: loadConfigsForDefaultMode2, getDefaultExtensionConfiguration: getDefaultExtensionConfiguration2, resolveDefaultRuntimeConfig: resolveDefaultRuntimeConfig2, Client: Client2, makeBuilder: makeBuilder2, createAggregatedClient: createAggregatedClient2 } = (init_client2(), __toCommonJS(client_exports));
+    var { Command: $Command } = (init_client2(), __toCommonJS(client_exports));
+    exports2.$Command = $Command;
+    exports2.__Client = Client2;
+    var { resolveDefaultsModeConfig: resolveDefaultsModeConfig2, loadConfig: loadConfig2, NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS: NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS2, NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS: NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS2, NODE_REGION_CONFIG_OPTIONS: NODE_REGION_CONFIG_OPTIONS2, NODE_REGION_CONFIG_FILE_OPTIONS: NODE_REGION_CONFIG_FILE_OPTIONS2, resolveRegionConfig: resolveRegionConfig2 } = (init_config2(), __toCommonJS(config_exports));
+    var { BinaryDecisionDiagram: BinaryDecisionDiagram2, EndpointCache: EndpointCache2, decideEndpoint: decideEndpoint2, customEndpointFunctions: customEndpointFunctions2, resolveEndpointConfig: resolveEndpointConfig2, getEndpointPlugin: getEndpointPlugin2 } = (init_endpoints(), __toCommonJS(endpoints_exports));
+    var { eventStreamSerdeProvider: eventStreamSerdeProvider3, resolveEventStreamSerdeConfig: resolveEventStreamSerdeConfig2 } = (init_event_streams(), __toCommonJS(event_streams_exports));
+    var { parseUrl: parseUrl2, getHttpHandlerExtensionConfiguration: getHttpHandlerExtensionConfiguration2, resolveHttpHandlerRuntimeConfig: resolveHttpHandlerRuntimeConfig2, getContentLengthPlugin: getContentLengthPlugin2 } = (init_protocols(), __toCommonJS(protocols_exports));
+    var { DEFAULT_RETRY_MODE: DEFAULT_RETRY_MODE2, NODE_RETRY_MODE_CONFIG_OPTIONS: NODE_RETRY_MODE_CONFIG_OPTIONS2, NODE_MAX_ATTEMPT_CONFIG_OPTIONS: NODE_MAX_ATTEMPT_CONFIG_OPTIONS2, resolveRetryConfig: resolveRetryConfig2, getRetryPlugin: getRetryPlugin2 } = (init_retry2(), __toCommonJS(retry_exports));
+    var { TypeRegistry: TypeRegistry2, getSchemaSerdePlugin: getSchemaSerdePlugin2 } = (init_schema(), __toCommonJS(schema_exports));
+    var { resolveAwsSdkSigV4Config: resolveAwsSdkSigV4Config2, AwsSdkSigV4Signer: AwsSdkSigV4Signer2, NODE_AUTH_SCHEME_PREFERENCE_OPTIONS: NODE_AUTH_SCHEME_PREFERENCE_OPTIONS2 } = (init_httpAuthSchemes2(), __toCommonJS(httpAuthSchemes_exports));
+    var { defaultProvider } = require_dist_cjs18();
+    var { eventStreamPayloadHandlerProvider } = require_dist_cjs25();
+    var { fromEnvSigningName, nodeProvider } = require_dist_cjs26();
+    var { toUtf8: toUtf83, fromUtf8: fromUtf83, toBase64: toBase643, fromBase64: fromBase642, calculateBodyLength: calculateBodyLength2 } = (init_serde(), __toCommonJS(serde_exports));
+    var { streamCollector: streamCollector7, NodeHttp2Handler } = require_dist_cjs8();
+    var { AwsRestJsonProtocol: AwsRestJsonProtocol2 } = (init_protocols2(), __toCommonJS(protocols_exports2));
+    var { Sha256 } = (init_checksum2(), __toCommonJS(checksum_exports));
+    var defaultBedrockRuntimeHttpAuthSchemeParametersProvider = async (config, context, input) => {
+      return {
+        operation: getSmithyContext2(context).operation,
+        region: await normalizeProvider3(config.region)() || (() => {
+          throw new Error("expected `region` to be configured for `aws.auth#sigv4`");
+        })()
+      };
+    };
+    function createAwsAuthSigv4HttpAuthOption5(authParameters) {
+      return {
+        schemeId: "aws.auth#sigv4",
+        signingProperties: {
+          name: "bedrock",
+          region: authParameters.region
+        },
+        propertiesExtractor: (config, context) => ({
+          signingProperties: {
+            config,
+            context
+          }
+        })
+      };
+    }
+    function createSmithyApiHttpBearerAuthHttpAuthOption(authParameters) {
+      return {
+        schemeId: "smithy.api#httpBearerAuth",
+        propertiesExtractor: ({ profile, filepath, configFilepath, ignoreCache }, context) => ({
+          identityProperties: {
+            profile,
+            filepath,
+            configFilepath,
+            ignoreCache
+          }
+        })
+      };
+    }
+    var defaultBedrockRuntimeHttpAuthSchemeProvider = (authParameters) => {
+      const options = [];
+      switch (authParameters.operation) {
+        default: {
+          options.push(createAwsAuthSigv4HttpAuthOption5(authParameters));
+          options.push(createSmithyApiHttpBearerAuthHttpAuthOption());
+        }
+      }
+      return options;
+    };
+    var resolveHttpAuthSchemeConfig5 = (config) => {
+      const token = memoizeIdentityProvider2(config.token, isIdentityExpired2, doesIdentityRequireRefresh2);
+      const config_0 = resolveAwsSdkSigV4Config2(config);
+      return Object.assign(config_0, {
+        authSchemePreference: normalizeProvider3(config.authSchemePreference ?? []),
+        token
+      });
+    };
+    var resolveClientEndpointParameters5 = (options) => {
+      return Object.assign(options, {
+        useDualstackEndpoint: options.useDualstackEndpoint ?? false,
+        useFipsEndpoint: options.useFipsEndpoint ?? false,
+        defaultSigningName: "bedrock"
+      });
+    };
+    var commonParams5 = {
+      UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
+      Endpoint: { type: "builtInParams", name: "endpoint" },
+      Region: { type: "builtInParams", name: "region" },
+      UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" }
+    };
+    var version = "3.1100.0";
+    var packageInfo = {
+      version
+    };
+    var k5 = "ref";
+    var a5 = -1;
+    var b5 = true;
+    var c5 = "isSet";
+    var d5 = "PartitionResult";
+    var e5 = "booleanEquals";
+    var f5 = "getAttr";
+    var g5 = { [k5]: "Endpoint" };
+    var h5 = { [k5]: d5 };
+    var i5 = {};
+    var j5 = [{ [k5]: "Region" }];
+    var _data5 = {
+      conditions: [
+        [c5, [g5]],
+        [c5, j5],
+        ["aws.partition", j5, d5],
+        [e5, [{ [k5]: "UseFIPS" }, b5]],
+        [e5, [{ [k5]: "UseDualStack" }, b5]],
+        [e5, [{ fn: f5, argv: [h5, "supportsDualStack"] }, b5]],
+        [e5, [{ fn: f5, argv: [h5, "supportsFIPS"] }, b5]]
+      ],
+      results: [
+        [a5],
+        [a5, "Invalid Configuration: FIPS and custom endpoint are not supported"],
+        [a5, "Invalid Configuration: Dualstack and custom endpoint are not supported"],
+        [g5, i5],
+        ["https://bedrock-runtime-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", i5],
+        [a5, "FIPS and DualStack are enabled, but this partition does not support one or both"],
+        ["https://bedrock-runtime-fips.{Region}.{PartitionResult#dnsSuffix}", i5],
+        [a5, "FIPS is enabled but this partition does not support FIPS"],
+        ["https://bedrock-runtime.{Region}.{PartitionResult#dualStackDnsSuffix}", i5],
+        [a5, "DualStack is enabled but this partition does not support DualStack"],
+        ["https://bedrock-runtime.{Region}.{PartitionResult#dnsSuffix}", i5],
+        [a5, "Invalid Configuration: Missing Region"]
+      ]
+    };
+    var root5 = 2;
+    var r5 = 1e8;
+    var nodes5 = new Int32Array([
+      -1,
+      1,
+      -1,
+      0,
+      12,
+      3,
+      1,
+      4,
+      r5 + 11,
+      2,
+      5,
+      r5 + 11,
+      3,
+      8,
+      6,
+      4,
+      7,
+      r5 + 10,
+      5,
+      r5 + 8,
+      r5 + 9,
+      4,
+      10,
+      9,
+      6,
+      r5 + 6,
+      r5 + 7,
+      5,
+      11,
+      r5 + 5,
+      6,
+      r5 + 4,
+      r5 + 5,
+      3,
+      r5 + 1,
+      13,
+      4,
+      r5 + 2,
+      r5 + 3
+    ]);
+    var bdd5 = BinaryDecisionDiagram2.from(nodes5, root5, _data5.conditions, _data5.results);
+    var cache5 = new EndpointCache2({
+      size: 50,
+      params: ["Endpoint", "Region", "UseDualStack", "UseFIPS"]
+    });
+    var defaultEndpointResolver5 = (endpointParams, context = {}) => {
+      return cache5.get(endpointParams, () => decideEndpoint2(bdd5, {
+        endpointParams,
+        logger: context.logger
+      }));
+    };
+    customEndpointFunctions2.aws = awsEndpointFunctions2;
+    var BedrockRuntimeServiceException = class _BedrockRuntimeServiceException extends ServiceException2 {
+      constructor(options) {
+        super(options);
+        Object.setPrototypeOf(this, _BedrockRuntimeServiceException.prototype);
+      }
+    };
+    var AccessDeniedException3 = class _AccessDeniedException extends BedrockRuntimeServiceException {
+      name = "AccessDeniedException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "AccessDeniedException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _AccessDeniedException.prototype);
+      }
+    };
+    var InternalServerException3 = class _InternalServerException extends BedrockRuntimeServiceException {
+      name = "InternalServerException";
+      $fault = "server";
+      constructor(opts) {
+        super({
+          name: "InternalServerException",
+          $fault: "server",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _InternalServerException.prototype);
+      }
+    };
+    var ThrottlingException = class _ThrottlingException extends BedrockRuntimeServiceException {
+      name = "ThrottlingException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "ThrottlingException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ThrottlingException.prototype);
+      }
+    };
+    var ValidationException2 = class _ValidationException extends BedrockRuntimeServiceException {
+      name = "ValidationException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "ValidationException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ValidationException.prototype);
+      }
+    };
+    var ConflictException = class _ConflictException extends BedrockRuntimeServiceException {
+      name = "ConflictException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "ConflictException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ConflictException.prototype);
+      }
+    };
+    var ResourceNotFoundException2 = class _ResourceNotFoundException extends BedrockRuntimeServiceException {
+      name = "ResourceNotFoundException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "ResourceNotFoundException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ResourceNotFoundException.prototype);
+      }
+    };
+    var ServiceQuotaExceededException = class _ServiceQuotaExceededException extends BedrockRuntimeServiceException {
+      name = "ServiceQuotaExceededException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "ServiceQuotaExceededException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ServiceQuotaExceededException.prototype);
+      }
+    };
+    var ServiceUnavailableException = class _ServiceUnavailableException extends BedrockRuntimeServiceException {
+      name = "ServiceUnavailableException";
+      $fault = "server";
+      constructor(opts) {
+        super({
+          name: "ServiceUnavailableException",
+          $fault: "server",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ServiceUnavailableException.prototype);
+      }
+    };
+    var ModelErrorException = class _ModelErrorException extends BedrockRuntimeServiceException {
+      name = "ModelErrorException";
+      $fault = "client";
+      originalStatusCode;
+      resourceName;
+      constructor(opts) {
+        super({
+          name: "ModelErrorException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ModelErrorException.prototype);
+        this.originalStatusCode = opts.originalStatusCode;
+        this.resourceName = opts.resourceName;
+      }
+    };
+    var ModelNotReadyException = class _ModelNotReadyException extends BedrockRuntimeServiceException {
+      name = "ModelNotReadyException";
+      $fault = "client";
+      $retryable = {};
+      constructor(opts) {
+        super({
+          name: "ModelNotReadyException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ModelNotReadyException.prototype);
+      }
+    };
+    var ModelTimeoutException = class _ModelTimeoutException extends BedrockRuntimeServiceException {
+      name = "ModelTimeoutException";
+      $fault = "client";
+      constructor(opts) {
+        super({
+          name: "ModelTimeoutException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ModelTimeoutException.prototype);
+      }
+    };
+    var ModelStreamErrorException = class _ModelStreamErrorException extends BedrockRuntimeServiceException {
+      name = "ModelStreamErrorException";
+      $fault = "client";
+      originalStatusCode;
+      originalMessage;
+      constructor(opts) {
+        super({
+          name: "ModelStreamErrorException",
+          $fault: "client",
+          ...opts
+        });
+        Object.setPrototypeOf(this, _ModelStreamErrorException.prototype);
+        this.originalStatusCode = opts.originalStatusCode;
+        this.originalMessage = opts.originalMessage;
+      }
+    };
+    var _A2 = "Accept";
+    var _AB = "AudioBlock";
+    var _ADE3 = "AccessDeniedException";
+    var _AG = "ApplyGuardrail";
+    var _AGD = "AppliedGuardrailDetails";
+    var _AGR = "ApplyGuardrailRequest";
+    var _AGRp = "ApplyGuardrailResponse";
+    var _AIM = "AsyncInvokeMessage";
+    var _AIODC = "AsyncInvokeOutputDataConfig";
+    var _AIS = "AsyncInvokeSummary";
+    var _AISODC = "AsyncInvokeS3OutputDataConfig";
+    var _AISs = "AsyncInvokeSummaries";
+    var _AS = "AudioSource";
+    var _ATC = "AnyToolChoice";
+    var _ATCu = "AutoToolChoice";
+    var _B = "Body";
+    var _BIPP = "BidirectionalInputPayloadPart";
+    var _BOPP = "BidirectionalOutputPayloadPart";
+    var _C2 = "Citation";
+    var _CB = "ContentBlocks";
+    var _CBD = "ContentBlockDelta";
+    var _CBDE = "ContentBlockDeltaEvent";
+    var _CBS = "ContentBlockStart";
+    var _CBSE = "ContentBlockStartEvent";
+    var _CBSEo = "ContentBlockStopEvent";
+    var _CBo = "ContentBlock";
+    var _CC = "CitationsConfig";
+    var _CCB = "CitationsContentBlock";
+    var _CD = "CacheDetail";
+    var _CDL = "CacheDetailsList";
+    var _CDi = "CitationsDelta";
+    var _CE = "ConflictException";
+    var _CGC = "CitationGeneratedContent";
+    var _CGCL = "CitationGeneratedContentList";
+    var _CL = "CitationLocation";
+    var _CM = "ConverseMetrics";
+    var _CO = "ConverseOutput";
+    var _CPB = "CachePointBlock";
+    var _CR = "ConverseRequest";
+    var _CRo = "ConverseResponse";
+    var _CS2 = "ConverseStream";
+    var _CSC = "CitationSourceContent";
+    var _CSCD = "CitationSourceContentDelta";
+    var _CSCL = "CitationSourceContentList";
+    var _CSCLD = "CitationSourceContentListDelta";
+    var _CSM = "ConverseStreamMetrics";
+    var _CSME = "ConverseStreamMetadataEvent";
+    var _CSO = "ConverseStreamOutput";
+    var _CSR = "ConverseStreamRequest";
+    var _CSRo = "ConverseStreamResponse";
+    var _CST = "ConverseStreamTrace";
+    var _CT2 = "ConverseTrace";
+    var _CTI = "CountTokensInput";
+    var _CTR2 = "ConverseTokensRequest";
+    var _CTRo = "CountTokensRequest";
+    var _CTRou = "CountTokensResponse";
+    var _CT_ = "Content-Type";
+    var _CTo = "CountTokens";
+    var _Ci = "Citations";
+    var _Co = "Converse";
+    var _DB = "DocumentBlock";
+    var _DCB = "DocumentContentBlocks";
+    var _DCBo = "DocumentContentBlock";
+    var _DCL = "DocumentCharLocation";
+    var _DCLo = "DocumentChunkLocation";
+    var _DPL = "DocumentPageLocation";
+    var _DS2 = "DocumentSource";
+    var _EB = "ErrorBlock";
+    var _GA = "GuardrailAssessment";
+    var _GAI = "GetAsyncInvoke";
+    var _GAIR = "GetAsyncInvokeRequest";
+    var _GAIRe = "GetAsyncInvokeResponse";
+    var _GAL = "GuardrailAssessmentList";
+    var _GALM = "GuardrailAssessmentListMap";
+    var _GAM = "GuardrailAssessmentMap";
+    var _GARDSL = "GuardrailAutomatedReasoningDifferenceScenarioList";
+    var _GARF = "GuardrailAutomatedReasoningFinding";
+    var _GARFL = "GuardrailAutomatedReasoningFindingList";
+    var _GARIF = "GuardrailAutomatedReasoningImpossibleFinding";
+    var _GARIFu = "GuardrailAutomatedReasoningInvalidFinding";
+    var _GARITR = "GuardrailAutomatedReasoningInputTextReference";
+    var _GARITRL = "GuardrailAutomatedReasoningInputTextReferenceList";
+    var _GARLW = "GuardrailAutomatedReasoningLogicWarning";
+    var _GARNTF = "GuardrailAutomatedReasoningNoTranslationsFinding";
+    var _GARPA = "GuardrailAutomatedReasoningPolicyAssessment";
+    var _GARR = "GuardrailAutomatedReasoningRule";
+    var _GARRL = "GuardrailAutomatedReasoningRuleList";
+    var _GARS = "GuardrailAutomatedReasoningScenario";
+    var _GARSF = "GuardrailAutomatedReasoningSatisfiableFinding";
+    var _GARSL = "GuardrailAutomatedReasoningStatementList";
+    var _GARSLC = "GuardrailAutomatedReasoningStatementLogicContent";
+    var _GARSNLC = "GuardrailAutomatedReasoningStatementNaturalLanguageContent";
+    var _GARSu = "GuardrailAutomatedReasoningStatement";
+    var _GART = "GuardrailAutomatedReasoningTranslation";
+    var _GARTAF = "GuardrailAutomatedReasoningTranslationAmbiguousFinding";
+    var _GARTCF = "GuardrailAutomatedReasoningTooComplexFinding";
+    var _GARTL = "GuardrailAutomatedReasoningTranslationList";
+    var _GARTO = "GuardrailAutomatedReasoningTranslationOption";
+    var _GARTOL = "GuardrailAutomatedReasoningTranslationOptionList";
+    var _GARVF = "GuardrailAutomatedReasoningValidFinding";
+    var _GC = "GuardrailConfiguration";
+    var _GCB = "GuardrailContentBlock";
+    var _GCBL = "GuardrailContentBlockList";
+    var _GCC = "GuardrailChecksConfig";
+    var _GCCB = "GuardrailChecksContentBlock";
+    var _GCCBL = "GuardrailChecksContentBlockList";
+    var _GCCBu = "GuardrailConverseContentBlock";
+    var _GCCFC = "GuardrailChecksContentFilterConfig";
+    var _GCCFCC = "GuardrailChecksContentFilterCategoryConfig";
+    var _GCCFCCL = "GuardrailChecksContentFilterCategoryConfigList";
+    var _GCCFR = "GuardrailChecksContentFilterResult";
+    var _GCCFRE = "GuardrailChecksContentFilterResultEntry";
+    var _GCCFRL = "GuardrailChecksContentFilterResultList";
+    var _GCCFU = "GuardrailChecksContentFilterUsage";
+    var _GCF = "GuardrailContentFilter";
+    var _GCFL = "GuardrailContentFilterList";
+    var _GCGF = "GuardrailContextualGroundingFilter";
+    var _GCGFu = "GuardrailContextualGroundingFilters";
+    var _GCGPA = "GuardrailContextualGroundingPolicyAssessment";
+    var _GCIB = "GuardrailConverseImageBlock";
+    var _GCIS = "GuardrailConverseImageSource";
+    var _GCM = "GuardrailChecksMessage";
+    var _GCML = "GuardrailChecksMessageList";
+    var _GCPA = "GuardrailContentPolicyAssessment";
+    var _GCPAC = "GuardrailChecksPromptAttackConfig";
+    var _GCPACC = "GuardrailChecksPromptAttackCategoryConfig";
+    var _GCPACCL = "GuardrailChecksPromptAttackCategoryConfigList";
+    var _GCPAR = "GuardrailChecksPromptAttackResult";
+    var _GCPARE = "GuardrailChecksPromptAttackResultEntry";
+    var _GCPARL = "GuardrailChecksPromptAttackResultList";
+    var _GCPAU = "GuardrailChecksPromptAttackUsage";
+    var _GCR = "GuardrailChecksResults";
+    var _GCSIC = "GuardrailChecksSensitiveInformationConfig";
+    var _GCSIEC = "GuardrailChecksSensitiveInformationEntityConfig";
+    var _GCSIECL = "GuardrailChecksSensitiveInformationEntityConfigList";
+    var _GCSIR = "GuardrailChecksSensitiveInformationResult";
+    var _GCSIRE = "GuardrailChecksSensitiveInformationResultEntry";
+    var _GCSIRL = "GuardrailChecksSensitiveInformationResultList";
+    var _GCSIU = "GuardrailChecksSensitiveInformationUsage";
+    var _GCTB = "GuardrailConverseTextBlock";
+    var _GCTC = "GuardrailChecksTextContent";
+    var _GCUR = "GuardrailChecksUsageResults";
+    var _GCW = "GuardrailCustomWord";
+    var _GCWL = "GuardrailCustomWordList";
+    var _GCu = "GuardrailCoverage";
+    var _GIB = "GuardrailImageBlock";
+    var _GIC = "GuardrailImageCoverage";
+    var _GIM = "GuardrailInvocationMetrics";
+    var _GIS = "GuardrailImageSource";
+    var _GMW = "GuardrailManagedWord";
+    var _GMWL = "GuardrailManagedWordList";
+    var _GOC = "GuardrailOutputContent";
+    var _GOCL = "GuardrailOutputContentList";
+    var _GPEF = "GuardrailPiiEntityFilter";
+    var _GPEFL = "GuardrailPiiEntityFilterList";
+    var _GRF = "GuardrailRegexFilter";
+    var _GRFL = "GuardrailRegexFilterList";
+    var _GSC = "GuardrailStreamConfiguration";
+    var _GSIPA = "GuardrailSensitiveInformationPolicyAssessment";
+    var _GT = "GuardrailTopic";
+    var _GTA = "GuardrailTraceAssessment";
+    var _GTB = "GuardrailTextBlock";
+    var _GTCC = "GuardrailTextCharactersCoverage";
+    var _GTL = "GuardrailTopicList";
+    var _GTPA = "GuardrailTopicPolicyAssessment";
+    var _GU = "GuardrailUsage";
+    var _GWPA = "GuardrailWordPolicyAssessment";
+    var _IB = "ImageBlock";
+    var _IBD = "ImageBlockDelta";
+    var _IBS = "ImageBlockStart";
+    var _IC = "InferenceConfiguration";
+    var _IGC = "InvokeGuardrailChecks";
+    var _IGCR = "InvokeGuardrailChecksRequest";
+    var _IGCRn = "InvokeGuardrailChecksResponse";
+    var _IM = "InvokeModel";
+    var _IMR = "InvokeModelRequest";
+    var _IMRn = "InvokeModelResponse";
+    var _IMTR = "InvokeModelTokensRequest";
+    var _IMWBS = "InvokeModelWithBidirectionalStream";
+    var _IMWBSI = "InvokeModelWithBidirectionalStreamInput";
+    var _IMWBSO = "InvokeModelWithBidirectionalStreamOutput";
+    var _IMWBSR = "InvokeModelWithBidirectionalStreamRequest";
+    var _IMWBSRn = "InvokeModelWithBidirectionalStreamResponse";
+    var _IMWRS = "InvokeModelWithResponseStream";
+    var _IMWRSR = "InvokeModelWithResponseStreamRequest";
+    var _IMWRSRn = "InvokeModelWithResponseStreamResponse";
+    var _IS = "ImageSource";
+    var _ISE3 = "InternalServerException";
+    var _JSD = "JsonSchemaDefinition";
+    var _LAI = "ListAsyncInvokes";
+    var _LAIR = "ListAsyncInvokesRequest";
+    var _LAIRi = "ListAsyncInvokesResponse";
+    var _M = "Message";
+    var _MEE = "ModelErrorException";
+    var _MIP = "ModelInputPayload";
+    var _MNRE = "ModelNotReadyException";
+    var _MSE = "MessageStartEvent";
+    var _MSEE = "ModelStreamErrorException";
+    var _MSEe = "MessageStopEvent";
+    var _MTE = "ModelTimeoutException";
+    var _Me = "Messages";
+    var _OC = "OutputConfig";
+    var _OF = "OutputFormat";
+    var _OFS = "OutputFormatStructure";
+    var _PB = "PartBody";
+    var _PC2 = "PerformanceConfiguration";
+    var _PP = "PayloadPart";
+    var _PRT = "PromptRouterTrace";
+    var _PVM = "PromptVariableMap";
+    var _PVV = "PromptVariableValues";
+    var _RCB = "ReasoningContentBlock";
+    var _RCBD = "ReasoningContentBlockDelta";
+    var _RM = "RequestMetadata";
+    var _RMJ = "RequestMetadataJson";
+    var _RNFE2 = "ResourceNotFoundException";
+    var _RS = "ResponseStream";
+    var _RTB = "ReasoningTextBlock";
+    var _SAI = "StartAsyncInvoke";
+    var _SAIR = "StartAsyncInvokeRequest";
+    var _SAIRt = "StartAsyncInvokeResponse";
+    var _SCB = "SystemContentBlocks";
+    var _SCBy = "SystemContentBlock";
+    var _SL = "S3Location";
+    var _SQEE = "ServiceQuotaExceededException";
+    var _SRB = "SearchResultBlock";
+    var _SRCB = "SearchResultContentBlock";
+    var _SRCBe = "SearchResultContentBlocks";
+    var _SRL = "SearchResultLocation";
+    var _ST2 = "ServiceTier";
+    var _STC = "SpecificToolChoice";
+    var _STy = "SystemTool";
+    var _SUE = "ServiceUnavailableException";
+    var _T2 = "Tag";
+    var _TAB = "ToolAdditionBlock";
+    var _TC2 = "ToolConfiguration";
+    var _TCo = "ToolChoice";
+    var _TE = "ThrottlingException";
+    var _TIS = "ToolInputSchema";
+    var _TL = "TagList";
+    var _TR = "ToolReference";
+    var _TRB = "ToolRemovalBlock";
+    var _TRBD = "ToolResultBlocksDelta";
+    var _TRBDo = "ToolResultBlockDelta";
+    var _TRBS = "ToolResultBlockStart";
+    var _TRBo = "ToolResultBlock";
+    var _TRCB = "ToolResultContentBlocks";
+    var _TRCBo = "ToolResultContentBlock";
+    var _TS = "ToolSpecification";
+    var _TU = "TokenUsage";
+    var _TUB = "ToolUseBlock";
+    var _TUBD = "ToolUseBlockDelta";
+    var _TUBS = "ToolUseBlockStart";
+    var _To = "Tools";
+    var _Too = "Tool";
+    var _VB = "VideoBlock";
+    var _VE2 = "ValidationException";
+    var _VS = "VideoSource";
+    var _WL = "WebLocation";
+    var _XABA = "X-Amzn-Bedrock-Accept";
+    var _XABCT = "X-Amzn-Bedrock-Content-Type";
+    var _XABG = "X-Amzn-Bedrock-GuardrailIdentifier";
+    var _XABG_ = "X-Amzn-Bedrock-GuardrailVersion";
+    var _XABPL = "X-Amzn-Bedrock-PerformanceConfig-Latency";
+    var _XABRM = "X-Amzn-Bedrock-Request-Metadata";
+    var _XABST = "X-Amzn-Bedrock-Service-Tier";
+    var _XABT = "X-Amzn-Bedrock-Trace";
+    var _a2 = "action";
+    var _aGD = "appliedGuardrailDetails";
+    var _aIS = "asyncInvokeSummaries";
+    var _aMRF = "additionalModelRequestFields";
+    var _aMRFP = "additionalModelResponseFieldPaths";
+    var _aMRFd = "additionalModelResponseFields";
+    var _aR = "actionReason";
+    var _aRP = "automatedReasoningPolicy";
+    var _aRPU = "automatedReasoningPolicyUnits";
+    var _aRPu = "automatedReasoningPolicies";
+    var _ac = "accept";
+    var _an = "any";
+    var _as = "assessments";
+    var _au = "audio";
+    var _aut = "auto";
+    var _b = "bytes";
+    var _bO = "bucketOwner";
+    var _bOe = "beginOffset";
+    var _bo = "body";
+    var _c5 = "client";
+    var _cBD = "contentBlockDelta";
+    var _cBI = "contentBlockIndex";
+    var _cBS = "contentBlockStart";
+    var _cBSo = "contentBlockStop";
+    var _cC = "citationsContent";
+    var _cD = "cacheDetails";
+    var _cF = "contentFilter";
+    var _cFS = "claimsFalseScenario";
+    var _cGP = "contextualGroundingPolicy";
+    var _cGPU = "contextualGroundingPolicyUnits";
+    var _cI3 = "contentIndex";
+    var _cP = "contentPolicy";
+    var _cPIU = "contentPolicyImageUnits";
+    var _cPU = "contentPolicyUnits";
+    var _cPa = "cachePoint";
+    var _cR = "contradictingRules";
+    var _cRIT = "cacheReadInputTokens";
+    var _cRT = "clientRequestToken";
+    var _cS2 = "confidenceScore";
+    var _cT = "contentType";
+    var _cTS = "claimsTrueScenario";
+    var _cW = "customWords";
+    var _cWIT = "cacheWriteInputTokens";
+    var _ca = "category";
+    var _cat = "categories";
+    var _ch = "checks";
+    var _chu = "chunk";
+    var _ci = "citations";
+    var _cit = "citation";
+    var _cl = "claims";
+    var _co3 = "content";
+    var _con = "context";
+    var _conf = "confidence";
+    var _conv = "converse";
+    var _d = "delta";
+    var _dC2 = "documentChar";
+    var _dCo = "documentChunk";
+    var _dI = "documentIndex";
+    var _dP = "documentPage";
+    var _dS = "differenceScenarios";
+    var _de = "detected";
+    var _des = "description";
+    var _do = "domain";
+    var _doc = "document";
+    var _e5 = "error";
+    var _eO = "endOffset";
+    var _eT = "endTime";
+    var _ef = "effort";
+    var _en = "enabled";
+    var _end = "end";
+    var _ent = "entities";
+    var _f = "format";
+    var _fM = "failureMessage";
+    var _fS = "filterStrength";
+    var _fi = "findings";
+    var _fil = "filters";
+    var _g = "guardrail";
+    var _gA = "guardrailArn";
+    var _gC = "guardrailCoverage";
+    var _gCu = "guardrailConfig";
+    var _gCua = "guardContent";
+    var _gI = "guardrailId";
+    var _gIu = "guardrailIdentifier";
+    var _gO = "guardrailOrigin";
+    var _gOu = "guardrailOwnership";
+    var _gPL = "guardrailProcessingLatency";
+    var _gV = "guardrailVersion";
+    var _gu = "guarded";
+    var _h4 = "http";
+    var _hE5 = "httpError";
+    var _hH2 = "httpHeader";
+    var _hQ2 = "httpQuery";
+    var _i = "input";
+    var _iA = "invocationArn";
+    var _iAn = "inputAssessment";
+    var _iC = "inferenceConfig";
+    var _iM = "invocationMetrics";
+    var _iMI = "invokedModelId";
+    var _iMn = "invokeModel";
+    var _iS = "inputSchema";
+    var _iSE = "internalServerException";
+    var _iT3 = "inputTokens";
+    var _id = "identifier";
+    var _im = "images";
+    var _ima = "image";
+    var _imp = "impossible";
+    var _in = "invalid";
+    var _j = "json";
+    var _jS = "jsonSchema";
+    var _k = "key";
+    var _kKI = "kmsKeyId";
+    var _l = "location";
+    var _lM = "latencyMs";
+    var _lMT = "lastModifiedTime";
+    var _lW = "logicWarning";
+    var _la = "latency";
+    var _lo = "logic";
+    var _m4 = "message";
+    var _mA = "modelArn";
+    var _mI = "modelId";
+    var _mIe = "messageIndex";
+    var _mIo = "modelInput";
+    var _mO = "modelOutput";
+    var _mR = "maxResults";
+    var _mS = "messageStart";
+    var _mSEE = "modelStreamErrorException";
+    var _mSe = "messageStop";
+    var _mT = "maxTokens";
+    var _mTE = "modelTimeoutException";
+    var _mWL = "managedWordLists";
+    var _ma = "match";
+    var _me = "messages";
+    var _met = "metrics";
+    var _meta = "metadata";
+    var _n = "name";
+    var _nL = "naturalLanguage";
+    var _nT = "nextToken";
+    var _nTo = "noTranslations";
+    var _o = "outputs";
+    var _oA = "outputAssessments";
+    var _oC = "outputConfig";
+    var _oDC = "outputDataConfig";
+    var _oM = "originalMessage";
+    var _oS = "outputScope";
+    var _oSC = "originalStatusCode";
+    var _oT = "outputTokens";
+    var _op = "options";
+    var _ou = "output";
+    var _p = "premises";
+    var _pA = "promptAttack";
+    var _pC = "performanceConfig";
+    var _pCL = "performanceConfigLatency";
+    var _pE = "piiEntities";
+    var _pR = "promptRouter";
+    var _pV = "promptVariables";
+    var _pVA = "policyVersionArn";
+    var _q = "qualifiers";
+    var _r3 = "results";
+    var _rC2 = "reasoningContent";
+    var _rCe = "redactedContent";
+    var _rM = "requestMetadata";
+    var _rN2 = "resourceName";
+    var _rT3 = "reasoningText";
+    var _re = "regex";
+    var _reg = "regexes";
+    var _ro = "role";
+    var _s5 = "smithy.ts.sdk.synthetic.com.amazonaws.bedrockruntime";
+    var _sB = "sortBy";
+    var _sC = "sourceContent";
+    var _sE = "statusEquals";
+    var _sI = "sensitiveInformation";
+    var _sIP = "sensitiveInformationPolicy";
+    var _sIPFU = "sensitiveInformationPolicyFreeUnits";
+    var _sIPU = "sensitiveInformationPolicyUnits";
+    var _sL = "s3Location";
+    var _sN = "serverName";
+    var _sO = "sortOrder";
+    var _sODC = "s3OutputDataConfig";
+    var _sPM = "streamProcessingMode";
+    var _sR = "stopReason";
+    var _sRI = "searchResultIndex";
+    var _sRL = "searchResultLocation";
+    var _sRe = "searchResult";
+    var _sRu = "supportingRules";
+    var _sS = "severityScore";
+    var _sSt = "stopSequences";
+    var _sT3 = "submitTime";
+    var _sTA = "submitTimeAfter";
+    var _sTB = "submitTimeBefore";
+    var _sTe = "serviceTier";
+    var _sTy = "systemTool";
+    var _sU = "s3Uri";
+    var _sUE = "serviceUnavailableException";
+    var _sa = "satisfiable";
+    var _sc2 = "score";
+    var _sch = "schema";
+    var _se3 = "server";
+    var _si = "signature";
+    var _so = "source";
+    var _st = "status";
+    var _sta = "start";
+    var _stat = "statements";
+    var _str = "stream";
+    var _stre = "streaming";
+    var _stri = "strict";
+    var _stru = "structure";
+    var _sy = "system";
+    var _t = "ttl";
+    var _tA = "toolAddition";
+    var _tAr = "translationAmbiguous";
+    var _tC = "toolConfig";
+    var _tCe = "textCharacters";
+    var _tCo = "toolChoice";
+    var _tCoo = "tooComplex";
+    var _tE = "throttlingException";
+    var _tF = "textFormat";
+    var _tP = "topicPolicy";
+    var _tPU = "topicPolicyUnits";
+    var _tPo = "topP";
+    var _tR = "toolResult";
+    var _tRo = "toolRemoval";
+    var _tS = "toolSpec";
+    var _tT3 = "totalTokens";
+    var _tU = "textUnits";
+    var _tUI = "toolUseId";
+    var _tUo = "toolUse";
+    var _ta = "tags";
+    var _te = "text";
+    var _tem = "temperature";
+    var _th = "threshold";
+    var _ti = "title";
+    var _to = "total";
+    var _too = "tool";
+    var _tool = "tools";
+    var _top = "topics";
+    var _tr = "trace";
+    var _tra = "translation";
+    var _tran = "translations";
+    var _tru = "truncated";
+    var _ty = "type";
+    var _u = "usage";
+    var _uC = "untranslatedClaims";
+    var _uP = "untranslatedPremises";
+    var _ur = "uri";
+    var _url = "url";
+    var _v = "value";
+    var _vE = "validationException";
+    var _va = "valid";
+    var _vi = "video";
+    var _w = "web";
+    var _wP = "wordPolicy";
+    var _wPU = "wordPolicyUnits";
+    var n05 = "com.amazonaws.bedrockruntime";
+    var _s_registry5 = TypeRegistry2.for(_s5);
+    var BedrockRuntimeServiceException$ = [-3, _s5, "BedrockRuntimeServiceException", 0, [], []];
+    _s_registry5.registerError(BedrockRuntimeServiceException$, BedrockRuntimeServiceException);
+    var n0_registry5 = TypeRegistry2.for(n05);
+    var AccessDeniedException$3 = [
+      -3,
+      n05,
+      _ADE3,
+      { [_e5]: _c5, [_hE5]: 403 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(AccessDeniedException$3, AccessDeniedException3);
+    var ConflictException$ = [
+      -3,
+      n05,
+      _CE,
+      { [_e5]: _c5, [_hE5]: 400 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ConflictException$, ConflictException);
+    var InternalServerException$3 = [
+      -3,
+      n05,
+      _ISE3,
+      { [_e5]: _se3, [_hE5]: 500 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(InternalServerException$3, InternalServerException3);
+    var ModelErrorException$ = [
+      -3,
+      n05,
+      _MEE,
+      { [_e5]: _c5, [_hE5]: 424 },
+      [_m4, _oSC, _rN2],
+      [0, 1, 0]
+    ];
+    n0_registry5.registerError(ModelErrorException$, ModelErrorException);
+    var ModelNotReadyException$ = [
+      -3,
+      n05,
+      _MNRE,
+      { [_e5]: _c5, [_hE5]: 429 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ModelNotReadyException$, ModelNotReadyException);
+    var ModelStreamErrorException$ = [
+      -3,
+      n05,
+      _MSEE,
+      { [_e5]: _c5, [_hE5]: 424 },
+      [_m4, _oSC, _oM],
+      [0, 1, 0]
+    ];
+    n0_registry5.registerError(ModelStreamErrorException$, ModelStreamErrorException);
+    var ModelTimeoutException$ = [
+      -3,
+      n05,
+      _MTE,
+      { [_e5]: _c5, [_hE5]: 408 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ModelTimeoutException$, ModelTimeoutException);
+    var ResourceNotFoundException$2 = [
+      -3,
+      n05,
+      _RNFE2,
+      { [_e5]: _c5, [_hE5]: 404 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ResourceNotFoundException$2, ResourceNotFoundException2);
+    var ServiceQuotaExceededException$ = [
+      -3,
+      n05,
+      _SQEE,
+      { [_e5]: _c5, [_hE5]: 400 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ServiceQuotaExceededException$, ServiceQuotaExceededException);
+    var ServiceUnavailableException$ = [
+      -3,
+      n05,
+      _SUE,
+      { [_e5]: _se3, [_hE5]: 503 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ServiceUnavailableException$, ServiceUnavailableException);
+    var ThrottlingException$ = [
+      -3,
+      n05,
+      _TE,
+      { [_e5]: _c5, [_hE5]: 429 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ThrottlingException$, ThrottlingException);
+    var ValidationException$2 = [
+      -3,
+      n05,
+      _VE2,
+      { [_e5]: _c5, [_hE5]: 400 },
+      [_m4],
+      [0]
+    ];
+    n0_registry5.registerError(ValidationException$2, ValidationException2);
+    var errorTypeRegistries5 = [
+      _s_registry5,
+      n0_registry5
+    ];
+    var AsyncInvokeMessage = [0, n05, _AIM, 8, 0];
+    var Body = [0, n05, _B, 8, 21];
+    var GuardrailAutomatedReasoningStatementLogicContent = [0, n05, _GARSLC, 8, 0];
+    var GuardrailAutomatedReasoningStatementNaturalLanguageContent = [0, n05, _GARSNLC, 8, 0];
+    var GuardrailChecksTextContent = [0, n05, _GCTC, 8, 0];
+    var ModelInputPayload = [0, n05, _MIP, 8, 15];
+    var PartBody = [0, n05, _PB, 8, 21];
+    var RequestMetadataJson = [0, n05, _RMJ, 8, 0];
+    var AnyToolChoice$ = [
+      3,
+      n05,
+      _ATC,
+      0,
+      [],
+      []
+    ];
+    var AppliedGuardrailDetails$ = [
+      3,
+      n05,
+      _AGD,
+      0,
+      [_gI, _gV, _gA, _gO, _gOu],
+      [0, 0, 0, 64 | 0, 0]
+    ];
+    var ApplyGuardrailRequest$ = [
+      3,
+      n05,
+      _AGR,
+      0,
+      [_gIu, _gV, _so, _co3, _oS],
+      [[0, 1], [0, 1], 0, [() => GuardrailContentBlockList, 0], 0],
+      4
+    ];
+    var ApplyGuardrailResponse$ = [
+      3,
+      n05,
+      _AGRp,
+      0,
+      [_u, _a2, _o, _as, _aR, _gC],
+      [() => GuardrailUsage$, 0, () => GuardrailOutputContentList, [() => GuardrailAssessmentList, 0], 0, () => GuardrailCoverage$],
+      4
+    ];
+    var AsyncInvokeS3OutputDataConfig$ = [
+      3,
+      n05,
+      _AISODC,
+      0,
+      [_sU, _kKI, _bO],
+      [0, 0, 0],
+      1
+    ];
+    var AsyncInvokeSummary$ = [
+      3,
+      n05,
+      _AIS,
+      0,
+      [_iA, _mA, _sT3, _oDC, _cRT, _st, _fM, _lMT, _eT],
+      [0, 0, 5, () => AsyncInvokeOutputDataConfig$, 0, 0, [() => AsyncInvokeMessage, 0], 5, 5],
+      4
+    ];
+    var AudioBlock$ = [
+      3,
+      n05,
+      _AB,
+      0,
+      [_f, _so, _e5],
+      [0, [() => AudioSource$, 0], [() => ErrorBlock$, 0]],
+      2
+    ];
+    var AutoToolChoice$ = [
+      3,
+      n05,
+      _ATCu,
+      0,
+      [],
+      []
+    ];
+    var BidirectionalInputPayloadPart$ = [
+      3,
+      n05,
+      _BIPP,
+      8,
+      [_b],
+      [[() => PartBody, 0]]
+    ];
+    var BidirectionalOutputPayloadPart$ = [
+      3,
+      n05,
+      _BOPP,
+      8,
+      [_b],
+      [[() => PartBody, 0]]
+    ];
+    var CacheDetail$ = [
+      3,
+      n05,
+      _CD,
+      0,
+      [_t, _iT3],
+      [0, 1],
+      2
+    ];
+    var CachePointBlock$ = [
+      3,
+      n05,
+      _CPB,
+      0,
+      [_ty, _t],
+      [0, 0],
+      1
+    ];
+    var Citation$ = [
+      3,
+      n05,
+      _C2,
+      0,
+      [_ti, _so, _sC, _l],
+      [0, 0, () => CitationSourceContentList, () => CitationLocation$]
+    ];
+    var CitationsConfig$ = [
+      3,
+      n05,
+      _CC,
+      0,
+      [_en],
+      [2],
+      1
+    ];
+    var CitationsContentBlock$ = [
+      3,
+      n05,
+      _CCB,
+      0,
+      [_co3, _ci],
+      [() => CitationGeneratedContentList, () => Citations]
+    ];
+    var CitationsDelta$ = [
+      3,
+      n05,
+      _CDi,
+      0,
+      [_ti, _so, _sC, _l],
+      [0, 0, () => CitationSourceContentListDelta, () => CitationLocation$]
+    ];
+    var CitationSourceContentDelta$ = [
+      3,
+      n05,
+      _CSCD,
+      0,
+      [_te],
+      [0]
+    ];
+    var ContentBlockDeltaEvent$ = [
+      3,
+      n05,
+      _CBDE,
+      0,
+      [_d, _cBI],
+      [[() => ContentBlockDelta$, 0], 1],
+      2
+    ];
+    var ContentBlockStartEvent$ = [
+      3,
+      n05,
+      _CBSE,
+      0,
+      [_sta, _cBI],
+      [() => ContentBlockStart$, 1],
+      2
+    ];
+    var ContentBlockStopEvent$ = [
+      3,
+      n05,
+      _CBSEo,
+      0,
+      [_cBI],
+      [1],
+      1
+    ];
+    var ConverseMetrics$ = [
+      3,
+      n05,
+      _CM,
+      0,
+      [_lM],
+      [1],
+      1
+    ];
+    var ConverseRequest$ = [
+      3,
+      n05,
+      _CR,
+      0,
+      [_mI, _me, _sy, _iC, _tC, _gCu, _aMRF, _pV, _aMRFP, _rM, _pC, _sTe, _oC],
+      [[0, 1], [() => Messages, 0], [() => SystemContentBlocks, 0], () => InferenceConfiguration$, () => ToolConfiguration$, () => GuardrailConfiguration$, 15, [() => PromptVariableMap, 0], 64 | 0, [() => RequestMetadata, 0], () => PerformanceConfiguration$, () => ServiceTier$, [() => OutputConfig$, 0]],
+      1
+    ];
+    var ConverseResponse$ = [
+      3,
+      n05,
+      _CRo,
+      0,
+      [_ou, _sR, _u, _met, _aMRFd, _tr, _pC, _sTe],
+      [[() => ConverseOutput$, 0], 0, () => TokenUsage$, () => ConverseMetrics$, 15, [() => ConverseTrace$, 0], () => PerformanceConfiguration$, () => ServiceTier$],
+      4
+    ];
+    var ConverseStreamMetadataEvent$ = [
+      3,
+      n05,
+      _CSME,
+      0,
+      [_u, _met, _tr, _pC, _sTe],
+      [() => TokenUsage$, () => ConverseStreamMetrics$, [() => ConverseStreamTrace$, 0], () => PerformanceConfiguration$, () => ServiceTier$],
+      2
+    ];
+    var ConverseStreamMetrics$ = [
+      3,
+      n05,
+      _CSM,
+      0,
+      [_lM],
+      [1],
+      1
+    ];
+    var ConverseStreamRequest$ = [
+      3,
+      n05,
+      _CSR,
+      0,
+      [_mI, _me, _sy, _iC, _tC, _gCu, _aMRF, _pV, _aMRFP, _rM, _pC, _sTe, _oC],
+      [[0, 1], [() => Messages, 0], [() => SystemContentBlocks, 0], () => InferenceConfiguration$, () => ToolConfiguration$, () => GuardrailStreamConfiguration$, 15, [() => PromptVariableMap, 0], 64 | 0, [() => RequestMetadata, 0], () => PerformanceConfiguration$, () => ServiceTier$, [() => OutputConfig$, 0]],
+      1
+    ];
+    var ConverseStreamResponse$ = [
+      3,
+      n05,
+      _CSRo,
+      0,
+      [_str],
+      [[() => ConverseStreamOutput$, 16]]
+    ];
+    var ConverseStreamTrace$ = [
+      3,
+      n05,
+      _CST,
+      0,
+      [_g, _pR],
+      [[() => GuardrailTraceAssessment$, 0], () => PromptRouterTrace$]
+    ];
+    var ConverseTokensRequest$ = [
+      3,
+      n05,
+      _CTR2,
+      0,
+      [_me, _sy, _tC, _aMRF],
+      [[() => Messages, 0], [() => SystemContentBlocks, 0], () => ToolConfiguration$, 15]
+    ];
+    var ConverseTrace$ = [
+      3,
+      n05,
+      _CT2,
+      0,
+      [_g, _pR],
+      [[() => GuardrailTraceAssessment$, 0], () => PromptRouterTrace$]
+    ];
+    var CountTokensRequest$ = [
+      3,
+      n05,
+      _CTRo,
+      0,
+      [_mI, _i],
+      [[0, 1], [() => CountTokensInput$, 0]],
+      2
+    ];
+    var CountTokensResponse$ = [
+      3,
+      n05,
+      _CTRou,
+      0,
+      [_iT3],
+      [1],
+      1
+    ];
+    var DocumentBlock$ = [
+      3,
+      n05,
+      _DB,
+      0,
+      [_n, _so, _f, _con, _ci],
+      [0, () => DocumentSource$, 0, 0, () => CitationsConfig$],
+      2
+    ];
+    var DocumentCharLocation$ = [
+      3,
+      n05,
+      _DCL,
+      0,
+      [_dI, _sta, _end],
+      [1, 1, 1]
+    ];
+    var DocumentChunkLocation$ = [
+      3,
+      n05,
+      _DCLo,
+      0,
+      [_dI, _sta, _end],
+      [1, 1, 1]
+    ];
+    var DocumentPageLocation$ = [
+      3,
+      n05,
+      _DPL,
+      0,
+      [_dI, _sta, _end],
+      [1, 1, 1]
+    ];
+    var ErrorBlock$ = [
+      3,
+      n05,
+      _EB,
+      8,
+      [_m4],
+      [0]
+    ];
+    var GetAsyncInvokeRequest$ = [
+      3,
+      n05,
+      _GAIR,
+      0,
+      [_iA],
+      [[0, 1]],
+      1
+    ];
+    var GetAsyncInvokeResponse$ = [
+      3,
+      n05,
+      _GAIRe,
+      0,
+      [_iA, _mA, _st, _sT3, _oDC, _cRT, _fM, _lMT, _eT],
+      [0, 0, 0, 5, () => AsyncInvokeOutputDataConfig$, 0, [() => AsyncInvokeMessage, 0], 5, 5],
+      5
+    ];
+    var GuardrailAssessment$ = [
+      3,
+      n05,
+      _GA,
+      0,
+      [_tP, _cP, _wP, _sIP, _cGP, _aRP, _iM, _aGD],
+      [() => GuardrailTopicPolicyAssessment$, () => GuardrailContentPolicyAssessment$, () => GuardrailWordPolicyAssessment$, () => GuardrailSensitiveInformationPolicyAssessment$, () => GuardrailContextualGroundingPolicyAssessment$, [() => GuardrailAutomatedReasoningPolicyAssessment$, 0], () => GuardrailInvocationMetrics$, () => AppliedGuardrailDetails$]
+    ];
+    var GuardrailAutomatedReasoningImpossibleFinding$ = [
+      3,
+      n05,
+      _GARIF,
+      0,
+      [_tra, _cR, _lW],
+      [[() => GuardrailAutomatedReasoningTranslation$, 0], () => GuardrailAutomatedReasoningRuleList, [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
+    ];
+    var GuardrailAutomatedReasoningInputTextReference$ = [
+      3,
+      n05,
+      _GARITR,
+      0,
+      [_te],
+      [[() => GuardrailAutomatedReasoningStatementNaturalLanguageContent, 0]]
+    ];
+    var GuardrailAutomatedReasoningInvalidFinding$ = [
+      3,
+      n05,
+      _GARIFu,
+      0,
+      [_tra, _cR, _lW],
+      [[() => GuardrailAutomatedReasoningTranslation$, 0], () => GuardrailAutomatedReasoningRuleList, [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
+    ];
+    var GuardrailAutomatedReasoningLogicWarning$ = [
+      3,
+      n05,
+      _GARLW,
+      0,
+      [_ty, _p, _cl],
+      [0, [() => GuardrailAutomatedReasoningStatementList, 0], [() => GuardrailAutomatedReasoningStatementList, 0]]
+    ];
+    var GuardrailAutomatedReasoningNoTranslationsFinding$ = [
+      3,
+      n05,
+      _GARNTF,
+      0,
+      [],
+      []
+    ];
+    var GuardrailAutomatedReasoningPolicyAssessment$ = [
+      3,
+      n05,
+      _GARPA,
+      0,
+      [_fi],
+      [[() => GuardrailAutomatedReasoningFindingList, 0]]
+    ];
+    var GuardrailAutomatedReasoningRule$ = [
+      3,
+      n05,
+      _GARR,
+      0,
+      [_id, _pVA],
+      [0, 0]
+    ];
+    var GuardrailAutomatedReasoningSatisfiableFinding$ = [
+      3,
+      n05,
+      _GARSF,
+      0,
+      [_tra, _cTS, _cFS, _lW],
+      [[() => GuardrailAutomatedReasoningTranslation$, 0], [() => GuardrailAutomatedReasoningScenario$, 0], [() => GuardrailAutomatedReasoningScenario$, 0], [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
+    ];
+    var GuardrailAutomatedReasoningScenario$ = [
+      3,
+      n05,
+      _GARS,
+      0,
+      [_stat],
+      [[() => GuardrailAutomatedReasoningStatementList, 0]]
+    ];
+    var GuardrailAutomatedReasoningStatement$ = [
+      3,
+      n05,
+      _GARSu,
+      0,
+      [_lo, _nL],
+      [[() => GuardrailAutomatedReasoningStatementLogicContent, 0], [() => GuardrailAutomatedReasoningStatementNaturalLanguageContent, 0]]
+    ];
+    var GuardrailAutomatedReasoningTooComplexFinding$ = [
+      3,
+      n05,
+      _GARTCF,
+      0,
+      [],
+      []
+    ];
+    var GuardrailAutomatedReasoningTranslation$ = [
+      3,
+      n05,
+      _GART,
+      0,
+      [_p, _cl, _uP, _uC, _conf],
+      [[() => GuardrailAutomatedReasoningStatementList, 0], [() => GuardrailAutomatedReasoningStatementList, 0], [() => GuardrailAutomatedReasoningInputTextReferenceList, 0], [() => GuardrailAutomatedReasoningInputTextReferenceList, 0], 1]
+    ];
+    var GuardrailAutomatedReasoningTranslationAmbiguousFinding$ = [
+      3,
+      n05,
+      _GARTAF,
+      0,
+      [_op, _dS],
+      [[() => GuardrailAutomatedReasoningTranslationOptionList, 0], [() => GuardrailAutomatedReasoningDifferenceScenarioList, 0]]
+    ];
+    var GuardrailAutomatedReasoningTranslationOption$ = [
+      3,
+      n05,
+      _GARTO,
+      0,
+      [_tran],
+      [[() => GuardrailAutomatedReasoningTranslationList, 0]]
+    ];
+    var GuardrailAutomatedReasoningValidFinding$ = [
+      3,
+      n05,
+      _GARVF,
+      0,
+      [_tra, _cTS, _sRu, _lW],
+      [[() => GuardrailAutomatedReasoningTranslation$, 0], [() => GuardrailAutomatedReasoningScenario$, 0], () => GuardrailAutomatedReasoningRuleList, [() => GuardrailAutomatedReasoningLogicWarning$, 0]]
+    ];
+    var GuardrailChecksConfig$ = [
+      3,
+      n05,
+      _GCC,
+      0,
+      [_cF, _pA, _sI],
+      [() => GuardrailChecksContentFilterConfig$, () => GuardrailChecksPromptAttackConfig$, () => GuardrailChecksSensitiveInformationConfig$]
+    ];
+    var GuardrailChecksContentFilterCategoryConfig$ = [
+      3,
+      n05,
+      _GCCFCC,
+      0,
+      [_ca],
+      [0],
+      1
+    ];
+    var GuardrailChecksContentFilterConfig$ = [
+      3,
+      n05,
+      _GCCFC,
+      0,
+      [_cat],
+      [() => GuardrailChecksContentFilterCategoryConfigList],
+      1
+    ];
+    var GuardrailChecksContentFilterResult$ = [
+      3,
+      n05,
+      _GCCFR,
+      0,
+      [_r3],
+      [() => GuardrailChecksContentFilterResultList],
+      1
+    ];
+    var GuardrailChecksContentFilterResultEntry$ = [
+      3,
+      n05,
+      _GCCFRE,
+      0,
+      [_ca, _sS],
+      [0, 1],
+      2
+    ];
+    var GuardrailChecksContentFilterUsage$ = [
+      3,
+      n05,
+      _GCCFU,
+      0,
+      [_tU],
+      [1],
+      1
+    ];
+    var GuardrailChecksMessage$ = [
+      3,
+      n05,
+      _GCM,
+      0,
+      [_ro, _co3],
+      [0, [() => GuardrailChecksContentBlockList, 0]],
+      2
+    ];
+    var GuardrailChecksPromptAttackCategoryConfig$ = [
+      3,
+      n05,
+      _GCPACC,
+      0,
+      [_ca],
+      [0],
+      1
+    ];
+    var GuardrailChecksPromptAttackConfig$ = [
+      3,
+      n05,
+      _GCPAC,
+      0,
+      [_cat],
+      [() => GuardrailChecksPromptAttackCategoryConfigList],
+      1
+    ];
+    var GuardrailChecksPromptAttackResult$ = [
+      3,
+      n05,
+      _GCPAR,
+      0,
+      [_r3],
+      [() => GuardrailChecksPromptAttackResultList],
+      1
+    ];
+    var GuardrailChecksPromptAttackResultEntry$ = [
+      3,
+      n05,
+      _GCPARE,
+      0,
+      [_ca, _sS],
+      [0, 1],
+      2
+    ];
+    var GuardrailChecksPromptAttackUsage$ = [
+      3,
+      n05,
+      _GCPAU,
+      0,
+      [_tU],
+      [1],
+      1
+    ];
+    var GuardrailChecksResults$ = [
+      3,
+      n05,
+      _GCR,
+      0,
+      [_cF, _pA, _sI],
+      [() => GuardrailChecksContentFilterResult$, () => GuardrailChecksPromptAttackResult$, () => GuardrailChecksSensitiveInformationResult$]
+    ];
+    var GuardrailChecksSensitiveInformationConfig$ = [
+      3,
+      n05,
+      _GCSIC,
+      0,
+      [_ent],
+      [() => GuardrailChecksSensitiveInformationEntityConfigList],
+      1
+    ];
+    var GuardrailChecksSensitiveInformationEntityConfig$ = [
+      3,
+      n05,
+      _GCSIEC,
+      0,
+      [_ty],
+      [0],
+      1
+    ];
+    var GuardrailChecksSensitiveInformationResult$ = [
+      3,
+      n05,
+      _GCSIR,
+      0,
+      [_r3, _tru],
+      [() => GuardrailChecksSensitiveInformationResultList, 2],
+      1
+    ];
+    var GuardrailChecksSensitiveInformationResultEntry$ = [
+      3,
+      n05,
+      _GCSIRE,
+      0,
+      [_ty, _cS2, _bOe, _eO, _mIe, _cI3],
+      [0, 1, 1, 1, 1, 1],
+      6
+    ];
+    var GuardrailChecksSensitiveInformationUsage$ = [
+      3,
+      n05,
+      _GCSIU,
+      0,
+      [_tU],
+      [1],
+      1
+    ];
+    var GuardrailChecksUsageResults$ = [
+      3,
+      n05,
+      _GCUR,
+      0,
+      [_cF, _pA, _sI],
+      [() => GuardrailChecksContentFilterUsage$, () => GuardrailChecksPromptAttackUsage$, () => GuardrailChecksSensitiveInformationUsage$]
+    ];
+    var GuardrailConfiguration$ = [
+      3,
+      n05,
+      _GC,
+      0,
+      [_gIu, _gV, _tr],
+      [0, 0, 0]
+    ];
+    var GuardrailContentFilter$ = [
+      3,
+      n05,
+      _GCF,
+      0,
+      [_ty, _conf, _a2, _fS, _de],
+      [0, 0, 0, 0, 2],
+      3
+    ];
+    var GuardrailContentPolicyAssessment$ = [
+      3,
+      n05,
+      _GCPA,
+      0,
+      [_fil],
+      [() => GuardrailContentFilterList],
+      1
+    ];
+    var GuardrailContextualGroundingFilter$ = [
+      3,
+      n05,
+      _GCGF,
+      0,
+      [_ty, _th, _sc2, _a2, _de],
+      [0, 1, 1, 0, 2],
+      4
+    ];
+    var GuardrailContextualGroundingPolicyAssessment$ = [
+      3,
+      n05,
+      _GCGPA,
+      0,
+      [_fil],
+      [() => GuardrailContextualGroundingFilters]
+    ];
+    var GuardrailConverseImageBlock$ = [
+      3,
+      n05,
+      _GCIB,
+      8,
+      [_f, _so],
+      [0, [() => GuardrailConverseImageSource$, 0]],
+      2
+    ];
+    var GuardrailConverseTextBlock$ = [
+      3,
+      n05,
+      _GCTB,
+      0,
+      [_te, _q],
+      [0, 64 | 0],
+      1
+    ];
+    var GuardrailCoverage$ = [
+      3,
+      n05,
+      _GCu,
+      0,
+      [_tCe, _im],
+      [() => GuardrailTextCharactersCoverage$, () => GuardrailImageCoverage$]
+    ];
+    var GuardrailCustomWord$ = [
+      3,
+      n05,
+      _GCW,
+      0,
+      [_ma, _a2, _de],
+      [0, 0, 2],
+      2
+    ];
+    var GuardrailImageBlock$ = [
+      3,
+      n05,
+      _GIB,
+      8,
+      [_f, _so],
+      [0, [() => GuardrailImageSource$, 0]],
+      2
+    ];
+    var GuardrailImageCoverage$ = [
+      3,
+      n05,
+      _GIC,
+      0,
+      [_gu, _to],
+      [1, 1]
+    ];
+    var GuardrailInvocationMetrics$ = [
+      3,
+      n05,
+      _GIM,
+      0,
+      [_gPL, _u, _gC],
+      [1, () => GuardrailUsage$, () => GuardrailCoverage$]
+    ];
+    var GuardrailManagedWord$ = [
+      3,
+      n05,
+      _GMW,
+      0,
+      [_ma, _ty, _a2, _de],
+      [0, 0, 0, 2],
+      3
+    ];
+    var GuardrailOutputContent$ = [
+      3,
+      n05,
+      _GOC,
+      0,
+      [_te],
+      [0]
+    ];
+    var GuardrailPiiEntityFilter$ = [
+      3,
+      n05,
+      _GPEF,
+      0,
+      [_ma, _ty, _a2, _de],
+      [0, 0, 0, 2],
+      3
+    ];
+    var GuardrailRegexFilter$ = [
+      3,
+      n05,
+      _GRF,
+      0,
+      [_a2, _n, _ma, _re, _de],
+      [0, 0, 0, 0, 2],
+      1
+    ];
+    var GuardrailSensitiveInformationPolicyAssessment$ = [
+      3,
+      n05,
+      _GSIPA,
+      0,
+      [_pE, _reg],
+      [() => GuardrailPiiEntityFilterList, () => GuardrailRegexFilterList],
+      2
+    ];
+    var GuardrailStreamConfiguration$ = [
+      3,
+      n05,
+      _GSC,
+      0,
+      [_gIu, _gV, _tr, _sPM],
+      [0, 0, 0, 0]
+    ];
+    var GuardrailTextBlock$ = [
+      3,
+      n05,
+      _GTB,
+      0,
+      [_te, _q],
+      [0, 64 | 0],
+      1
+    ];
+    var GuardrailTextCharactersCoverage$ = [
+      3,
+      n05,
+      _GTCC,
+      0,
+      [_gu, _to],
+      [1, 1]
+    ];
+    var GuardrailTopic$ = [
+      3,
+      n05,
+      _GT,
+      0,
+      [_n, _ty, _a2, _de],
+      [0, 0, 0, 2],
+      3
+    ];
+    var GuardrailTopicPolicyAssessment$ = [
+      3,
+      n05,
+      _GTPA,
+      0,
+      [_top],
+      [() => GuardrailTopicList],
+      1
+    ];
+    var GuardrailTraceAssessment$ = [
+      3,
+      n05,
+      _GTA,
+      0,
+      [_mO, _iAn, _oA, _aR],
+      [64 | 0, [() => GuardrailAssessmentMap, 0], [() => GuardrailAssessmentListMap, 0], 0]
+    ];
+    var GuardrailUsage$ = [
+      3,
+      n05,
+      _GU,
+      0,
+      [_tPU, _cPU, _wPU, _sIPU, _sIPFU, _cGPU, _cPIU, _aRPU, _aRPu],
+      [1, 1, 1, 1, 1, 1, 1, 1, 1],
+      6
+    ];
+    var GuardrailWordPolicyAssessment$ = [
+      3,
+      n05,
+      _GWPA,
+      0,
+      [_cW, _mWL],
+      [() => GuardrailCustomWordList, () => GuardrailManagedWordList],
+      2
+    ];
+    var ImageBlock$ = [
+      3,
+      n05,
+      _IB,
+      0,
+      [_f, _so, _e5],
+      [0, [() => ImageSource$, 0], [() => ErrorBlock$, 0]],
+      2
+    ];
+    var ImageBlockDelta$ = [
+      3,
+      n05,
+      _IBD,
+      0,
+      [_so, _e5],
+      [[() => ImageSource$, 0], [() => ErrorBlock$, 0]]
+    ];
+    var ImageBlockStart$ = [
+      3,
+      n05,
+      _IBS,
+      0,
+      [_f],
+      [0],
+      1
+    ];
+    var InferenceConfiguration$ = [
+      3,
+      n05,
+      _IC,
+      0,
+      [_mT, _tem, _tPo, _sSt],
+      [1, 1, 1, 64 | 0]
+    ];
+    var InvokeGuardrailChecksRequest$ = [
+      3,
+      n05,
+      _IGCR,
+      0,
+      [_me, _ch],
+      [[() => GuardrailChecksMessageList, 0], () => GuardrailChecksConfig$],
+      2
+    ];
+    var InvokeGuardrailChecksResponse$ = [
+      3,
+      n05,
+      _IGCRn,
+      0,
+      [_r3, _u],
+      [() => GuardrailChecksResults$, () => GuardrailChecksUsageResults$],
+      2
+    ];
+    var InvokeModelRequest$ = [
+      3,
+      n05,
+      _IMR,
+      0,
+      [_mI, _bo, _cT, _ac, _tr, _gIu, _gV, _pCL, _sTe, _rM],
+      [[0, 1], [() => Body, 16], [0, { [_hH2]: _CT_ }], [0, { [_hH2]: _A2 }], [0, { [_hH2]: _XABT }], [0, { [_hH2]: _XABG }], [0, { [_hH2]: _XABG_ }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }], [() => RequestMetadataJson, { [_hH2]: _XABRM }]],
+      1
+    ];
+    var InvokeModelResponse$ = [
+      3,
+      n05,
+      _IMRn,
+      0,
+      [_bo, _cT, _pCL, _sTe],
+      [[() => Body, 16], [0, { [_hH2]: _CT_ }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }]],
+      2
+    ];
+    var InvokeModelTokensRequest$ = [
+      3,
+      n05,
+      _IMTR,
+      0,
+      [_bo],
+      [[() => Body, 0]],
+      1
+    ];
+    var InvokeModelWithBidirectionalStreamRequest$ = [
+      3,
+      n05,
+      _IMWBSR,
+      0,
+      [_mI, _bo],
+      [[0, 1], [() => InvokeModelWithBidirectionalStreamInput$, 16]],
+      2
+    ];
+    var InvokeModelWithBidirectionalStreamResponse$ = [
+      3,
+      n05,
+      _IMWBSRn,
+      0,
+      [_bo],
+      [[() => InvokeModelWithBidirectionalStreamOutput$, 16]],
+      1
+    ];
+    var InvokeModelWithResponseStreamRequest$ = [
+      3,
+      n05,
+      _IMWRSR,
+      0,
+      [_mI, _bo, _cT, _ac, _tr, _gIu, _gV, _pCL, _sTe, _rM],
+      [[0, 1], [() => Body, 16], [0, { [_hH2]: _CT_ }], [0, { [_hH2]: _XABA }], [0, { [_hH2]: _XABT }], [0, { [_hH2]: _XABG }], [0, { [_hH2]: _XABG_ }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }], [() => RequestMetadataJson, { [_hH2]: _XABRM }]],
+      1
+    ];
+    var InvokeModelWithResponseStreamResponse$ = [
+      3,
+      n05,
+      _IMWRSRn,
+      0,
+      [_bo, _cT, _pCL, _sTe],
+      [[() => ResponseStream$, 16], [0, { [_hH2]: _XABCT }], [0, { [_hH2]: _XABPL }], [0, { [_hH2]: _XABST }]],
+      2
+    ];
+    var JsonSchemaDefinition$ = [
+      3,
+      n05,
+      _JSD,
+      0,
+      [_sch, _n, _des],
+      [0, 0, 0],
+      1
+    ];
+    var ListAsyncInvokesRequest$ = [
+      3,
+      n05,
+      _LAIR,
+      0,
+      [_sTA, _sTB, _sE, _mR, _nT, _sB, _sO],
+      [[5, { [_hQ2]: _sTA }], [5, { [_hQ2]: _sTB }], [0, { [_hQ2]: _sE }], [1, { [_hQ2]: _mR }], [0, { [_hQ2]: _nT }], [0, { [_hQ2]: _sB }], [0, { [_hQ2]: _sO }]]
+    ];
+    var ListAsyncInvokesResponse$ = [
+      3,
+      n05,
+      _LAIRi,
+      0,
+      [_nT, _aIS],
+      [0, [() => AsyncInvokeSummaries, 0]]
+    ];
+    var Message$ = [
+      3,
+      n05,
+      _M,
+      0,
+      [_ro, _co3],
+      [0, [() => ContentBlocks, 0]],
+      2
+    ];
+    var MessageStartEvent$ = [
+      3,
+      n05,
+      _MSE,
+      0,
+      [_ro],
+      [0],
+      1
+    ];
+    var MessageStopEvent$ = [
+      3,
+      n05,
+      _MSEe,
+      0,
+      [_sR, _aMRFd],
+      [0, 15],
+      1
+    ];
+    var OutputConfig$ = [
+      3,
+      n05,
+      _OC,
+      0,
+      [_tF, _ef],
+      [[() => OutputFormat$, 0], 0]
+    ];
+    var OutputFormat$ = [
+      3,
+      n05,
+      _OF,
+      0,
+      [_ty, _stru],
+      [0, [() => OutputFormatStructure$, 0]],
+      2
+    ];
+    var PayloadPart$ = [
+      3,
+      n05,
+      _PP,
+      8,
+      [_b],
+      [[() => PartBody, 0]]
+    ];
+    var PerformanceConfiguration$ = [
+      3,
+      n05,
+      _PC2,
+      0,
+      [_la],
+      [0]
+    ];
+    var PromptRouterTrace$ = [
+      3,
+      n05,
+      _PRT,
+      0,
+      [_iMI],
+      [0]
+    ];
+    var ReasoningTextBlock$ = [
+      3,
+      n05,
+      _RTB,
+      8,
+      [_te, _si],
+      [0, 0],
+      1
+    ];
+    var S3Location$ = [
+      3,
+      n05,
+      _SL,
+      0,
+      [_ur, _bO],
+      [0, 0],
+      1
+    ];
+    var SearchResultBlock$ = [
+      3,
+      n05,
+      _SRB,
+      0,
+      [_so, _ti, _co3, _ci],
+      [0, 0, () => SearchResultContentBlocks, () => CitationsConfig$],
+      3
+    ];
+    var SearchResultContentBlock$ = [
+      3,
+      n05,
+      _SRCB,
+      0,
+      [_te],
+      [0],
+      1
+    ];
+    var SearchResultLocation$ = [
+      3,
+      n05,
+      _SRL,
+      0,
+      [_sRI, _sta, _end],
+      [1, 1, 1]
+    ];
+    var ServiceTier$ = [
+      3,
+      n05,
+      _ST2,
+      0,
+      [_ty],
+      [0],
+      1
+    ];
+    var SpecificToolChoice$ = [
+      3,
+      n05,
+      _STC,
+      0,
+      [_n],
+      [0],
+      1
+    ];
+    var StartAsyncInvokeRequest$ = [
+      3,
+      n05,
+      _SAIR,
+      0,
+      [_mI, _mIo, _oDC, _cRT, _ta],
+      [0, [() => ModelInputPayload, 0], () => AsyncInvokeOutputDataConfig$, [0, 4], () => TagList],
+      3
+    ];
+    var StartAsyncInvokeResponse$ = [
+      3,
+      n05,
+      _SAIRt,
+      0,
+      [_iA],
+      [0],
+      1
+    ];
+    var SystemTool$ = [
+      3,
+      n05,
+      _STy,
+      0,
+      [_n],
+      [0],
+      1
+    ];
+    var Tag$2 = [
+      3,
+      n05,
+      _T2,
+      0,
+      [_k, _v],
+      [0, 0],
+      2
+    ];
+    var TokenUsage$ = [
+      3,
+      n05,
+      _TU,
+      0,
+      [_iT3, _oT, _tT3, _cRIT, _cWIT, _cD],
+      [1, 1, 1, 1, 1, () => CacheDetailsList],
+      3
+    ];
+    var ToolAdditionBlock$ = [
+      3,
+      n05,
+      _TAB,
+      0,
+      [_too],
+      [() => ToolReference$],
+      1
+    ];
+    var ToolConfiguration$ = [
+      3,
+      n05,
+      _TC2,
+      0,
+      [_tool, _tCo],
+      [() => Tools, () => ToolChoice$],
+      1
+    ];
+    var ToolReference$ = [
+      3,
+      n05,
+      _TR,
+      0,
+      [_ty, _n, _sN],
+      [0, 0, 0]
+    ];
+    var ToolRemovalBlock$ = [
+      3,
+      n05,
+      _TRB,
+      0,
+      [_too],
+      [() => ToolReference$],
+      1
+    ];
+    var ToolResultBlock$ = [
+      3,
+      n05,
+      _TRBo,
+      0,
+      [_tUI, _co3, _st, _ty],
+      [0, [() => ToolResultContentBlocks, 0], 0, 0],
+      2
+    ];
+    var ToolResultBlockStart$ = [
+      3,
+      n05,
+      _TRBS,
+      0,
+      [_tUI, _ty, _st],
+      [0, 0, 0],
+      1
+    ];
+    var ToolSpecification$ = [
+      3,
+      n05,
+      _TS,
+      0,
+      [_n, _iS, _des, _stri],
+      [0, () => ToolInputSchema$, 0, 2],
+      2
+    ];
+    var ToolUseBlock$ = [
+      3,
+      n05,
+      _TUB,
+      0,
+      [_tUI, _n, _i, _ty],
+      [0, 0, 15, 0],
+      3
+    ];
+    var ToolUseBlockDelta$ = [
+      3,
+      n05,
+      _TUBD,
+      0,
+      [_i],
+      [0],
+      1
+    ];
+    var ToolUseBlockStart$ = [
+      3,
+      n05,
+      _TUBS,
+      0,
+      [_tUI, _n, _ty],
+      [0, 0, 0],
+      2
+    ];
+    var VideoBlock$ = [
+      3,
+      n05,
+      _VB,
+      0,
+      [_f, _so],
+      [0, () => VideoSource$],
+      2
+    ];
+    var WebLocation$ = [
+      3,
+      n05,
+      _WL,
+      0,
+      [_url, _do],
+      [0, 0]
+    ];
+    var AsyncInvokeSummaries = [
+      1,
+      n05,
+      _AISs,
+      0,
+      [
+        () => AsyncInvokeSummary$,
+        0
+      ]
+    ];
+    var CacheDetailsList = [
+      1,
+      n05,
+      _CDL,
+      0,
+      () => CacheDetail$
+    ];
+    var CitationGeneratedContentList = [
+      1,
+      n05,
+      _CGCL,
+      0,
+      () => CitationGeneratedContent$
+    ];
+    var Citations = [
+      1,
+      n05,
+      _Ci,
+      0,
+      () => Citation$
+    ];
+    var CitationSourceContentList = [
+      1,
+      n05,
+      _CSCL,
+      0,
+      () => CitationSourceContent$
+    ];
+    var CitationSourceContentListDelta = [
+      1,
+      n05,
+      _CSCLD,
+      0,
+      () => CitationSourceContentDelta$
+    ];
+    var ContentBlocks = [
+      1,
+      n05,
+      _CB,
+      0,
+      [
+        () => ContentBlock$,
+        0
+      ]
+    ];
+    var DocumentContentBlocks = [
+      1,
+      n05,
+      _DCB,
+      0,
+      () => DocumentContentBlock$
+    ];
+    var GuardrailAssessmentList = [
+      1,
+      n05,
+      _GAL,
+      0,
+      [
+        () => GuardrailAssessment$,
+        0
+      ]
+    ];
+    var GuardrailAutomatedReasoningDifferenceScenarioList = [
+      1,
+      n05,
+      _GARDSL,
+      0,
+      [
+        () => GuardrailAutomatedReasoningScenario$,
+        0
+      ]
+    ];
+    var GuardrailAutomatedReasoningFindingList = [
+      1,
+      n05,
+      _GARFL,
+      0,
+      [
+        () => GuardrailAutomatedReasoningFinding$,
+        0
+      ]
+    ];
+    var GuardrailAutomatedReasoningInputTextReferenceList = [
+      1,
+      n05,
+      _GARITRL,
+      0,
+      [
+        () => GuardrailAutomatedReasoningInputTextReference$,
+        0
+      ]
+    ];
+    var GuardrailAutomatedReasoningRuleList = [
+      1,
+      n05,
+      _GARRL,
+      0,
+      () => GuardrailAutomatedReasoningRule$
+    ];
+    var GuardrailAutomatedReasoningStatementList = [
+      1,
+      n05,
+      _GARSL,
+      0,
+      [
+        () => GuardrailAutomatedReasoningStatement$,
+        0
+      ]
+    ];
+    var GuardrailAutomatedReasoningTranslationList = [
+      1,
+      n05,
+      _GARTL,
+      0,
+      [
+        () => GuardrailAutomatedReasoningTranslation$,
+        0
+      ]
+    ];
+    var GuardrailAutomatedReasoningTranslationOptionList = [
+      1,
+      n05,
+      _GARTOL,
+      0,
+      [
+        () => GuardrailAutomatedReasoningTranslationOption$,
+        0
+      ]
+    ];
+    var GuardrailChecksContentBlockList = [
+      1,
+      n05,
+      _GCCBL,
+      0,
+      [
+        () => GuardrailChecksContentBlock$,
+        0
+      ]
+    ];
+    var GuardrailChecksContentFilterCategoryConfigList = [
+      1,
+      n05,
+      _GCCFCCL,
+      0,
+      () => GuardrailChecksContentFilterCategoryConfig$
+    ];
+    var GuardrailChecksContentFilterResultList = [
+      1,
+      n05,
+      _GCCFRL,
+      0,
+      () => GuardrailChecksContentFilterResultEntry$
+    ];
+    var GuardrailChecksMessageList = [
+      1,
+      n05,
+      _GCML,
+      0,
+      [
+        () => GuardrailChecksMessage$,
+        0
+      ]
+    ];
+    var GuardrailChecksPromptAttackCategoryConfigList = [
+      1,
+      n05,
+      _GCPACCL,
+      0,
+      () => GuardrailChecksPromptAttackCategoryConfig$
+    ];
+    var GuardrailChecksPromptAttackResultList = [
+      1,
+      n05,
+      _GCPARL,
+      0,
+      () => GuardrailChecksPromptAttackResultEntry$
+    ];
+    var GuardrailChecksSensitiveInformationEntityConfigList = [
+      1,
+      n05,
+      _GCSIECL,
+      0,
+      () => GuardrailChecksSensitiveInformationEntityConfig$
+    ];
+    var GuardrailChecksSensitiveInformationResultList = [
+      1,
+      n05,
+      _GCSIRL,
+      0,
+      () => GuardrailChecksSensitiveInformationResultEntry$
+    ];
+    var GuardrailContentBlockList = [
+      1,
+      n05,
+      _GCBL,
+      0,
+      [
+        () => GuardrailContentBlock$,
+        0
+      ]
+    ];
+    var GuardrailContentFilterList = [
+      1,
+      n05,
+      _GCFL,
+      0,
+      () => GuardrailContentFilter$
+    ];
+    var GuardrailContextualGroundingFilters = [
+      1,
+      n05,
+      _GCGFu,
+      0,
+      () => GuardrailContextualGroundingFilter$
+    ];
+    var GuardrailCustomWordList = [
+      1,
+      n05,
+      _GCWL,
+      0,
+      () => GuardrailCustomWord$
+    ];
+    var GuardrailManagedWordList = [
+      1,
+      n05,
+      _GMWL,
+      0,
+      () => GuardrailManagedWord$
+    ];
+    var GuardrailOutputContentList = [
+      1,
+      n05,
+      _GOCL,
+      0,
+      () => GuardrailOutputContent$
+    ];
+    var GuardrailPiiEntityFilterList = [
+      1,
+      n05,
+      _GPEFL,
+      0,
+      () => GuardrailPiiEntityFilter$
+    ];
+    var GuardrailRegexFilterList = [
+      1,
+      n05,
+      _GRFL,
+      0,
+      () => GuardrailRegexFilter$
+    ];
+    var GuardrailTopicList = [
+      1,
+      n05,
+      _GTL,
+      0,
+      () => GuardrailTopic$
+    ];
+    var Messages = [
+      1,
+      n05,
+      _Me,
+      0,
+      [
+        () => Message$,
+        0
+      ]
+    ];
+    var SearchResultContentBlocks = [
+      1,
+      n05,
+      _SRCBe,
+      0,
+      () => SearchResultContentBlock$
+    ];
+    var SystemContentBlocks = [
+      1,
+      n05,
+      _SCB,
+      0,
+      [
+        () => SystemContentBlock$,
+        0
+      ]
+    ];
+    var TagList = [
+      1,
+      n05,
+      _TL,
+      0,
+      () => Tag$2
+    ];
+    var ToolResultBlocksDelta = [
+      1,
+      n05,
+      _TRBD,
+      0,
+      () => ToolResultBlockDelta$
+    ];
+    var ToolResultContentBlocks = [
+      1,
+      n05,
+      _TRCB,
+      0,
+      [
+        () => ToolResultContentBlock$,
+        0
+      ]
+    ];
+    var Tools = [
+      1,
+      n05,
+      _To,
+      0,
+      () => Tool$
+    ];
+    var GuardrailAssessmentListMap = [
+      2,
+      n05,
+      _GALM,
+      0,
+      [
+        0,
+        0
+      ],
+      [
+        () => GuardrailAssessmentList,
+        0
+      ]
+    ];
+    var GuardrailAssessmentMap = [
+      2,
+      n05,
+      _GAM,
+      0,
+      [
+        0,
+        0
+      ],
+      [
+        () => GuardrailAssessment$,
+        0
+      ]
+    ];
+    var PromptVariableMap = [
+      2,
+      n05,
+      _PVM,
+      8,
+      0,
+      () => PromptVariableValues$
+    ];
+    var RequestMetadata = [
+      2,
+      n05,
+      _RM,
+      8,
+      0,
+      0
+    ];
+    var AsyncInvokeOutputDataConfig$ = [
+      4,
+      n05,
+      _AIODC,
+      0,
+      [_sODC],
+      [() => AsyncInvokeS3OutputDataConfig$]
+    ];
+    var AudioSource$ = [
+      4,
+      n05,
+      _AS,
+      8,
+      [_b, _sL],
+      [21, () => S3Location$]
+    ];
+    var CitationGeneratedContent$ = [
+      4,
+      n05,
+      _CGC,
+      0,
+      [_te],
+      [0]
+    ];
+    var CitationLocation$ = [
+      4,
+      n05,
+      _CL,
+      0,
+      [_w, _dC2, _dP, _dCo, _sRL],
+      [() => WebLocation$, () => DocumentCharLocation$, () => DocumentPageLocation$, () => DocumentChunkLocation$, () => SearchResultLocation$]
+    ];
+    var CitationSourceContent$ = [
+      4,
+      n05,
+      _CSC,
+      0,
+      [_te],
+      [0]
+    ];
+    var ContentBlock$ = [
+      4,
+      n05,
+      _CBo,
+      0,
+      [_te, _ima, _doc, _vi, _au, _tUo, _tR, _gCua, _cPa, _rC2, _cC, _sRe, _tA, _tRo],
+      [0, [() => ImageBlock$, 0], () => DocumentBlock$, () => VideoBlock$, [() => AudioBlock$, 0], () => ToolUseBlock$, [() => ToolResultBlock$, 0], [() => GuardrailConverseContentBlock$, 0], () => CachePointBlock$, [() => ReasoningContentBlock$, 0], () => CitationsContentBlock$, () => SearchResultBlock$, () => ToolAdditionBlock$, () => ToolRemovalBlock$]
+    ];
+    var ContentBlockDelta$ = [
+      4,
+      n05,
+      _CBD,
+      0,
+      [_te, _tUo, _tR, _rC2, _cit, _ima],
+      [0, () => ToolUseBlockDelta$, () => ToolResultBlocksDelta, [() => ReasoningContentBlockDelta$, 0], () => CitationsDelta$, [() => ImageBlockDelta$, 0]]
+    ];
+    var ContentBlockStart$ = [
+      4,
+      n05,
+      _CBS,
+      0,
+      [_tUo, _tR, _ima],
+      [() => ToolUseBlockStart$, () => ToolResultBlockStart$, () => ImageBlockStart$]
+    ];
+    var ConverseOutput$ = [
+      4,
+      n05,
+      _CO,
+      0,
+      [_m4],
+      [[() => Message$, 0]]
+    ];
+    var ConverseStreamOutput$ = [
+      4,
+      n05,
+      _CSO,
+      { [_stre]: 1 },
+      [_mS, _cBS, _cBD, _cBSo, _mSe, _meta, _iSE, _mSEE, _vE, _tE, _sUE],
+      [() => MessageStartEvent$, () => ContentBlockStartEvent$, [() => ContentBlockDeltaEvent$, 0], () => ContentBlockStopEvent$, () => MessageStopEvent$, [() => ConverseStreamMetadataEvent$, 0], [() => InternalServerException$3, 0], [() => ModelStreamErrorException$, 0], [() => ValidationException$2, 0], [() => ThrottlingException$, 0], [() => ServiceUnavailableException$, 0]]
+    ];
+    var CountTokensInput$ = [
+      4,
+      n05,
+      _CTI,
+      0,
+      [_iMn, _conv],
+      [[() => InvokeModelTokensRequest$, 0], [() => ConverseTokensRequest$, 0]]
+    ];
+    var DocumentContentBlock$ = [
+      4,
+      n05,
+      _DCBo,
+      0,
+      [_te],
+      [0]
+    ];
+    var DocumentSource$ = [
+      4,
+      n05,
+      _DS2,
+      0,
+      [_b, _sL, _te, _co3],
+      [21, () => S3Location$, 0, () => DocumentContentBlocks]
+    ];
+    var GuardrailAutomatedReasoningFinding$ = [
+      4,
+      n05,
+      _GARF,
+      0,
+      [_va, _in, _sa, _imp, _tAr, _tCoo, _nTo],
+      [[() => GuardrailAutomatedReasoningValidFinding$, 0], [() => GuardrailAutomatedReasoningInvalidFinding$, 0], [() => GuardrailAutomatedReasoningSatisfiableFinding$, 0], [() => GuardrailAutomatedReasoningImpossibleFinding$, 0], [() => GuardrailAutomatedReasoningTranslationAmbiguousFinding$, 0], () => GuardrailAutomatedReasoningTooComplexFinding$, () => GuardrailAutomatedReasoningNoTranslationsFinding$]
+    ];
+    var GuardrailChecksContentBlock$ = [
+      4,
+      n05,
+      _GCCB,
+      0,
+      [_te],
+      [[() => GuardrailChecksTextContent, 0]]
+    ];
+    var GuardrailContentBlock$ = [
+      4,
+      n05,
+      _GCB,
+      0,
+      [_te, _ima],
+      [() => GuardrailTextBlock$, [() => GuardrailImageBlock$, 0]]
+    ];
+    var GuardrailConverseContentBlock$ = [
+      4,
+      n05,
+      _GCCBu,
+      0,
+      [_te, _ima],
+      [() => GuardrailConverseTextBlock$, [() => GuardrailConverseImageBlock$, 0]]
+    ];
+    var GuardrailConverseImageSource$ = [
+      4,
+      n05,
+      _GCIS,
+      8,
+      [_b],
+      [21]
+    ];
+    var GuardrailImageSource$ = [
+      4,
+      n05,
+      _GIS,
+      8,
+      [_b],
+      [21]
+    ];
+    var ImageSource$ = [
+      4,
+      n05,
+      _IS,
+      8,
+      [_b, _sL],
+      [21, () => S3Location$]
+    ];
+    var InvokeModelWithBidirectionalStreamInput$ = [
+      4,
+      n05,
+      _IMWBSI,
+      { [_stre]: 1 },
+      [_chu],
+      [[() => BidirectionalInputPayloadPart$, 0]]
+    ];
+    var InvokeModelWithBidirectionalStreamOutput$ = [
+      4,
+      n05,
+      _IMWBSO,
+      { [_stre]: 1 },
+      [_chu, _iSE, _mSEE, _vE, _tE, _mTE, _sUE],
+      [[() => BidirectionalOutputPayloadPart$, 0], [() => InternalServerException$3, 0], [() => ModelStreamErrorException$, 0], [() => ValidationException$2, 0], [() => ThrottlingException$, 0], [() => ModelTimeoutException$, 0], [() => ServiceUnavailableException$, 0]]
+    ];
+    var OutputFormatStructure$ = [
+      4,
+      n05,
+      _OFS,
+      8,
+      [_jS],
+      [() => JsonSchemaDefinition$]
+    ];
+    var PromptVariableValues$ = [
+      4,
+      n05,
+      _PVV,
+      0,
+      [_te],
+      [0]
+    ];
+    var ReasoningContentBlock$ = [
+      4,
+      n05,
+      _RCB,
+      8,
+      [_rT3, _rCe],
+      [[() => ReasoningTextBlock$, 0], 21]
+    ];
+    var ReasoningContentBlockDelta$ = [
+      4,
+      n05,
+      _RCBD,
+      8,
+      [_te, _rCe, _si],
+      [0, 21, 0]
+    ];
+    var ResponseStream$ = [
+      4,
+      n05,
+      _RS,
+      { [_stre]: 1 },
+      [_chu, _iSE, _mSEE, _vE, _tE, _mTE, _sUE],
+      [[() => PayloadPart$, 0], [() => InternalServerException$3, 0], [() => ModelStreamErrorException$, 0], [() => ValidationException$2, 0], [() => ThrottlingException$, 0], [() => ModelTimeoutException$, 0], [() => ServiceUnavailableException$, 0]]
+    ];
+    var SystemContentBlock$ = [
+      4,
+      n05,
+      _SCBy,
+      0,
+      [_te, _gCua, _cPa],
+      [0, [() => GuardrailConverseContentBlock$, 0], () => CachePointBlock$]
+    ];
+    var Tool$ = [
+      4,
+      n05,
+      _Too,
+      0,
+      [_tS, _sTy, _cPa],
+      [() => ToolSpecification$, () => SystemTool$, () => CachePointBlock$]
+    ];
+    var ToolChoice$ = [
+      4,
+      n05,
+      _TCo,
+      0,
+      [_aut, _an, _too],
+      [() => AutoToolChoice$, () => AnyToolChoice$, () => SpecificToolChoice$]
+    ];
+    var ToolInputSchema$ = [
+      4,
+      n05,
+      _TIS,
+      0,
+      [_j],
+      [15]
+    ];
+    var ToolResultBlockDelta$ = [
+      4,
+      n05,
+      _TRBDo,
+      0,
+      [_te, _j],
+      [0, 15]
+    ];
+    var ToolResultContentBlock$ = [
+      4,
+      n05,
+      _TRCBo,
+      0,
+      [_j, _te, _ima, _doc, _vi, _sRe],
+      [15, 0, [() => ImageBlock$, 0], () => DocumentBlock$, () => VideoBlock$, () => SearchResultBlock$]
+    ];
+    var VideoSource$ = [
+      4,
+      n05,
+      _VS,
+      0,
+      [_b, _sL],
+      [21, () => S3Location$]
+    ];
+    var ApplyGuardrail$ = [
+      9,
+      n05,
+      _AG,
+      { [_h4]: ["POST", "/guardrail/{guardrailIdentifier}/version/{guardrailVersion}/apply", 200] },
+      () => ApplyGuardrailRequest$,
+      () => ApplyGuardrailResponse$
+    ];
+    var Converse$ = [
+      9,
+      n05,
+      _Co,
+      { [_h4]: ["POST", "/model/{modelId}/converse", 200] },
+      () => ConverseRequest$,
+      () => ConverseResponse$
+    ];
+    var ConverseStream$ = [
+      9,
+      n05,
+      _CS2,
+      { [_h4]: ["POST", "/model/{modelId}/converse-stream", 200] },
+      () => ConverseStreamRequest$,
+      () => ConverseStreamResponse$
+    ];
+    var CountTokens$ = [
+      9,
+      n05,
+      _CTo,
+      { [_h4]: ["POST", "/model/{modelId}/count-tokens", 200] },
+      () => CountTokensRequest$,
+      () => CountTokensResponse$
+    ];
+    var GetAsyncInvoke$ = [
+      9,
+      n05,
+      _GAI,
+      { [_h4]: ["GET", "/async-invoke/{invocationArn}", 200] },
+      () => GetAsyncInvokeRequest$,
+      () => GetAsyncInvokeResponse$
+    ];
+    var InvokeGuardrailChecks$ = [
+      9,
+      n05,
+      _IGC,
+      { [_h4]: ["POST", "/guardrail-checks/invoke", 200] },
+      () => InvokeGuardrailChecksRequest$,
+      () => InvokeGuardrailChecksResponse$
+    ];
+    var InvokeModel$ = [
+      9,
+      n05,
+      _IM,
+      { [_h4]: ["POST", "/model/{modelId}/invoke", 200] },
+      () => InvokeModelRequest$,
+      () => InvokeModelResponse$
+    ];
+    var InvokeModelWithBidirectionalStream$ = [
+      9,
+      n05,
+      _IMWBS,
+      { [_h4]: ["POST", "/model/{modelId}/invoke-with-bidirectional-stream", 200] },
+      () => InvokeModelWithBidirectionalStreamRequest$,
+      () => InvokeModelWithBidirectionalStreamResponse$
+    ];
+    var InvokeModelWithResponseStream$ = [
+      9,
+      n05,
+      _IMWRS,
+      { [_h4]: ["POST", "/model/{modelId}/invoke-with-response-stream", 200] },
+      () => InvokeModelWithResponseStreamRequest$,
+      () => InvokeModelWithResponseStreamResponse$
+    ];
+    var ListAsyncInvokes$ = [
+      9,
+      n05,
+      _LAI,
+      { [_h4]: ["GET", "/async-invoke", 200] },
+      () => ListAsyncInvokesRequest$,
+      () => ListAsyncInvokesResponse$
+    ];
+    var StartAsyncInvoke$ = [
+      9,
+      n05,
+      _SAI,
+      { [_h4]: ["POST", "/async-invoke", 200] },
+      () => StartAsyncInvokeRequest$,
+      () => StartAsyncInvokeResponse$
+    ];
+    var getRuntimeConfig$1 = (config) => {
+      return {
+        apiVersion: "2023-09-30",
+        base64Decoder: config?.base64Decoder ?? fromBase642,
+        base64Encoder: config?.base64Encoder ?? toBase643,
+        disableHostPrefix: config?.disableHostPrefix ?? false,
+        endpointProvider: config?.endpointProvider ?? defaultEndpointResolver5,
+        extensions: config?.extensions ?? [],
+        httpAuthSchemeProvider: config?.httpAuthSchemeProvider ?? defaultBedrockRuntimeHttpAuthSchemeProvider,
+        httpAuthSchemes: config?.httpAuthSchemes ?? [
+          {
+            schemeId: "aws.auth#sigv4",
+            identityProvider: (ipc) => ipc.getIdentityProvider("aws.auth#sigv4"),
+            signer: new AwsSdkSigV4Signer2()
+          },
+          {
+            schemeId: "smithy.api#httpBearerAuth",
+            identityProvider: (ipc) => ipc.getIdentityProvider("smithy.api#httpBearerAuth"),
+            signer: new HttpBearerAuthSigner2()
+          }
+        ],
+        logger: config?.logger ?? new NoOpLogger2(),
+        protocol: config?.protocol ?? AwsRestJsonProtocol2,
+        protocolSettings: config?.protocolSettings ?? {
+          defaultNamespace: "com.amazonaws.bedrockruntime",
+          errorTypeRegistries: errorTypeRegistries5,
+          version: "2023-09-30",
+          serviceTarget: "AmazonBedrockFrontendService"
+        },
+        serviceId: config?.serviceId ?? "Bedrock Runtime",
+        sha256: config?.sha256 ?? Sha256,
+        urlParser: config?.urlParser ?? parseUrl2,
+        utf8Decoder: config?.utf8Decoder ?? fromUtf83,
+        utf8Encoder: config?.utf8Encoder ?? toUtf83
+      };
+    };
+    var getRuntimeConfig9 = (config) => {
+      emitWarningIfUnsupportedVersion3(process.version);
+      const defaultsMode = resolveDefaultsModeConfig2(config);
+      const defaultConfigProvider = () => defaultsMode().then(loadConfigsForDefaultMode2);
+      const clientSharedValues = getRuntimeConfig$1(config);
+      emitWarningIfUnsupportedVersion$1(process.version);
+      const loaderConfig = {
+        profile: config?.profile,
+        logger: clientSharedValues.logger,
+        signingName: "bedrock"
+      };
+      return {
+        ...clientSharedValues,
+        ...config,
+        runtime: "node",
+        defaultsMode,
+        authSchemePreference: config?.authSchemePreference ?? loadConfig2(NODE_AUTH_SCHEME_PREFERENCE_OPTIONS2, loaderConfig),
+        bodyLengthChecker: config?.bodyLengthChecker ?? calculateBodyLength2,
+        credentialDefaultProvider: config?.credentialDefaultProvider ?? defaultProvider,
+        defaultUserAgentProvider: config?.defaultUserAgentProvider ?? createDefaultUserAgentProvider2({ serviceId: clientSharedValues.serviceId, clientVersion: packageInfo.version }),
+        eventStreamPayloadHandlerProvider: config?.eventStreamPayloadHandlerProvider ?? eventStreamPayloadHandlerProvider,
+        eventStreamSerdeProvider: config?.eventStreamSerdeProvider ?? eventStreamSerdeProvider3,
+        httpAuthSchemes: config?.httpAuthSchemes ?? [
+          {
+            schemeId: "aws.auth#sigv4",
+            identityProvider: (ipc) => ipc.getIdentityProvider("aws.auth#sigv4"),
+            signer: new AwsSdkSigV4Signer2()
+          },
+          {
+            schemeId: "smithy.api#httpBearerAuth",
+            identityProvider: (ipc) => ipc.getIdentityProvider("smithy.api#httpBearerAuth") || (async (idProps) => {
+              try {
+                return await fromEnvSigningName({ signingName: "bedrock" })();
+              } catch (error2) {
+                return await nodeProvider(idProps)(idProps);
+              }
+            }),
+            signer: new HttpBearerAuthSigner2()
+          }
+        ],
+        maxAttempts: config?.maxAttempts ?? loadConfig2(NODE_MAX_ATTEMPT_CONFIG_OPTIONS2, config),
+        region: config?.region ?? loadConfig2(NODE_REGION_CONFIG_OPTIONS2, { ...NODE_REGION_CONFIG_FILE_OPTIONS2, ...loaderConfig }),
+        requestHandler: NodeHttp2Handler.create(config?.requestHandler ?? (async () => ({
+          ...await defaultConfigProvider(),
+          disableConcurrentStreams: true
+        }))),
+        retryMode: config?.retryMode ?? loadConfig2({
+          ...NODE_RETRY_MODE_CONFIG_OPTIONS2,
+          default: async () => (await defaultConfigProvider()).retryMode || DEFAULT_RETRY_MODE2
+        }, config),
+        streamCollector: config?.streamCollector ?? streamCollector7,
+        useDualstackEndpoint: config?.useDualstackEndpoint ?? loadConfig2(NODE_USE_DUALSTACK_ENDPOINT_CONFIG_OPTIONS2, loaderConfig),
+        useFipsEndpoint: config?.useFipsEndpoint ?? loadConfig2(NODE_USE_FIPS_ENDPOINT_CONFIG_OPTIONS2, loaderConfig),
+        userAgentAppId: config?.userAgentAppId ?? loadConfig2(NODE_APP_ID_CONFIG_OPTIONS2, loaderConfig)
+      };
+    };
+    var getHttpAuthExtensionConfiguration5 = (runtimeConfig) => {
+      const _httpAuthSchemes = runtimeConfig.httpAuthSchemes;
+      let _httpAuthSchemeProvider = runtimeConfig.httpAuthSchemeProvider;
+      let _credentials = runtimeConfig.credentials;
+      let _token = runtimeConfig.token;
+      return {
+        setHttpAuthScheme(httpAuthScheme) {
+          const index = _httpAuthSchemes.findIndex((scheme) => scheme.schemeId === httpAuthScheme.schemeId);
+          if (index === -1) {
+            _httpAuthSchemes.push(httpAuthScheme);
+          } else {
+            _httpAuthSchemes.splice(index, 1, httpAuthScheme);
+          }
+        },
+        httpAuthSchemes() {
+          return _httpAuthSchemes;
+        },
+        setHttpAuthSchemeProvider(httpAuthSchemeProvider) {
+          _httpAuthSchemeProvider = httpAuthSchemeProvider;
+        },
+        httpAuthSchemeProvider() {
+          return _httpAuthSchemeProvider;
+        },
+        setCredentials(credentials) {
+          _credentials = credentials;
+        },
+        credentials() {
+          return _credentials;
+        },
+        setToken(token) {
+          _token = token;
+        },
+        token() {
+          return _token;
+        }
+      };
+    };
+    var resolveHttpAuthRuntimeConfig5 = (config) => {
+      return {
+        httpAuthSchemes: config.httpAuthSchemes(),
+        httpAuthSchemeProvider: config.httpAuthSchemeProvider(),
+        credentials: config.credentials(),
+        token: config.token()
+      };
+    };
+    var resolveRuntimeExtensions5 = (runtimeConfig, extensions) => {
+      const extensionConfiguration = Object.assign(getAwsRegionExtensionConfiguration2(runtimeConfig), getDefaultExtensionConfiguration2(runtimeConfig), getHttpHandlerExtensionConfiguration2(runtimeConfig), getHttpAuthExtensionConfiguration5(runtimeConfig));
+      extensions.forEach((extension) => extension.configure(extensionConfiguration));
+      return Object.assign(runtimeConfig, resolveAwsRegionExtensionConfiguration2(extensionConfiguration), resolveDefaultRuntimeConfig2(extensionConfiguration), resolveHttpHandlerRuntimeConfig2(extensionConfiguration), resolveHttpAuthRuntimeConfig5(extensionConfiguration));
+    };
+    var BedrockRuntimeClient3 = class extends Client2 {
+      config;
+      constructor(...[configuration]) {
+        const _config_0 = getRuntimeConfig9(configuration || {});
+        super(_config_0);
+        this.initConfig = _config_0;
+        const _config_1 = resolveClientEndpointParameters5(_config_0);
+        const _config_2 = resolveUserAgentConfig2(_config_1);
+        const _config_3 = resolveRetryConfig2(_config_2);
+        const _config_4 = resolveRegionConfig2(_config_3);
+        const _config_5 = resolveHostHeaderConfig2(_config_4);
+        const _config_6 = resolveEndpointConfig2(_config_5);
+        const _config_7 = resolveEventStreamSerdeConfig2(_config_6);
+        const _config_8 = resolveHttpAuthSchemeConfig5(_config_7);
+        const _config_9 = resolveEventStreamConfig(_config_8);
+        const _config_10 = resolveWebSocketConfig(_config_9);
+        const _config_11 = resolveRuntimeExtensions5(_config_10, configuration?.extensions || []);
+        this.config = _config_11;
+        this.middlewareStack.use(getSchemaSerdePlugin2(this.config));
+        this.middlewareStack.use(getUserAgentPlugin2(this.config));
+        this.middlewareStack.use(getRetryPlugin2(this.config));
+        this.middlewareStack.use(getContentLengthPlugin2(this.config));
+        this.middlewareStack.use(getHostHeaderPlugin2(this.config));
+        this.middlewareStack.use(getLoggerPlugin2(this.config));
+        this.middlewareStack.use(getRecursionDetectionPlugin2(this.config));
+        this.middlewareStack.use(getHttpAuthSchemeEndpointRuleSetPlugin2(this.config, {
+          httpAuthSchemeParametersProvider: defaultBedrockRuntimeHttpAuthSchemeParametersProvider,
+          identityProviderConfigProvider: async (config) => new DefaultIdentityProviderConfig2({
+            "aws.auth#sigv4": config.credentials,
+            "smithy.api#httpBearerAuth": config.token
+          })
+        }));
+        this.middlewareStack.use(getHttpSigningPlugin2(this.config));
+      }
+      destroy() {
+        super.destroy();
+      }
+    };
+    var command5 = makeBuilder2(commonParams5, "AmazonBedrockFrontendService", "BedrockRuntimeClient", getEndpointPlugin2);
+    var _ep05 = {};
+    var _mw05 = (Command2, cs, config, o3) => [];
+    var _mw1 = (Command2, cs, config, o3) => [
+      getEventStreamPlugin(config),
+      getWebSocketPlugin(config, {
+        headerPrefix: "x-amz-bedrock-"
+      })
+    ];
+    var ApplyGuardrailCommand = class extends command5(_ep05, _mw05, "ApplyGuardrail", ApplyGuardrail$) {
+    };
+    var ConverseCommand2 = class extends command5(_ep05, _mw05, "Converse", Converse$) {
+    };
+    var ConverseStreamCommand = class extends command5(_ep05, _mw05, "ConverseStream", ConverseStream$) {
+    };
+    var CountTokensCommand = class extends command5(_ep05, _mw05, "CountTokens", CountTokens$) {
+    };
+    var GetAsyncInvokeCommand = class extends command5(_ep05, _mw05, "GetAsyncInvoke", GetAsyncInvoke$) {
+    };
+    var InvokeGuardrailChecksCommand = class extends command5(_ep05, _mw05, "InvokeGuardrailChecks", InvokeGuardrailChecks$) {
+    };
+    var InvokeModelCommand2 = class extends command5(_ep05, _mw05, "InvokeModel", InvokeModel$) {
+    };
+    var InvokeModelWithBidirectionalStreamCommand = class extends command5(_ep05, _mw1, "InvokeModelWithBidirectionalStream", InvokeModelWithBidirectionalStream$) {
+    };
+    var InvokeModelWithResponseStreamCommand = class extends command5(_ep05, _mw05, "InvokeModelWithResponseStream", InvokeModelWithResponseStream$) {
+    };
+    var ListAsyncInvokesCommand = class extends command5(_ep05, _mw05, "ListAsyncInvokes", ListAsyncInvokes$) {
+    };
+    var StartAsyncInvokeCommand = class extends command5(_ep05, _mw05, "StartAsyncInvoke", StartAsyncInvoke$) {
+    };
+    var paginateListAsyncInvokes = createPaginator2(BedrockRuntimeClient3, ListAsyncInvokesCommand, "nextToken", "nextToken", "maxResults");
+    var commands5 = {
+      ApplyGuardrailCommand,
+      ConverseCommand: ConverseCommand2,
+      ConverseStreamCommand,
+      CountTokensCommand,
+      GetAsyncInvokeCommand,
+      InvokeGuardrailChecksCommand,
+      InvokeModelCommand: InvokeModelCommand2,
+      InvokeModelWithBidirectionalStreamCommand,
+      InvokeModelWithResponseStreamCommand,
+      ListAsyncInvokesCommand,
+      StartAsyncInvokeCommand
+    };
+    var paginators = {
+      paginateListAsyncInvokes
+    };
+    var BedrockRuntime = class extends BedrockRuntimeClient3 {
+    };
+    createAggregatedClient2(commands5, BedrockRuntime, { paginators });
+    var AsyncInvokeStatus = {
+      COMPLETED: "Completed",
+      FAILED: "Failed",
+      IN_PROGRESS: "InProgress"
+    };
+    var SortAsyncInvocationBy = {
+      SUBMISSION_TIME: "SubmissionTime"
+    };
+    var SortOrder = {
+      ASCENDING: "Ascending",
+      DESCENDING: "Descending"
+    };
+    var GuardrailImageFormat = {
+      JPEG: "jpeg",
+      PNG: "png"
+    };
+    var GuardrailContentQualifier = {
+      GROUNDING_SOURCE: "grounding_source",
+      GUARD_CONTENT: "guard_content",
+      QUERY: "query"
+    };
+    var GuardrailOutputScope = {
+      FULL: "FULL",
+      INTERVENTIONS: "INTERVENTIONS"
+    };
+    var GuardrailContentSource = {
+      INPUT: "INPUT",
+      OUTPUT: "OUTPUT"
+    };
+    var GuardrailAction = {
+      GUARDRAIL_INTERVENED: "GUARDRAIL_INTERVENED",
+      NONE: "NONE"
+    };
+    var GuardrailOrigin = {
+      ACCOUNT_ENFORCED: "ACCOUNT_ENFORCED",
+      ORGANIZATION_ENFORCED: "ORGANIZATION_ENFORCED",
+      REQUEST: "REQUEST"
+    };
+    var GuardrailOwnership = {
+      CROSS_ACCOUNT: "CROSS_ACCOUNT",
+      SELF: "SELF"
+    };
+    var GuardrailAutomatedReasoningLogicWarningType = {
+      ALWAYS_FALSE: "ALWAYS_FALSE",
+      ALWAYS_TRUE: "ALWAYS_TRUE"
+    };
+    var GuardrailContentPolicyAction = {
+      BLOCKED: "BLOCKED",
+      NONE: "NONE"
+    };
+    var GuardrailContentFilterConfidence = {
+      HIGH: "HIGH",
+      LOW: "LOW",
+      MEDIUM: "MEDIUM",
+      NONE: "NONE"
+    };
+    var GuardrailContentFilterStrength = {
+      HIGH: "HIGH",
+      LOW: "LOW",
+      MEDIUM: "MEDIUM",
+      NONE: "NONE"
+    };
+    var GuardrailContentFilterType = {
+      HATE: "HATE",
+      INSULTS: "INSULTS",
+      MISCONDUCT: "MISCONDUCT",
+      PROMPT_ATTACK: "PROMPT_ATTACK",
+      SEXUAL: "SEXUAL",
+      VIOLENCE: "VIOLENCE"
+    };
+    var GuardrailContextualGroundingPolicyAction = {
+      BLOCKED: "BLOCKED",
+      NONE: "NONE"
+    };
+    var GuardrailContextualGroundingFilterType = {
+      GROUNDING: "GROUNDING",
+      RELEVANCE: "RELEVANCE"
+    };
+    var GuardrailSensitiveInformationPolicyAction = {
+      ANONYMIZED: "ANONYMIZED",
+      BLOCKED: "BLOCKED",
+      NONE: "NONE"
+    };
+    var GuardrailPiiEntityType = {
+      ADDRESS: "ADDRESS",
+      AGE: "AGE",
+      AWS_ACCESS_KEY: "AWS_ACCESS_KEY",
+      AWS_SECRET_KEY: "AWS_SECRET_KEY",
+      CA_HEALTH_NUMBER: "CA_HEALTH_NUMBER",
+      CA_SOCIAL_INSURANCE_NUMBER: "CA_SOCIAL_INSURANCE_NUMBER",
+      CREDIT_DEBIT_CARD_CVV: "CREDIT_DEBIT_CARD_CVV",
+      CREDIT_DEBIT_CARD_EXPIRY: "CREDIT_DEBIT_CARD_EXPIRY",
+      CREDIT_DEBIT_CARD_NUMBER: "CREDIT_DEBIT_CARD_NUMBER",
+      DRIVER_ID: "DRIVER_ID",
+      EMAIL: "EMAIL",
+      INTERNATIONAL_BANK_ACCOUNT_NUMBER: "INTERNATIONAL_BANK_ACCOUNT_NUMBER",
+      IP_ADDRESS: "IP_ADDRESS",
+      LICENSE_PLATE: "LICENSE_PLATE",
+      MAC_ADDRESS: "MAC_ADDRESS",
+      NAME: "NAME",
+      PASSWORD: "PASSWORD",
+      PHONE: "PHONE",
+      PIN: "PIN",
+      SWIFT_CODE: "SWIFT_CODE",
+      UK_NATIONAL_HEALTH_SERVICE_NUMBER: "UK_NATIONAL_HEALTH_SERVICE_NUMBER",
+      UK_NATIONAL_INSURANCE_NUMBER: "UK_NATIONAL_INSURANCE_NUMBER",
+      UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER: "UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER",
+      URL: "URL",
+      USERNAME: "USERNAME",
+      US_BANK_ACCOUNT_NUMBER: "US_BANK_ACCOUNT_NUMBER",
+      US_BANK_ROUTING_NUMBER: "US_BANK_ROUTING_NUMBER",
+      US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER: "US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER",
+      US_PASSPORT_NUMBER: "US_PASSPORT_NUMBER",
+      US_SOCIAL_SECURITY_NUMBER: "US_SOCIAL_SECURITY_NUMBER",
+      VEHICLE_IDENTIFICATION_NUMBER: "VEHICLE_IDENTIFICATION_NUMBER"
+    };
+    var GuardrailTopicPolicyAction = {
+      BLOCKED: "BLOCKED",
+      NONE: "NONE"
+    };
+    var GuardrailTopicType = {
+      DENY: "DENY"
+    };
+    var GuardrailWordPolicyAction = {
+      BLOCKED: "BLOCKED",
+      NONE: "NONE"
+    };
+    var GuardrailManagedWordType = {
+      PROFANITY: "PROFANITY"
+    };
+    var GuardrailChecksContentFilterCategory = {
+      HATE: "HATE",
+      INSULTS: "INSULTS",
+      MISCONDUCT: "MISCONDUCT",
+      SEXUAL: "SEXUAL",
+      VIOLENCE: "VIOLENCE"
+    };
+    var GuardrailChecksPromptAttackCategory = {
+      JAILBREAK: "JAILBREAK",
+      PROMPT_INJECTION: "PROMPT_INJECTION",
+      PROMPT_LEAKAGE: "PROMPT_LEAKAGE"
+    };
+    var GuardrailChecksSensitiveInformationEntityType = {
+      ADDRESS: "ADDRESS",
+      AGE: "AGE",
+      AWS_ACCESS_KEY: "AWS_ACCESS_KEY",
+      AWS_SECRET_KEY: "AWS_SECRET_KEY",
+      CA_HEALTH_NUMBER: "CA_HEALTH_NUMBER",
+      CA_SOCIAL_INSURANCE_NUMBER: "CA_SOCIAL_INSURANCE_NUMBER",
+      CREDIT_DEBIT_CARD_CVV: "CREDIT_DEBIT_CARD_CVV",
+      CREDIT_DEBIT_CARD_EXPIRY: "CREDIT_DEBIT_CARD_EXPIRY",
+      CREDIT_DEBIT_CARD_NUMBER: "CREDIT_DEBIT_CARD_NUMBER",
+      DRIVER_ID: "DRIVER_ID",
+      EMAIL: "EMAIL",
+      INTERNATIONAL_BANK_ACCOUNT_NUMBER: "INTERNATIONAL_BANK_ACCOUNT_NUMBER",
+      IP_ADDRESS: "IP_ADDRESS",
+      LICENSE_PLATE: "LICENSE_PLATE",
+      MAC_ADDRESS: "MAC_ADDRESS",
+      NAME: "NAME",
+      PASSWORD: "PASSWORD",
+      PHONE: "PHONE",
+      PIN: "PIN",
+      SWIFT_CODE: "SWIFT_CODE",
+      UK_NATIONAL_HEALTH_SERVICE_NUMBER: "UK_NATIONAL_HEALTH_SERVICE_NUMBER",
+      UK_NATIONAL_INSURANCE_NUMBER: "UK_NATIONAL_INSURANCE_NUMBER",
+      UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER: "UK_UNIQUE_TAXPAYER_REFERENCE_NUMBER",
+      URL: "URL",
+      USERNAME: "USERNAME",
+      US_BANK_ACCOUNT_NUMBER: "US_BANK_ACCOUNT_NUMBER",
+      US_BANK_ROUTING_NUMBER: "US_BANK_ROUTING_NUMBER",
+      US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER: "US_INDIVIDUAL_TAX_IDENTIFICATION_NUMBER",
+      US_PASSPORT_NUMBER: "US_PASSPORT_NUMBER",
+      US_SOCIAL_SECURITY_NUMBER: "US_SOCIAL_SECURITY_NUMBER",
+      VEHICLE_IDENTIFICATION_NUMBER: "VEHICLE_IDENTIFICATION_NUMBER"
+    };
+    var GuardrailChecksRole = {
+      ASSISTANT: "assistant",
+      SYSTEM: "system",
+      USER: "user"
+    };
+    var GuardrailTrace = {
+      DISABLED: "disabled",
+      ENABLED: "enabled",
+      ENABLED_FULL: "enabled_full"
+    };
+    var AudioFormat = {
+      AAC: "aac",
+      FLAC: "flac",
+      M4A: "m4a",
+      MKA: "mka",
+      MKV: "mkv",
+      MP3: "mp3",
+      MP4: "mp4",
+      MPEG: "mpeg",
+      MPGA: "mpga",
+      OGG: "ogg",
+      OPUS: "opus",
+      PCM: "pcm",
+      WAV: "wav",
+      WEBM: "webm",
+      X_AAC: "x-aac"
+    };
+    var CacheTTL = {
+      FIVE_MINUTES: "5m",
+      ONE_HOUR: "1h"
+    };
+    var CachePointType = {
+      DEFAULT: "default"
+    };
+    var DocumentFormat = {
+      CSV: "csv",
+      DOC: "doc",
+      DOCX: "docx",
+      HTML: "html",
+      MD: "md",
+      PDF: "pdf",
+      TXT: "txt",
+      XLS: "xls",
+      XLSX: "xlsx"
+    };
+    var GuardrailConverseImageFormat = {
+      JPEG: "jpeg",
+      PNG: "png"
+    };
+    var GuardrailConverseContentQualifier = {
+      GROUNDING_SOURCE: "grounding_source",
+      GUARD_CONTENT: "guard_content",
+      QUERY: "query"
+    };
+    var ImageFormat = {
+      GIF: "gif",
+      JPEG: "jpeg",
+      PNG: "png",
+      WEBP: "webp"
+    };
+    var VideoFormat = {
+      FLV: "flv",
+      MKV: "mkv",
+      MOV: "mov",
+      MP4: "mp4",
+      MPEG: "mpeg",
+      MPG: "mpg",
+      THREE_GP: "three_gp",
+      WEBM: "webm",
+      WMV: "wmv"
+    };
+    var ToolResultStatus = {
+      ERROR: "error",
+      SUCCESS: "success"
+    };
+    var ToolUseType = {
+      SERVER_TOOL_USE: "server_tool_use"
+    };
+    var ConversationRole = {
+      ASSISTANT: "assistant",
+      SYSTEM: "system",
+      USER: "user"
+    };
+    var OutputFormatType = {
+      JSON_SCHEMA: "json_schema"
+    };
+    var PerformanceConfigLatency = {
+      OPTIMIZED: "optimized",
+      STANDARD: "standard"
+    };
+    var ServiceTierType = {
+      DEFAULT: "default",
+      FLEX: "flex",
+      PRIORITY: "priority",
+      RESERVED: "reserved"
+    };
+    var StopReason = {
+      CONTENT_FILTERED: "content_filtered",
+      END_TURN: "end_turn",
+      GUARDRAIL_INTERVENED: "guardrail_intervened",
+      MALFORMED_MODEL_OUTPUT: "malformed_model_output",
+      MALFORMED_TOOL_USE: "malformed_tool_use",
+      MAX_TOKENS: "max_tokens",
+      MODEL_CONTEXT_WINDOW_EXCEEDED: "model_context_window_exceeded",
+      STOP_SEQUENCE: "stop_sequence",
+      TOOL_USE: "tool_use"
+    };
+    var GuardrailStreamProcessingMode = {
+      ASYNC: "async",
+      SYNC: "sync"
+    };
+    var Trace = {
+      DISABLED: "DISABLED",
+      ENABLED: "ENABLED",
+      ENABLED_FULL: "ENABLED_FULL"
+    };
+    exports2.AccessDeniedException = AccessDeniedException3;
+    exports2.AccessDeniedException$ = AccessDeniedException$3;
+    exports2.AnyToolChoice$ = AnyToolChoice$;
+    exports2.AppliedGuardrailDetails$ = AppliedGuardrailDetails$;
+    exports2.ApplyGuardrail$ = ApplyGuardrail$;
+    exports2.ApplyGuardrailCommand = ApplyGuardrailCommand;
+    exports2.ApplyGuardrailRequest$ = ApplyGuardrailRequest$;
+    exports2.ApplyGuardrailResponse$ = ApplyGuardrailResponse$;
+    exports2.AsyncInvokeOutputDataConfig$ = AsyncInvokeOutputDataConfig$;
+    exports2.AsyncInvokeS3OutputDataConfig$ = AsyncInvokeS3OutputDataConfig$;
+    exports2.AsyncInvokeStatus = AsyncInvokeStatus;
+    exports2.AsyncInvokeSummary$ = AsyncInvokeSummary$;
+    exports2.AudioBlock$ = AudioBlock$;
+    exports2.AudioFormat = AudioFormat;
+    exports2.AudioSource$ = AudioSource$;
+    exports2.AutoToolChoice$ = AutoToolChoice$;
+    exports2.BedrockRuntime = BedrockRuntime;
+    exports2.BedrockRuntimeClient = BedrockRuntimeClient3;
+    exports2.BedrockRuntimeServiceException = BedrockRuntimeServiceException;
+    exports2.BedrockRuntimeServiceException$ = BedrockRuntimeServiceException$;
+    exports2.BidirectionalInputPayloadPart$ = BidirectionalInputPayloadPart$;
+    exports2.BidirectionalOutputPayloadPart$ = BidirectionalOutputPayloadPart$;
+    exports2.CacheDetail$ = CacheDetail$;
+    exports2.CachePointBlock$ = CachePointBlock$;
+    exports2.CachePointType = CachePointType;
+    exports2.CacheTTL = CacheTTL;
+    exports2.Citation$ = Citation$;
+    exports2.CitationGeneratedContent$ = CitationGeneratedContent$;
+    exports2.CitationLocation$ = CitationLocation$;
+    exports2.CitationSourceContent$ = CitationSourceContent$;
+    exports2.CitationSourceContentDelta$ = CitationSourceContentDelta$;
+    exports2.CitationsConfig$ = CitationsConfig$;
+    exports2.CitationsContentBlock$ = CitationsContentBlock$;
+    exports2.CitationsDelta$ = CitationsDelta$;
+    exports2.ConflictException = ConflictException;
+    exports2.ConflictException$ = ConflictException$;
+    exports2.ContentBlock$ = ContentBlock$;
+    exports2.ContentBlockDelta$ = ContentBlockDelta$;
+    exports2.ContentBlockDeltaEvent$ = ContentBlockDeltaEvent$;
+    exports2.ContentBlockStart$ = ContentBlockStart$;
+    exports2.ContentBlockStartEvent$ = ContentBlockStartEvent$;
+    exports2.ContentBlockStopEvent$ = ContentBlockStopEvent$;
+    exports2.ConversationRole = ConversationRole;
+    exports2.Converse$ = Converse$;
+    exports2.ConverseCommand = ConverseCommand2;
+    exports2.ConverseMetrics$ = ConverseMetrics$;
+    exports2.ConverseOutput$ = ConverseOutput$;
+    exports2.ConverseRequest$ = ConverseRequest$;
+    exports2.ConverseResponse$ = ConverseResponse$;
+    exports2.ConverseStream$ = ConverseStream$;
+    exports2.ConverseStreamCommand = ConverseStreamCommand;
+    exports2.ConverseStreamMetadataEvent$ = ConverseStreamMetadataEvent$;
+    exports2.ConverseStreamMetrics$ = ConverseStreamMetrics$;
+    exports2.ConverseStreamOutput$ = ConverseStreamOutput$;
+    exports2.ConverseStreamRequest$ = ConverseStreamRequest$;
+    exports2.ConverseStreamResponse$ = ConverseStreamResponse$;
+    exports2.ConverseStreamTrace$ = ConverseStreamTrace$;
+    exports2.ConverseTokensRequest$ = ConverseTokensRequest$;
+    exports2.ConverseTrace$ = ConverseTrace$;
+    exports2.CountTokens$ = CountTokens$;
+    exports2.CountTokensCommand = CountTokensCommand;
+    exports2.CountTokensInput$ = CountTokensInput$;
+    exports2.CountTokensRequest$ = CountTokensRequest$;
+    exports2.CountTokensResponse$ = CountTokensResponse$;
+    exports2.DocumentBlock$ = DocumentBlock$;
+    exports2.DocumentCharLocation$ = DocumentCharLocation$;
+    exports2.DocumentChunkLocation$ = DocumentChunkLocation$;
+    exports2.DocumentContentBlock$ = DocumentContentBlock$;
+    exports2.DocumentFormat = DocumentFormat;
+    exports2.DocumentPageLocation$ = DocumentPageLocation$;
+    exports2.DocumentSource$ = DocumentSource$;
+    exports2.ErrorBlock$ = ErrorBlock$;
+    exports2.GetAsyncInvoke$ = GetAsyncInvoke$;
+    exports2.GetAsyncInvokeCommand = GetAsyncInvokeCommand;
+    exports2.GetAsyncInvokeRequest$ = GetAsyncInvokeRequest$;
+    exports2.GetAsyncInvokeResponse$ = GetAsyncInvokeResponse$;
+    exports2.GuardrailAction = GuardrailAction;
+    exports2.GuardrailAssessment$ = GuardrailAssessment$;
+    exports2.GuardrailAutomatedReasoningFinding$ = GuardrailAutomatedReasoningFinding$;
+    exports2.GuardrailAutomatedReasoningImpossibleFinding$ = GuardrailAutomatedReasoningImpossibleFinding$;
+    exports2.GuardrailAutomatedReasoningInputTextReference$ = GuardrailAutomatedReasoningInputTextReference$;
+    exports2.GuardrailAutomatedReasoningInvalidFinding$ = GuardrailAutomatedReasoningInvalidFinding$;
+    exports2.GuardrailAutomatedReasoningLogicWarning$ = GuardrailAutomatedReasoningLogicWarning$;
+    exports2.GuardrailAutomatedReasoningLogicWarningType = GuardrailAutomatedReasoningLogicWarningType;
+    exports2.GuardrailAutomatedReasoningNoTranslationsFinding$ = GuardrailAutomatedReasoningNoTranslationsFinding$;
+    exports2.GuardrailAutomatedReasoningPolicyAssessment$ = GuardrailAutomatedReasoningPolicyAssessment$;
+    exports2.GuardrailAutomatedReasoningRule$ = GuardrailAutomatedReasoningRule$;
+    exports2.GuardrailAutomatedReasoningSatisfiableFinding$ = GuardrailAutomatedReasoningSatisfiableFinding$;
+    exports2.GuardrailAutomatedReasoningScenario$ = GuardrailAutomatedReasoningScenario$;
+    exports2.GuardrailAutomatedReasoningStatement$ = GuardrailAutomatedReasoningStatement$;
+    exports2.GuardrailAutomatedReasoningTooComplexFinding$ = GuardrailAutomatedReasoningTooComplexFinding$;
+    exports2.GuardrailAutomatedReasoningTranslation$ = GuardrailAutomatedReasoningTranslation$;
+    exports2.GuardrailAutomatedReasoningTranslationAmbiguousFinding$ = GuardrailAutomatedReasoningTranslationAmbiguousFinding$;
+    exports2.GuardrailAutomatedReasoningTranslationOption$ = GuardrailAutomatedReasoningTranslationOption$;
+    exports2.GuardrailAutomatedReasoningValidFinding$ = GuardrailAutomatedReasoningValidFinding$;
+    exports2.GuardrailChecksConfig$ = GuardrailChecksConfig$;
+    exports2.GuardrailChecksContentBlock$ = GuardrailChecksContentBlock$;
+    exports2.GuardrailChecksContentFilterCategory = GuardrailChecksContentFilterCategory;
+    exports2.GuardrailChecksContentFilterCategoryConfig$ = GuardrailChecksContentFilterCategoryConfig$;
+    exports2.GuardrailChecksContentFilterConfig$ = GuardrailChecksContentFilterConfig$;
+    exports2.GuardrailChecksContentFilterResult$ = GuardrailChecksContentFilterResult$;
+    exports2.GuardrailChecksContentFilterResultEntry$ = GuardrailChecksContentFilterResultEntry$;
+    exports2.GuardrailChecksContentFilterUsage$ = GuardrailChecksContentFilterUsage$;
+    exports2.GuardrailChecksMessage$ = GuardrailChecksMessage$;
+    exports2.GuardrailChecksPromptAttackCategory = GuardrailChecksPromptAttackCategory;
+    exports2.GuardrailChecksPromptAttackCategoryConfig$ = GuardrailChecksPromptAttackCategoryConfig$;
+    exports2.GuardrailChecksPromptAttackConfig$ = GuardrailChecksPromptAttackConfig$;
+    exports2.GuardrailChecksPromptAttackResult$ = GuardrailChecksPromptAttackResult$;
+    exports2.GuardrailChecksPromptAttackResultEntry$ = GuardrailChecksPromptAttackResultEntry$;
+    exports2.GuardrailChecksPromptAttackUsage$ = GuardrailChecksPromptAttackUsage$;
+    exports2.GuardrailChecksResults$ = GuardrailChecksResults$;
+    exports2.GuardrailChecksRole = GuardrailChecksRole;
+    exports2.GuardrailChecksSensitiveInformationConfig$ = GuardrailChecksSensitiveInformationConfig$;
+    exports2.GuardrailChecksSensitiveInformationEntityConfig$ = GuardrailChecksSensitiveInformationEntityConfig$;
+    exports2.GuardrailChecksSensitiveInformationEntityType = GuardrailChecksSensitiveInformationEntityType;
+    exports2.GuardrailChecksSensitiveInformationResult$ = GuardrailChecksSensitiveInformationResult$;
+    exports2.GuardrailChecksSensitiveInformationResultEntry$ = GuardrailChecksSensitiveInformationResultEntry$;
+    exports2.GuardrailChecksSensitiveInformationUsage$ = GuardrailChecksSensitiveInformationUsage$;
+    exports2.GuardrailChecksUsageResults$ = GuardrailChecksUsageResults$;
+    exports2.GuardrailConfiguration$ = GuardrailConfiguration$;
+    exports2.GuardrailContentBlock$ = GuardrailContentBlock$;
+    exports2.GuardrailContentFilter$ = GuardrailContentFilter$;
+    exports2.GuardrailContentFilterConfidence = GuardrailContentFilterConfidence;
+    exports2.GuardrailContentFilterStrength = GuardrailContentFilterStrength;
+    exports2.GuardrailContentFilterType = GuardrailContentFilterType;
+    exports2.GuardrailContentPolicyAction = GuardrailContentPolicyAction;
+    exports2.GuardrailContentPolicyAssessment$ = GuardrailContentPolicyAssessment$;
+    exports2.GuardrailContentQualifier = GuardrailContentQualifier;
+    exports2.GuardrailContentSource = GuardrailContentSource;
+    exports2.GuardrailContextualGroundingFilter$ = GuardrailContextualGroundingFilter$;
+    exports2.GuardrailContextualGroundingFilterType = GuardrailContextualGroundingFilterType;
+    exports2.GuardrailContextualGroundingPolicyAction = GuardrailContextualGroundingPolicyAction;
+    exports2.GuardrailContextualGroundingPolicyAssessment$ = GuardrailContextualGroundingPolicyAssessment$;
+    exports2.GuardrailConverseContentBlock$ = GuardrailConverseContentBlock$;
+    exports2.GuardrailConverseContentQualifier = GuardrailConverseContentQualifier;
+    exports2.GuardrailConverseImageBlock$ = GuardrailConverseImageBlock$;
+    exports2.GuardrailConverseImageFormat = GuardrailConverseImageFormat;
+    exports2.GuardrailConverseImageSource$ = GuardrailConverseImageSource$;
+    exports2.GuardrailConverseTextBlock$ = GuardrailConverseTextBlock$;
+    exports2.GuardrailCoverage$ = GuardrailCoverage$;
+    exports2.GuardrailCustomWord$ = GuardrailCustomWord$;
+    exports2.GuardrailImageBlock$ = GuardrailImageBlock$;
+    exports2.GuardrailImageCoverage$ = GuardrailImageCoverage$;
+    exports2.GuardrailImageFormat = GuardrailImageFormat;
+    exports2.GuardrailImageSource$ = GuardrailImageSource$;
+    exports2.GuardrailInvocationMetrics$ = GuardrailInvocationMetrics$;
+    exports2.GuardrailManagedWord$ = GuardrailManagedWord$;
+    exports2.GuardrailManagedWordType = GuardrailManagedWordType;
+    exports2.GuardrailOrigin = GuardrailOrigin;
+    exports2.GuardrailOutputContent$ = GuardrailOutputContent$;
+    exports2.GuardrailOutputScope = GuardrailOutputScope;
+    exports2.GuardrailOwnership = GuardrailOwnership;
+    exports2.GuardrailPiiEntityFilter$ = GuardrailPiiEntityFilter$;
+    exports2.GuardrailPiiEntityType = GuardrailPiiEntityType;
+    exports2.GuardrailRegexFilter$ = GuardrailRegexFilter$;
+    exports2.GuardrailSensitiveInformationPolicyAction = GuardrailSensitiveInformationPolicyAction;
+    exports2.GuardrailSensitiveInformationPolicyAssessment$ = GuardrailSensitiveInformationPolicyAssessment$;
+    exports2.GuardrailStreamConfiguration$ = GuardrailStreamConfiguration$;
+    exports2.GuardrailStreamProcessingMode = GuardrailStreamProcessingMode;
+    exports2.GuardrailTextBlock$ = GuardrailTextBlock$;
+    exports2.GuardrailTextCharactersCoverage$ = GuardrailTextCharactersCoverage$;
+    exports2.GuardrailTopic$ = GuardrailTopic$;
+    exports2.GuardrailTopicPolicyAction = GuardrailTopicPolicyAction;
+    exports2.GuardrailTopicPolicyAssessment$ = GuardrailTopicPolicyAssessment$;
+    exports2.GuardrailTopicType = GuardrailTopicType;
+    exports2.GuardrailTrace = GuardrailTrace;
+    exports2.GuardrailTraceAssessment$ = GuardrailTraceAssessment$;
+    exports2.GuardrailUsage$ = GuardrailUsage$;
+    exports2.GuardrailWordPolicyAction = GuardrailWordPolicyAction;
+    exports2.GuardrailWordPolicyAssessment$ = GuardrailWordPolicyAssessment$;
+    exports2.ImageBlock$ = ImageBlock$;
+    exports2.ImageBlockDelta$ = ImageBlockDelta$;
+    exports2.ImageBlockStart$ = ImageBlockStart$;
+    exports2.ImageFormat = ImageFormat;
+    exports2.ImageSource$ = ImageSource$;
+    exports2.InferenceConfiguration$ = InferenceConfiguration$;
+    exports2.InternalServerException = InternalServerException3;
+    exports2.InternalServerException$ = InternalServerException$3;
+    exports2.InvokeGuardrailChecks$ = InvokeGuardrailChecks$;
+    exports2.InvokeGuardrailChecksCommand = InvokeGuardrailChecksCommand;
+    exports2.InvokeGuardrailChecksRequest$ = InvokeGuardrailChecksRequest$;
+    exports2.InvokeGuardrailChecksResponse$ = InvokeGuardrailChecksResponse$;
+    exports2.InvokeModel$ = InvokeModel$;
+    exports2.InvokeModelCommand = InvokeModelCommand2;
+    exports2.InvokeModelRequest$ = InvokeModelRequest$;
+    exports2.InvokeModelResponse$ = InvokeModelResponse$;
+    exports2.InvokeModelTokensRequest$ = InvokeModelTokensRequest$;
+    exports2.InvokeModelWithBidirectionalStream$ = InvokeModelWithBidirectionalStream$;
+    exports2.InvokeModelWithBidirectionalStreamCommand = InvokeModelWithBidirectionalStreamCommand;
+    exports2.InvokeModelWithBidirectionalStreamInput$ = InvokeModelWithBidirectionalStreamInput$;
+    exports2.InvokeModelWithBidirectionalStreamOutput$ = InvokeModelWithBidirectionalStreamOutput$;
+    exports2.InvokeModelWithBidirectionalStreamRequest$ = InvokeModelWithBidirectionalStreamRequest$;
+    exports2.InvokeModelWithBidirectionalStreamResponse$ = InvokeModelWithBidirectionalStreamResponse$;
+    exports2.InvokeModelWithResponseStream$ = InvokeModelWithResponseStream$;
+    exports2.InvokeModelWithResponseStreamCommand = InvokeModelWithResponseStreamCommand;
+    exports2.InvokeModelWithResponseStreamRequest$ = InvokeModelWithResponseStreamRequest$;
+    exports2.InvokeModelWithResponseStreamResponse$ = InvokeModelWithResponseStreamResponse$;
+    exports2.JsonSchemaDefinition$ = JsonSchemaDefinition$;
+    exports2.ListAsyncInvokes$ = ListAsyncInvokes$;
+    exports2.ListAsyncInvokesCommand = ListAsyncInvokesCommand;
+    exports2.ListAsyncInvokesRequest$ = ListAsyncInvokesRequest$;
+    exports2.ListAsyncInvokesResponse$ = ListAsyncInvokesResponse$;
+    exports2.Message$ = Message$;
+    exports2.MessageStartEvent$ = MessageStartEvent$;
+    exports2.MessageStopEvent$ = MessageStopEvent$;
+    exports2.ModelErrorException = ModelErrorException;
+    exports2.ModelErrorException$ = ModelErrorException$;
+    exports2.ModelNotReadyException = ModelNotReadyException;
+    exports2.ModelNotReadyException$ = ModelNotReadyException$;
+    exports2.ModelStreamErrorException = ModelStreamErrorException;
+    exports2.ModelStreamErrorException$ = ModelStreamErrorException$;
+    exports2.ModelTimeoutException = ModelTimeoutException;
+    exports2.ModelTimeoutException$ = ModelTimeoutException$;
+    exports2.OutputConfig$ = OutputConfig$;
+    exports2.OutputFormat$ = OutputFormat$;
+    exports2.OutputFormatStructure$ = OutputFormatStructure$;
+    exports2.OutputFormatType = OutputFormatType;
+    exports2.PayloadPart$ = PayloadPart$;
+    exports2.PerformanceConfigLatency = PerformanceConfigLatency;
+    exports2.PerformanceConfiguration$ = PerformanceConfiguration$;
+    exports2.PromptRouterTrace$ = PromptRouterTrace$;
+    exports2.PromptVariableValues$ = PromptVariableValues$;
+    exports2.ReasoningContentBlock$ = ReasoningContentBlock$;
+    exports2.ReasoningContentBlockDelta$ = ReasoningContentBlockDelta$;
+    exports2.ReasoningTextBlock$ = ReasoningTextBlock$;
+    exports2.ResourceNotFoundException = ResourceNotFoundException2;
+    exports2.ResourceNotFoundException$ = ResourceNotFoundException$2;
+    exports2.ResponseStream$ = ResponseStream$;
+    exports2.S3Location$ = S3Location$;
+    exports2.SearchResultBlock$ = SearchResultBlock$;
+    exports2.SearchResultContentBlock$ = SearchResultContentBlock$;
+    exports2.SearchResultLocation$ = SearchResultLocation$;
+    exports2.ServiceQuotaExceededException = ServiceQuotaExceededException;
+    exports2.ServiceQuotaExceededException$ = ServiceQuotaExceededException$;
+    exports2.ServiceTier$ = ServiceTier$;
+    exports2.ServiceTierType = ServiceTierType;
+    exports2.ServiceUnavailableException = ServiceUnavailableException;
+    exports2.ServiceUnavailableException$ = ServiceUnavailableException$;
+    exports2.SortAsyncInvocationBy = SortAsyncInvocationBy;
+    exports2.SortOrder = SortOrder;
+    exports2.SpecificToolChoice$ = SpecificToolChoice$;
+    exports2.StartAsyncInvoke$ = StartAsyncInvoke$;
+    exports2.StartAsyncInvokeCommand = StartAsyncInvokeCommand;
+    exports2.StartAsyncInvokeRequest$ = StartAsyncInvokeRequest$;
+    exports2.StartAsyncInvokeResponse$ = StartAsyncInvokeResponse$;
+    exports2.StopReason = StopReason;
+    exports2.SystemContentBlock$ = SystemContentBlock$;
+    exports2.SystemTool$ = SystemTool$;
+    exports2.Tag$ = Tag$2;
+    exports2.ThrottlingException = ThrottlingException;
+    exports2.ThrottlingException$ = ThrottlingException$;
+    exports2.TokenUsage$ = TokenUsage$;
+    exports2.Tool$ = Tool$;
+    exports2.ToolAdditionBlock$ = ToolAdditionBlock$;
+    exports2.ToolChoice$ = ToolChoice$;
+    exports2.ToolConfiguration$ = ToolConfiguration$;
+    exports2.ToolInputSchema$ = ToolInputSchema$;
+    exports2.ToolReference$ = ToolReference$;
+    exports2.ToolRemovalBlock$ = ToolRemovalBlock$;
+    exports2.ToolResultBlock$ = ToolResultBlock$;
+    exports2.ToolResultBlockDelta$ = ToolResultBlockDelta$;
+    exports2.ToolResultBlockStart$ = ToolResultBlockStart$;
+    exports2.ToolResultContentBlock$ = ToolResultContentBlock$;
+    exports2.ToolResultStatus = ToolResultStatus;
+    exports2.ToolSpecification$ = ToolSpecification$;
+    exports2.ToolUseBlock$ = ToolUseBlock$;
+    exports2.ToolUseBlockDelta$ = ToolUseBlockDelta$;
+    exports2.ToolUseBlockStart$ = ToolUseBlockStart$;
+    exports2.ToolUseType = ToolUseType;
+    exports2.Trace = Trace;
+    exports2.ValidationException = ValidationException2;
+    exports2.ValidationException$ = ValidationException$2;
+    exports2.VideoBlock$ = VideoBlock$;
+    exports2.VideoFormat = VideoFormat;
+    exports2.VideoSource$ = VideoSource$;
+    exports2.WebLocation$ = WebLocation$;
+    exports2.errorTypeRegistries = errorTypeRegistries5;
+    exports2.paginateListAsyncInvokes = paginateListAsyncInvokes;
+  }
+});
+
 // backend/src/lambda.ts
 var lambda_exports = {};
 __export(lambda_exports, {
   handler: () => handler
 });
 module.exports = __toCommonJS(lambda_exports);
-
-// backend/src/bedrock.ts
-var import_client_bedrock_runtime = __toESM(require_dist_cjs21(), 1);
-var client = new import_client_bedrock_runtime.BedrockRuntimeClient({
-  region: process.env.AWS_REGION || "us-east-1"
-});
-async function invokeBedrockClaude(messages, systemPrompt, maxTokens = 1024, tools2) {
-  const modelId = process.env.BEDROCK_MODEL_ID || "anthropic.claude-3-sonnet-20240229-v1:0";
-  const payload2 = {
-    anthropic_version: "bedrock-2023-05-31",
-    max_tokens: maxTokens,
-    messages
-  };
-  if (systemPrompt) {
-    payload2.system = systemPrompt;
-  }
-  if (tools2 && tools2.length > 0) {
-    payload2.tools = tools2;
-  }
-  const command5 = new import_client_bedrock_runtime.InvokeModelCommand({
-    modelId,
-    contentType: "application/json",
-    accept: "application/json",
-    body: JSON.stringify(payload2)
-  });
-  const response = await client.send(command5);
-  const result = JSON.parse(
-    new TextDecoder().decode(response.body)
-  );
-  return result;
-}
-async function chat(userMessage, systemPrompt) {
-  const response = await invokeBedrockClaude(
-    [{ role: "user", content: userMessage }],
-    systemPrompt
-  );
-  return response.content[0]?.text ?? "";
-}
-
-// backend/src/tools.ts
-var import_lib_dynamodb2 = __toESM(require_dist_cjs27(), 1);
+var import_lib_dynamodb3 = __toESM(require_dist_cjs21(), 1);
 
 // node_modules/dotenv/config.js
 (function() {
@@ -39053,97 +39013,402 @@ var import_lib_dynamodb2 = __toESM(require_dist_cjs27(), 1);
 })();
 
 // db/scripts/dynamo.ts
-var import_client_dynamodb = __toESM(require_dist_cjs26(), 1);
-var import_lib_dynamodb = __toESM(require_dist_cjs27(), 1);
-var client2 = new import_client_dynamodb.DynamoDBClient({
+var import_client_dynamodb = __toESM(require_dist_cjs20(), 1);
+var import_lib_dynamodb = __toESM(require_dist_cjs21(), 1);
+var client = new import_client_dynamodb.DynamoDBClient({
   region: process.env.AWS_REGION || "us-east-1"
 });
-var ddb = import_lib_dynamodb.DynamoDBDocumentClient.from(client2);
+var ddb = import_lib_dynamodb.DynamoDBDocumentClient.from(client);
 
-// backend/src/tools.ts
-var tools = [
-  {
-    name: "search_vendor",
-    description: "\u4F9D\u670D\u52D9\u985E\u578B\uFF08\u8207\u9078\u586B\u95DC\u9375\u5B57\uFF09\u67E5\u8A62\u670D\u52D9\u5546\u8207\u670D\u52D9\u9805\u76EE",
-    input_schema: {
-      type: "object",
-      properties: {
-        type: {
-          type: "string",
-          description: "\u670D\u52D9\u985E\u578B\u4EE3\u78BC\uFF1A1\u6E05\u6F54/2\u5BB6\u96FB\u6E05\u6D17/3\u5BC4\u4EF6/6\u8A02\u4F4D/9\u5916\u9001/10\u6C34\u96FB\u4FEE\u7E55/11\u8CFC\u7269"
-        },
-        keyword: { type: "string", description: "\u670D\u52D9\u5546\u6216\u670D\u52D9\u540D\u7A31\u95DC\u9375\u5B57\uFF08\u9078\u586B\uFF09" }
-      },
-      required: ["type"]
-    },
-    async execute(input) {
-      const { Items } = await ddb.send(
-        new import_lib_dynamodb2.QueryCommand({
-          TableName: process.env.DYNAMO_VENDOR_TABLE ?? "service_vendor",
-          KeyConditionExpression: "#type = :type",
-          ExpressionAttributeNames: { "#type": "type" },
-          ExpressionAttributeValues: { ":type": input.type },
-          Limit: 10
-        })
-      );
-      const keyword = typeof input.keyword === "string" ? input.keyword.toLowerCase() : void 0;
-      const items = Items ?? [];
-      return keyword ? items.filter(
-        (item) => item.service_name?.toLowerCase().includes(keyword) || item.vendor_name?.toLowerCase().includes(keyword)
-      ) : items;
-    }
+// backend/src/bedrock.ts
+var import_client_bedrock_runtime = __toESM(require_dist_cjs27(), 1);
+var client2 = new import_client_bedrock_runtime.BedrockRuntimeClient({
+  region: process.env.AWS_REGION || "us-east-1"
+});
+async function invokeBedrockClaude(messages, systemPrompt, maxTokens = 1024, tools) {
+  const modelId = process.env.BEDROCK_MODEL_ID || "anthropic.claude-3-sonnet-20240229-v1:0";
+  const payload2 = {
+    anthropic_version: "bedrock-2023-05-31",
+    max_tokens: maxTokens,
+    messages
+  };
+  if (systemPrompt) {
+    payload2.system = systemPrompt;
   }
-];
-function getToolDefinitions() {
-  return tools.map(({ name, description, input_schema }) => ({
-    name,
-    description,
-    input_schema
-  }));
+  if (tools && tools.length > 0) {
+    payload2.tools = tools;
+  }
+  const command5 = new import_client_bedrock_runtime.InvokeModelCommand({
+    modelId,
+    contentType: "application/json",
+    accept: "application/json",
+    body: JSON.stringify(payload2)
+  });
+  const response = await client2.send(command5);
+  const result = JSON.parse(
+    new TextDecoder().decode(response.body)
+  );
+  return result;
 }
-async function runTool(name, input) {
-  const tool = tools.find((t) => t.name === name);
-  if (!tool) throw new Error(`\u672A\u77E5\u5DE5\u5177: ${name}`);
-  return tool.execute(input);
+async function chat(userMessage, systemPrompt) {
+  const response = await invokeBedrockClaude(
+    [{ role: "user", content: userMessage }],
+    systemPrompt
+  );
+  return response.content[0]?.text ?? "";
 }
 
 // backend/src/agent.ts
-var MAX_STEPS = 5;
-async function runAgentLoop(messages, systemPrompt) {
-  const history = [...messages];
-  const tools2 = getToolDefinitions();
-  for (let step = 0; step < MAX_STEPS; step++) {
-    const response = await invokeBedrockClaude(history, systemPrompt, 1024, tools2);
-    if (response.stop_reason !== "tool_use") {
-      return response.content.find((c5) => c5.type === "text")?.text ?? "";
-    }
-    history.push({ role: "assistant", content: response.content });
-    const toolUses = response.content.filter((c5) => c5.type === "tool_use");
-    const toolResults = await Promise.all(
-      toolUses.map(async (call) => {
-        try {
-          const result = await runTool(call.name, call.input ?? {});
-          return {
-            type: "tool_result",
-            tool_use_id: call.id,
-            content: JSON.stringify(result)
-          };
-        } catch (err2) {
-          return {
-            type: "tool_result",
-            tool_use_id: call.id,
-            content: `error: ${err2 instanceof Error ? err2.message : "\u672A\u77E5\u932F\u8AA4"}`
-          };
-        }
-      })
+var import_client_bedrock_runtime2 = __toESM(require_dist_cjs27(), 1);
+
+// backend/src/tools/searchProduct.ts
+async function searchProduct(input) {
+  const mockProducts = [
+    { id: "p1", name: "\u6FC3\u8403\u7F8E\u5F0F\u5496\u5561", price: 55, description: "\u9580\u5E02\u73FE\u716E\u7F8E\u5F0F", category: "\u98F2\u54C1" },
+    { id: "p2", name: "\u62FF\u9435\u5496\u5561", price: 65, description: "\u9580\u5E02\u73FE\u716E\u62FF\u9435", category: "\u98F2\u54C1" },
+    { id: "p3", name: "\u80FD\u91CF\u88DC\u7D66B\u7FA4", price: 89, description: "\u63D0\u795E\u4FDD\u5065\u98DF\u54C1", category: "\u4FDD\u5065" },
+    { id: "p4", name: "\u71B1\u58D3\u5410\u53F8(\u706B\u817F\u8D77\u53F8)", price: 45, description: "\u9580\u5E02\u71B1\u98DF", category: "\u98DF\u54C1" },
+    { id: "p5", name: "\u96E8\u5098(\u6298\u758A)", price: 199, description: "\u8F15\u4FBF\u6298\u758A\u5098", category: "\u751F\u6D3B\u7528\u54C1" }
+  ];
+  let results = mockProducts;
+  if (input.keyword) {
+    const kw = input.keyword.toLowerCase();
+    results = results.filter(
+      (p3) => p3.name.includes(kw) || p3.description.includes(kw) || p3.category.includes(kw)
     );
-    history.push({ role: "user", content: toolResults });
   }
-  throw new Error(`Agent Loop \u8D85\u904E ${MAX_STEPS} \u6B65\u4ECD\u672A\u5F97\u5230\u6700\u7D42\u56DE\u8986`);
+  if (input.category) {
+    results = results.filter((p3) => p3.category === input.category);
+  }
+  if (input.limit) {
+    results = results.slice(0, input.limit);
+  }
+  return { products: results };
+}
+
+// backend/src/tools/searchService.ts
+var import_lib_dynamodb2 = __toESM(require_dist_cjs21(), 1);
+async function searchService(input) {
+  const tableName = process.env.DYNAMO_SERVICE_TABLE ?? "ServicesCatalog";
+  const { Items } = await ddb.send(new import_lib_dynamodb2.ScanCommand({ TableName: tableName }));
+  let services = Items ?? [];
+  if (input.type !== void 0) {
+    services = services.filter((s2) => parseInt(s2.type, 10) === input.type);
+  }
+  if (input.keyword) {
+    const kw = input.keyword.toLowerCase();
+    services = services.filter(
+      (s2) => s2.service_name?.toLowerCase().includes(kw) || s2.description?.toLowerCase().includes(kw) || s2.vendor_name?.toLowerCase().includes(kw)
+    );
+  }
+  return { services };
+}
+
+// backend/src/tools/getUserProfile.ts
+async function getUserProfile(input) {
+  const mockProfile = {
+    userId: input.userId,
+    hashtags: ["#\u6548\u7387\u512A\u5148", "#\u5546\u52D9\u51FA\u5DEE", "#\u5496\u5561\u63A7", "#\u884C\u52D5\u652F\u4ED8"],
+    preferences: {
+      decisionStyle: "\u6548\u7387\u512A\u5148",
+      lifestyle: "\u5546\u52D9\u51FA\u5DEE",
+      habits: ["\u8D85\u5546\u53D6\u8CA8", "\u884C\u52D5\u652F\u4ED8", "\u5916\u9001\u5E38\u5BA2"]
+    }
+  };
+  return { profile: mockProfile };
+}
+
+// backend/src/tools/createBundle.ts
+async function createBundle(input) {
+  const bundle = {
+    bundleId: `bnd-${Date.now()}`,
+    userId: input.userId,
+    title: input.title,
+    steps: input.steps.map((step, i5) => ({
+      stepId: `step-${i5 + 1}`,
+      description: step.description,
+      serviceId: step.serviceId,
+      productId: step.productId,
+      completed: false
+    })),
+    status: "draft",
+    createdAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  return { bundle };
+}
+
+// backend/src/tools/createOrder.ts
+async function createOrder(input) {
+  const totalPrice = input.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const order = {
+    orderId: `ord-${Date.now()}`,
+    userId: input.userId,
+    items: input.items,
+    totalPrice,
+    status: "draft",
+    remark: input.remark,
+    createdAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+  return { order };
+}
+
+// backend/src/tools/getWeather.ts
+async function getWeather(input) {
+  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
+  return {
+    city: input.city,
+    date: input.date ?? today,
+    temperature: 28,
+    condition: "\u591A\u96F2",
+    rainProbability: 60,
+    suggestion: "\u964D\u96E8\u6A5F\u7387\u504F\u9AD8\uFF0C\u5EFA\u8B70\u651C\u5E36\u96E8\u5177"
+  };
+}
+
+// backend/src/tools/index.ts
+async function executeTool(toolName, input) {
+  switch (toolName) {
+    case "search_product":
+      return await searchProduct(input);
+    case "search_service":
+      return await searchService(input);
+    case "get_user_profile":
+      return await getUserProfile(input);
+    case "create_bundle":
+      return await createBundle(input);
+    case "create_order":
+      return await createOrder(input);
+    case "get_weather":
+      return await getWeather(input);
+    default:
+      throw new Error(`\u672A\u77E5\u7684\u5DE5\u5177: ${toolName}`);
+  }
+}
+var toolDefinitions = [
+  {
+    toolSpec: {
+      name: "search_product",
+      description: "\u641C\u5C0B\u96F6\u552E\u5546\u54C1\u3002\u6839\u64DA\u95DC\u9375\u5B57\u6216\u5206\u985E\u5C0B\u627E\u53EF\u8CFC\u8CB7\u7684\u5546\u54C1\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            keyword: { type: "string", description: "\u641C\u5C0B\u95DC\u9375\u5B57" },
+            category: { type: "string", description: "\u5546\u54C1\u5206\u985E\uFF08\u98F2\u54C1\u3001\u98DF\u54C1\u3001\u4FDD\u5065\u3001\u751F\u6D3B\u7528\u54C1\uFF09" },
+            limit: { type: "number", description: "\u56DE\u50B3\u6578\u91CF\u4E0A\u9650" }
+          },
+          required: ["keyword"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "search_service",
+      description: "\u641C\u5C0B\u670D\u52D9\u9805\u76EE\u3002\u6839\u64DA\u985E\u578B\u6216\u95DC\u9375\u5B57\u5C0B\u627E\u53EF\u9810\u7D04\u7684\u670D\u52D9\uFF08\u6E05\u6F54\u3001\u4EA4\u901A\u3001\u5916\u9001\u3001\u8A02\u4F4D\u7B49\uFF09\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            type: {
+              type: "number",
+              description: "\u670D\u52D9\u985E\u578B\uFF1A1=\u6E05\u6F54, 2=\u5BB6\u96FB\u6E05\u6D17, 3=\u4EA4\u901A\u5BC4\u4EF6, 6=\u8A02\u4F4D, 9=\u5916\u9001, 10=\u6C34\u96FB\u4FEE\u7E55, 11=\u8CFC\u7269"
+            },
+            keyword: { type: "string", description: "\u641C\u5C0B\u95DC\u9375\u5B57" }
+          }
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "get_user_profile",
+      description: "\u53D6\u5F97\u4F7F\u7528\u8005\u7684\u504F\u597D\u8A2D\u5B9A\u8207 hashtag \u6A19\u7C64\uFF0C\u7528\u4F86\u500B\u4EBA\u5316\u63A8\u85A6\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            userId: { type: "string", description: "\u4F7F\u7528\u8005 ID" }
+          },
+          required: ["userId"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "create_bundle",
+      description: "\u5EFA\u7ACB\u884C\u7A0B\u5305\u8349\u7A3F\u3002\u5C07\u591A\u500B\u670D\u52D9\u548C\u5546\u54C1\u6253\u5305\u6210\u4E00\u500B\u884C\u7A0B\u8A08\u756B\uFF0C\u5305\u542B\u6B65\u9A5F\u6E05\u55AE\u3002\u9700\u4F7F\u7528\u8005\u78BA\u8A8D\u5F8C\u624D\u6B63\u5F0F\u751F\u6548\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            userId: { type: "string", description: "\u4F7F\u7528\u8005 ID" },
+            title: { type: "string", description: "\u884C\u7A0B\u5305\u6A19\u984C" },
+            steps: {
+              type: "array",
+              description: "\u884C\u7A0B\u6B65\u9A5F\u5217\u8868",
+              items: {
+                type: "object",
+                properties: {
+                  description: { type: "string", description: "\u6B65\u9A5F\u63CF\u8FF0" },
+                  serviceId: { type: "string", description: "\u95DC\u806F\u7684\u670D\u52D9 ID" },
+                  productId: { type: "string", description: "\u95DC\u806F\u7684\u5546\u54C1 ID" }
+                },
+                required: ["description"]
+              }
+            }
+          },
+          required: ["userId", "title", "steps"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "create_order",
+      description: "\u5EFA\u7ACB\u8A02\u55AE\u8349\u7A3F\u3002\u5C07\u5546\u54C1\u6216\u670D\u52D9\u52A0\u5165\u8A02\u55AE\uFF0C\u9700\u4F7F\u7528\u8005\u78BA\u8A8D\u5F8C\u624D\u6B63\u5F0F\u6210\u7ACB\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            userId: { type: "string", description: "\u4F7F\u7528\u8005 ID" },
+            items: {
+              type: "array",
+              description: "\u8A02\u55AE\u9805\u76EE",
+              items: {
+                type: "object",
+                properties: {
+                  productId: { type: "string", description: "\u5546\u54C1 ID" },
+                  serviceId: { type: "string", description: "\u670D\u52D9 ID" },
+                  name: { type: "string", description: "\u9805\u76EE\u540D\u7A31" },
+                  quantity: { type: "number", description: "\u6578\u91CF" },
+                  price: { type: "number", description: "\u55AE\u50F9" }
+                },
+                required: ["name", "quantity", "price"]
+              }
+            },
+            remark: { type: "string", description: "\u5099\u8A3B" }
+          },
+          required: ["userId", "items"]
+        }
+      }
+    }
+  },
+  {
+    toolSpec: {
+      name: "get_weather",
+      description: "\u67E5\u8A62\u6307\u5B9A\u57CE\u5E02\u7684\u5929\u6C23\u8CC7\u8A0A\uFF0C\u7528\u65BC\u60C5\u5883\u611F\u77E5\u63A8\u85A6\uFF08\u5982\u4E0B\u96E8\u63A8\u85A6\u96E8\u5177\u3001\u53EB\u8ECA\uFF09\u3002",
+      inputSchema: {
+        json: {
+          type: "object",
+          properties: {
+            city: { type: "string", description: "\u57CE\u5E02\u540D\u7A31" },
+            date: { type: "string", description: "\u65E5\u671F (YYYY-MM-DD)\uFF0C\u7701\u7565\u5247\u70BA\u4ECA\u5929" }
+          },
+          required: ["city"]
+        }
+      }
+    }
+  }
+];
+
+// backend/src/agent.ts
+var client3 = new import_client_bedrock_runtime2.BedrockRuntimeClient({
+  region: process.env.AWS_REGION || "us-west-2"
+});
+var MODEL_ID = process.env.BEDROCK_MODEL_ID || "us.anthropic.claude-sonnet-4-20250514-v1:0";
+var MAX_STEPS = 10;
+var SYSTEM_PROMPT = `\u4F60\u662F UNI Flow \u667A\u6167\u96F6\u552E\u7BA1\u5BB6\uFF0C\u4E00\u500B\u57FA\u65BC AI \u7684\u667A\u6167\u793E\u5340\u8207\u96F6\u552E\u670D\u52D9\u52A9\u624B\u3002
+
+\u4F60\u7684\u89D2\u8272\uFF1A
+- \u7406\u89E3\u4F7F\u7528\u8005\u7684\u751F\u6D3B\u9700\u6C42\uFF08\u98DF\u8863\u4F4F\u884C\u80B2\u6A02\uFF09
+- \u6839\u64DA\u4F7F\u7528\u8005\u504F\u597D\u63A8\u85A6\u9069\u5408\u7684\u670D\u52D9\u548C\u5546\u54C1
+- \u5C07\u8907\u96DC\u9700\u6C42\u62C6\u89E3\u70BA\u5177\u9AD4\u6B65\u9A5F
+- \u5354\u52A9\u6253\u5305\u884C\u7A0B\u3001\u4E0B\u55AE\u5546\u54C1\u3001\u9810\u7D04\u670D\u52D9
+
+\u898F\u5247\uFF1A
+- \u5EFA\u7ACB\u8A02\u55AE\u6216\u884C\u7A0B\u5305\u524D\uFF0C\u5148\u78BA\u8A8D\u4F7F\u7528\u8005\u610F\u9858
+- \u56DE\u8986\u4F7F\u7528\u7E41\u9AD4\u4E2D\u6587
+- \u4FDD\u6301\u7C21\u6F54\u89AA\u5207\u7684\u8A9E\u6C23
+- \u5982\u679C\u9700\u8981\u66F4\u591A\u8CC7\u8A0A\uFF0C\u4E3B\u52D5\u8A62\u554F\u4F7F\u7528\u8005`;
+async function agentChat(userId, userMessage, conversationHistory = []) {
+  const messages = [
+    ...conversationHistory,
+    { role: "user", content: [{ text: userMessage }] }
+  ];
+  for (let step = 0; step < MAX_STEPS; step++) {
+    const command5 = new import_client_bedrock_runtime2.ConverseCommand({
+      modelId: MODEL_ID,
+      system: [{ text: SYSTEM_PROMPT + `
+
+\u76EE\u524D\u4F7F\u7528\u8005 ID: ${userId}` }],
+      messages,
+      toolConfig: {
+        tools: toolDefinitions
+      }
+    });
+    const response = await client3.send(command5);
+    const stopReason = response.stopReason;
+    const outputMessage = response.output?.message;
+    if (!outputMessage) {
+      throw new Error("Bedrock \u6C92\u6709\u56DE\u50B3\u8A0A\u606F");
+    }
+    messages.push({ role: "assistant", content: outputMessage.content });
+    if (stopReason === "end_turn") {
+      const textContent = outputMessage.content?.find((block) => block.text);
+      const reply = textContent?.text ?? "";
+      return { reply, history: messages };
+    }
+    if (stopReason === "tool_use") {
+      const toolUseBlocks = outputMessage.content?.filter(
+        (block) => block.toolUse
+      ) ?? [];
+      const toolResults = [];
+      for (const block of toolUseBlocks) {
+        const toolUse = block.toolUse;
+        const toolUseId = toolUse.toolUseId;
+        const name = toolUse.name;
+        const input = toolUse.input;
+        console.log(`[Agent] \u4F7F\u7528\u5DE5\u5177: ${name}`, JSON.stringify(input));
+        try {
+          const result = await executeTool(name, input);
+          toolResults.push({
+            toolResult: {
+              toolUseId,
+              content: [{ json: result }]
+            }
+          });
+        } catch (err2) {
+          const errorMsg = err2 instanceof Error ? err2.message : "\u5DE5\u5177\u57F7\u884C\u5931\u6557";
+          console.error(`[Agent] \u5DE5\u5177\u932F\u8AA4: ${name}`, errorMsg);
+          toolResults.push({
+            toolResult: {
+              toolUseId,
+              content: [{ text: `\u5DE5\u5177\u57F7\u884C\u5931\u6557: ${errorMsg}` }],
+              status: "error"
+            }
+          });
+        }
+      }
+      messages.push({ role: "user", content: toolResults });
+    }
+  }
+  return {
+    reply: "\u62B1\u6B49\uFF0C\u6211\u8655\u7406\u9019\u500B\u8ACB\u6C42\u82B1\u4E86\u592A\u9577\u6642\u9593\u3002\u53EF\u4EE5\u7C21\u5316\u4F60\u7684\u9700\u6C42\u518D\u8A66\u4E00\u6B21\u55CE\uFF1F",
+    history: messages
+  };
 }
 
 // backend/src/lambda.ts
 async function handler(event) {
+  const method = event.requestContext?.http?.method ?? "POST";
+  if (method === "OPTIONS") {
+    return json(200, {});
+  }
+  if (method === "GET") {
+    return handleGetData(event);
+  }
   try {
     const body = JSON.parse(event.body || "{}");
     const isAgent = event.rawPath?.endsWith("/agent") || body.agent === true;
@@ -39152,8 +39417,10 @@ async function handler(event) {
         return json(400, { error: "messages \u6B04\u4F4D\u70BA\u5FC5\u586B\u4E14\u9808\u70BA\u975E\u7A7A\u9663\u5217" });
       }
       if (isAgent) {
-        const reply = await runAgentLoop(body.messages, body.systemPrompt);
-        return json(200, { reply });
+        const lastMsg = body.messages[body.messages.length - 1];
+        const userMessage = typeof lastMsg?.content === "string" ? lastMsg.content : "";
+        const result = await agentChat(body.userId || "anonymous", userMessage, []);
+        return json(200, { reply: result.reply });
       }
       const response = await invokeBedrockClaude(
         body.messages,
@@ -39177,10 +39444,34 @@ async function handler(event) {
     return json(500, { error: "AI \u56DE\u8986\u5931\u6557", detail });
   }
 }
+async function handleGetData(event) {
+  const tableName = event.queryStringParameters?.table ?? process.env.DYNAMO_SERVICE_TABLE ?? process.env.DYNAMO_VENDOR_TABLE;
+  if (!tableName) {
+    return json(500, {
+      error: "\u672A\u8A2D\u5B9A\u8CC7\u6599\u8868\u540D\u7A31",
+      detail: "\u8ACB\u7528 ?table=\u8CC7\u6599\u8868\u540D\u7A31\uFF0C\u6216\u5728\u74B0\u5883\u8B8A\u6578\u8A2D\u5B9A DYNAMO_SERVICE_TABLE"
+    });
+  }
+  try {
+    const { Items } = await ddb.send(
+      new import_lib_dynamodb3.ScanCommand({ TableName: tableName, Limit: 20 })
+    );
+    return json(200, { table: tableName, count: Items?.length ?? 0, items: Items ?? [] });
+  } catch (err2) {
+    console.error("DynamoDB \u67E5\u8A62\u5931\u6557:", err2);
+    const detail = err2 instanceof Error ? err2.message : "\u672A\u77E5\u932F\u8AA4";
+    return json(500, { error: "\u8CC7\u6599\u67E5\u8A62\u5931\u6557", detail });
+  }
+}
 function json(statusCode, body) {
   return {
     statusCode,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "GET,POST,OPTIONS"
+    },
     body: JSON.stringify(body)
   };
 }
