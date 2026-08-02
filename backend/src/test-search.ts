@@ -27,7 +27,7 @@ async function test() {
   console.log("4. 搜尋所有服務：");
   const r4 = await searchService({});
   console.log(`  共 ${r4.services.length} 筆`);
-  r4.services.forEach((s) => console.log(`  - ${s.name} (${s.vendorName})`));
+  r4.services.forEach((s) => console.log(`  - ${s.service_name} (${s.vendor_name})`));
 }
 
 test().catch(console.error);
