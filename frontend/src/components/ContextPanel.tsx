@@ -253,14 +253,41 @@ export default function ContextPanel({
             {tasks.map((task: any) => {
               const currentStatus = taskStates[task.id] || task.status;
               const cfg = statusConfig[currentStatus] || statusConfig["pending"];
+              const bookableId = task.serviceId || task.productId;
+              const inCart = bookableId ? cartItems.some((c) => c.id === bookableId) : false;
+              const actionLabel = task.category === "transport" ? "叫車" : task.productId ? "加入購物車" : "預約";
               return (
                 <div key={task.id} style={{ background: "white", borderRadius: 12, padding: "12px 14px", border: "1px solid #E5E7EB", display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>{task.icon}</span>
+                  {task.imgUrl ? (
+                    <img src={task.imgUrl} alt="" style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
+                  ) : (
+                    <span style={{ fontSize: 20, flexShrink: 0 }}>{task.icon}</span>
+                  )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, color: "#0F0A2E", marginBottom: 2 }}>{task.title}</div>
                     <div style={{ fontSize: 11, color: "#6B7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{task.detail}</div>
                   </div>
-                  <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, padding: "3px 8px", borderRadius: 20, flexShrink: 0, fontFamily: "var(--font-display)" }}>{cfg.label}</span>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, padding: "3px 8px", borderRadius: 20, fontFamily: "var(--font-display)" }}>{cfg.label}</span>
+                    {bookableId && (
+                      <button
+                        onClick={() => {
+                          if (inCart) return;
+                          onProductAdd({
+                            id: bookableId,
+                            name: task.vendorName ? `${task.vendorName} · ${task.title}` : task.title,
+                            detail: task.detail,
+                            price: task.price ?? 0,
+                            qty: 1,
+                            icon: task.icon,
+                          });
+                        }}
+                        style={{ fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 20, border: "none", cursor: inCart ? "default" : "pointer", background: inCart ? "#DCFCE7" : "#6246EA", color: inCart ? "#16A34A" : "white", fontFamily: "var(--font-display)", whiteSpace: "nowrap" }}
+                      >
+                        {inCart ? "✓ 已加入" : actionLabel}
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}

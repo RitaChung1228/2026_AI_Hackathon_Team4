@@ -173,6 +173,13 @@ export interface AgentResult {
       title: string;
       status: "confirmed" | "in-progress" | "pending";
       detail: string;
+      /** 讓前端能連到商品/服務詳情或叫車等動作，而不是只顯示文字 */
+      serviceId?: string;
+      productId?: string;
+      vendorName?: string;
+      price?: number;
+      imgUrl?: string;
+      category?: string;
     }>;
   };
   /** Agent 過程中呼叫的工具清單（供前端顯示分析動畫步驟） */
@@ -353,8 +360,9 @@ function extractMission(toolCalls: ToolCallRecord[]): AgentResult["mission"] {
   const serviceById = new Map<string, any>();
   const productById = new Map<string, any>();
   for (const tc of toolCalls) {
+    // Service 的主鍵欄位是 service_id（snake_case，見 types.ts），不是 id
     if (tc.name === "search_service") {
-      for (const s of (tc.result as any)?.services ?? []) serviceById.set(s.id, s);
+      for (const s of (tc.result as any)?.services ?? []) serviceById.set(s.service_id, s);
     }
     if (tc.name === "search_product") {
       for (const p of (tc.result as any)?.products ?? []) productById.set(p.id, p);
@@ -369,7 +377,7 @@ function extractMission(toolCalls: ToolCallRecord[]): AgentResult["mission"] {
       const service = s.serviceId ? serviceById.get(s.serviceId) : undefined;
       const product = s.productId ? productById.get(s.productId) : undefined;
       const detail = service
-        ? `${service.vendorName || service.name} · ${service.name}`
+        ? `${service.vendor_name || service.service_name} · ${service.service_name}`
         : product
           ? `${product.name} · NT$${product.price}`
           : s.serviceId
@@ -384,6 +392,12 @@ function extractMission(toolCalls: ToolCallRecord[]): AgentResult["mission"] {
         title: s.description,
         status: "pending" as const,
         detail,
+        serviceId: s.serviceId,
+        productId: s.productId,
+        vendorName: service?.vendor_name,
+        price: service?.price ?? product?.price,
+        imgUrl: service?.img_url,
+        category: service?.category ?? (product ? "product" : undefined),
       };
     }),
   };

@@ -39605,6 +39605,27 @@ async function saveChatHistory(input) {
   }
 }
 
+// backend/src/lib/stepIcon.ts
+function getStepIcon(description) {
+  const lower = description.toLowerCase();
+  if (lower.includes("\u4EA4\u901A") || lower.includes("\u8ECA") || lower.includes("\u63A5\u9001")) return "\u{1F695}";
+  if (lower.includes("\u5929\u6C23") || lower.includes("\u96E8")) return "\u{1F327}";
+  if (lower.includes("\u4F4F\u5BBF") || lower.includes("\u98EF\u5E97") || lower.includes("\u65C5\u9928")) return "\u{1F3E8}";
+  if (lower.includes("\u9910") || lower.includes("\u5403") || lower.includes("\u98DF")) return "\u{1F37D}";
+  if (lower.includes("\u8CFC\u7269") || lower.includes("\u8CB7") || lower.includes("\u5546\u54C1") || lower.includes("\u63A1\u8CFC")) return "\u{1F6D2}";
+  if (lower.includes("\u9810\u7D04") || lower.includes("\u9810\u8A02")) return "\u{1F4C5}";
+  if (lower.includes("\u6E05\u6F54") || lower.includes("\u6253\u6383")) return "\u{1F9F9}";
+  if (lower.includes("\u4FEE\u7E55") || lower.includes("\u6C34\u96FB") || lower.includes("\u4FEE\u7406")) return "\u{1F527}";
+  if (lower.includes("\u86CB\u7CD5") || lower.includes("\u751F\u65E5")) return "\u{1F382}";
+  if (lower.includes("\u79AE\u7269")) return "\u{1F381}";
+  if (lower.includes("\u642C\u5BB6") || lower.includes("\u6253\u5305")) return "\u{1F4E6}";
+  if (lower.includes("\u5065\u8EAB") || lower.includes("\u904B\u52D5")) return "\u{1F4AA}";
+  if (lower.includes("\u5BF5\u7269") || lower.includes("\u91AB\u9662")) return "\u{1F43E}";
+  if (lower.includes("\u63D0\u9192") || lower.includes("\u901A\u77E5")) return "\u23F0";
+  if (lower.includes("\u4FDD\u96AA")) return "\u{1F6E1}";
+  return "\u{1F4CB}";
+}
+
 // backend/src/agent.ts
 var client4 = new import_client_bedrock_runtime2.BedrockRuntimeClient({
   region: process.env.AWS_REGION || "us-west-2"
@@ -39853,7 +39874,7 @@ function extractMission(toolCalls) {
   const productById = /* @__PURE__ */ new Map();
   for (const tc of toolCalls) {
     if (tc.name === "search_service") {
-      for (const s2 of tc.result?.services ?? []) serviceById.set(s2.id, s2);
+      for (const s2 of tc.result?.services ?? []) serviceById.set(s2.service_id, s2);
     }
     if (tc.name === "search_product") {
       for (const p3 of tc.result?.products ?? []) productById.set(p3.id, p3);
@@ -39866,13 +39887,19 @@ function extractMission(toolCalls) {
     tasks: bundle.steps.map((s2, i5) => {
       const service = s2.serviceId ? serviceById.get(s2.serviceId) : void 0;
       const product = s2.productId ? productById.get(s2.productId) : void 0;
-      const detail = service ? `${service.vendorName || service.name} \xB7 ${service.name}` : product ? `${product.name} \xB7 NT$${product.price}` : s2.serviceId ? `\u670D\u52D9: ${s2.serviceId}` : s2.productId ? `\u5546\u54C1: ${s2.productId}` : "\u5F85\u8655\u7406";
+      const detail = service ? `${service.vendor_name || service.service_name} \xB7 ${service.service_name}` : product ? `${product.name} \xB7 NT$${product.price}` : s2.serviceId ? `\u670D\u52D9: ${s2.serviceId}` : s2.productId ? `\u5546\u54C1: ${s2.productId}` : "\u5F85\u8655\u7406";
       return {
         id: s2.stepId ?? `step-${i5 + 1}`,
         icon: getStepIcon(s2.description),
         title: s2.description,
         status: "pending",
-        detail
+        detail,
+        serviceId: s2.serviceId,
+        productId: s2.productId,
+        vendorName: service?.vendor_name,
+        price: service?.price ?? product?.price,
+        imgUrl: service?.img_url,
+        category: service?.category ?? (product ? "product" : void 0)
       };
     })
   };
@@ -39899,25 +39926,6 @@ function trimHistory(history) {
     }
   }
   return history;
-}
-function getStepIcon(description) {
-  const lower = description.toLowerCase();
-  if (lower.includes("\u4EA4\u901A") || lower.includes("\u8ECA") || lower.includes("\u63A5\u9001")) return "\u{1F695}";
-  if (lower.includes("\u5929\u6C23") || lower.includes("\u96E8")) return "\u{1F327}";
-  if (lower.includes("\u4F4F\u5BBF") || lower.includes("\u98EF\u5E97") || lower.includes("\u65C5\u9928")) return "\u{1F3E8}";
-  if (lower.includes("\u9910") || lower.includes("\u5403") || lower.includes("\u98DF")) return "\u{1F37D}";
-  if (lower.includes("\u8CFC\u7269") || lower.includes("\u8CB7") || lower.includes("\u5546\u54C1") || lower.includes("\u63A1\u8CFC")) return "\u{1F6D2}";
-  if (lower.includes("\u9810\u7D04") || lower.includes("\u9810\u8A02")) return "\u{1F4C5}";
-  if (lower.includes("\u6E05\u6F54") || lower.includes("\u6253\u6383")) return "\u{1F9F9}";
-  if (lower.includes("\u4FEE\u7E55") || lower.includes("\u6C34\u96FB") || lower.includes("\u4FEE\u7406")) return "\u{1F527}";
-  if (lower.includes("\u86CB\u7CD5") || lower.includes("\u751F\u65E5")) return "\u{1F382}";
-  if (lower.includes("\u79AE\u7269")) return "\u{1F381}";
-  if (lower.includes("\u642C\u5BB6") || lower.includes("\u6253\u5305")) return "\u{1F4E6}";
-  if (lower.includes("\u5065\u8EAB") || lower.includes("\u904B\u52D5")) return "\u{1F4AA}";
-  if (lower.includes("\u5BF5\u7269") || lower.includes("\u91AB\u9662")) return "\u{1F43E}";
-  if (lower.includes("\u63D0\u9192") || lower.includes("\u901A\u77E5")) return "\u23F0";
-  if (lower.includes("\u4FDD\u96AA")) return "\u{1F6E1}";
-  return "\u{1F4CB}";
 }
 
 // backend/src/lambda.ts
