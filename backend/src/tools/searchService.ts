@@ -27,20 +27,29 @@ export async function searchService(input: SearchServiceInput): Promise<SearchSe
     })
   );
 
-  let services = (Items ?? []) as Service[];
+  const all = (Items ?? []) as Service[];
+  const kw = input.keyword?.toLowerCase();
 
-  if (input.type !== undefined) {
-    services = services.filter((s) => parseInt(s.type, 10) === input.type);
-  }
+  const byKeyword = (list: Service[]) =>
+    kw
+      ? list.filter(
+          (s) =>
+            s.service_name?.toLowerCase().includes(kw) ||
+            s.description?.toLowerCase().includes(kw) ||
+            s.vendor_name?.toLowerCase().includes(kw)
+        )
+      : list;
 
-  if (input.keyword) {
-    const kw = input.keyword.toLowerCase();
-    services = services.filter(
-      (s) =>
-        s.service_name?.toLowerCase().includes(kw) ||
-        s.description?.toLowerCase().includes(kw) ||
-        s.vendor_name?.toLowerCase().includes(kw)
-    );
+  const byType = (list: Service[]) =>
+    input.type !== undefined ? list.filter((s) => parseInt(s.type, 10) === input.type) : list;
+
+  let services = byKeyword(byType(all));
+
+  // type 是 AI 自己猜的（它只知道系統提示裡列的 7 種代碼），遇到目錄裡沒對應到的分類
+  // （例如「搬家」沒有專屬代碼，AI 常誤猜成 3=交通寄件）就會把關鍵字明明對得上的結果濾光。
+  // 這種情況下退回只用關鍵字比對，不要讓猜錯的 type 蓋掉正確的搜尋結果。
+  if (services.length === 0 && input.type !== undefined && kw) {
+    services = byKeyword(all);
   }
 
   return { services };

@@ -1,14 +1,14 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import Login from "./screens/Login";
 import Onboarding from "./screens/Onboarding";
 import Home from "./screens/Home";
 import ScenarioPackDetail from "./screens/ScenarioPackDetail";
-import ChatPanel from "./components/ChatPanel";
+import ChatPanel, { WELCOME_MESSAGES } from "./components/ChatPanel";
 import ContextPanel from "./components/ContextPanel";
 import BottomNav from "./components/BottomNav";
 import Missions from "./screens/Missions";
 import Profile from "./screens/Profile";
-import type { ContextView, CartItem, AuthUser, ScheduledTrip } from "./types";
+import type { ContextView, CartItem, AuthUser, ScheduledTrip, ChatMessage } from "./types";
 import { scenarioPacks } from "./data";
 import { todayISO } from "./dateUtils";
 
@@ -30,6 +30,12 @@ export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [transportTime, setTransportTime] = useState<string | undefined>(undefined);
   const [agentMission, setAgentMission] = useState<any>(null);
+  /* AI 規劃卡片上的快速操作（重新規劃／調整預算…）→ 當作使用者訊息送給 AI */
+  const [quickPrompt, setQuickPrompt] = useState<string | null>(null);
+
+  /* 對話紀錄提升到 App 層級，切換頁面時 ChatPanel 會被卸載重掛，紀錄放這裡才不會消失 */
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(WELCOME_MESSAGES);
+  const agentHistory = useRef<any[]>([]);
 
   /* 註冊的新帳號才走標籤設定，一般登入直接進主頁 */
   const handleLogin = (loggedIn: AuthUser, isNewUser: boolean) => {
@@ -51,6 +57,8 @@ export default function App() {
     setTransportTime(undefined);
     setActiveTab("home");
     setPage("login");
+    setChatMessages(WELCOME_MESSAGES);
+    agentHistory.current = [];
   }, []);
 
   /* Onboarding complete */
@@ -212,6 +220,11 @@ export default function App() {
             panelOpen={panelOpen}
             isMobile={true}
             onAgentMission={setAgentMission}
+            quickPrompt={quickPrompt}
+            onQuickPromptConsumed={() => setQuickPrompt(null)}
+            messages={chatMessages}
+            setMessages={setChatMessages}
+            agentHistory={agentHistory}
           />
 
           {panelOpen && contextView !== "idle" && (
@@ -246,6 +259,8 @@ export default function App() {
                     onDismissComplete={() => { setContextView("idle"); setPanelOpen(false); }}
                     onProductAdd={handleProductAdd}
                     agentMission={agentMission}
+                    onQuickPrompt={(text) => { setQuickPrompt(text); setPanelOpen(false); }}
+                    onOpenChat={handlePanelClose}
                   />
                 </div>
               </div>

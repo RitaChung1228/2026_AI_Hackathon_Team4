@@ -58,10 +58,12 @@ const SYSTEM_PROMPT = `你是 UNI Flow 智慧零售管家，一個基於 AI 的�
    何時用：使用者有複合需求，且已經釐清需求細節後
    輸入：userId、title、steps[]
    重要：先問問題確認需求，收到回答後才呼叫此工具
-   重要：任何一個 step 只要涉及「去哪家店」「買什麼商品」「用什麼服務」，一定要先呼叫
-   search_service 或 search_product 拿到真實結果，並把該結果的 id 填進該 step 的
-   serviceId 或 productId——不能只寫文字描述、不帶 id。只有跟具體店家/商品/服務無關的
-   步驟（例如「回家後加熱享用」）才可以不帶 id。
+   重要：任何一個 step 只要涉及「去哪家店」「買什麼商品」「用什麼服務」，先呼叫
+   search_service 或 search_product 查詢，查到相關結果就把該結果的 id 填進該 step 的
+   serviceId 或 productId。如果搜尋不到符合的服務/商品（例如目錄裡沒有「搬家公司」
+   這類服務），該 step 就寫清楚的文字描述、不帶 id 即可——絕對不要因為某幾個 step
+   找不到對應 id，就整個放棄呼叫 create_bundle。使用者的需求一定要落地成一份完整的
+   行程計畫，即使部分步驟沒有串到真實商品/服務也一樣要建立。
 
 6. create_order - 建立訂單草稿
    何時用：使用者確認要購買商品或預約服務時
@@ -76,8 +78,13 @@ const SYSTEM_PROMPT = `你是 UNI Flow 智慧零售管家，一個基於 AI 的�
 第二步：根據使用者需求，一次問一個問題釐清需求（最多問 3 題，每題附上建議選項）
 第三步：每次收到回答後，決定是否需要再問下一題，或已有足夠資訊可以開始規劃
 第四步：資訊足夠後，搜尋相關商品和服務
-第五步：呼叫 create_bundle 建立行程計畫
-第六步：簡短告知使用者已建立計畫
+第五步：呼叫 create_bundle 建立行程計畫（steps 至少要有 2 個以上步驟）
+第六步：簡短告知使用者已建立計畫，不要在文字裡重複條列每個步驟
+
+絕對禁止：問完問題、資訊足夠後，直接把整個計畫用文字條列給使用者（例如「第一批：...」「週六：...」
+「→ 步驟一...」）卻不呼叫 create_bundle。這條規則不只適用於購物/服務類需求，任何類型的多步驟安排
+都算，包含耍廢行程、週末計畫、行程規劃、運動課表等——只要內容是「一連串要做的事」，就必須呼叫
+create_bundle 讓前端顯示可視化任務卡片，文字回覆只做一句話摘要即可，不要重複條列步驟內容。
 
 提問格式（重要）：
 每次提問時，在回覆最後一行用以下格式附上建議選項：
@@ -117,6 +124,8 @@ const SYSTEM_PROMPT = `你是 UNI Flow 智慧零售管家，一個基於 AI 的�
 → 最多問 3 題，超過就直接用已有資訊規劃
 → 如果使用者一開始就給了足夠資訊，可以跳過提問直接規劃
 → 選項要具體、口語化，讓使用者容易選擇
+→ 規劃出多步驟計畫時一律呼叫 create_bundle，絕不要只用文字條列步驟（前端要靠 create_bundle
+  的結果渲染成可互動的任務卡片，使用者才能逐項編輯/確認，純文字沒有這個功能）
 
 ## 工具搭配策略
 
@@ -337,11 +346,24 @@ export async function agentChat(
  */
 function extractText(content: any[] | undefined): string {
   if (!content) return "";
-  return content
+  const text = content
     .filter((block: any) => typeof block?.text === "string")
     .map((block: any) => block.text.trim())
     .filter(Boolean)
     .join("\n\n");
+  return stripMarkdown(text);
+}
+
+/**
+ * 保險起見：模型偶爾還是會不遵守「禁止 Markdown」的指示，
+ * 這裡把常見的 ** 粗體 / # 標題 / ` 行內程式碼 標記拿掉，避免前端顯示星號原文。
+ */
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/`([^`]+)`/g, "$1");
 }
 
 /**
@@ -394,9 +416,9 @@ function extractMission(toolCalls: ToolCallRecord[]): AgentResult["mission"] {
         detail,
         serviceId: s.serviceId,
         productId: s.productId,
-        vendorName: service?.vendor_name,
+        vendorName: service?.vendor_name ?? product?.vendorName,
         price: service?.price ?? product?.price,
-        imgUrl: service?.img_url,
+        imgUrl: service?.img_url ?? product?.imgUrl,
         category: service?.category ?? (product ? "product" : undefined),
       };
     }),

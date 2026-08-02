@@ -24,6 +24,8 @@ export async function searchProduct(input: SearchProductInput): Promise<SearchPr
     price: item.price ?? 0,
     description: item.description ?? "",
     category: item.type ?? "retail",
+    imgUrl: item.img_url,
+    vendorName: item.vendor_name,
   }));
 
   // keyword filter

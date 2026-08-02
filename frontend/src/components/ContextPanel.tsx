@@ -6,6 +6,22 @@ import {
   recommendations, scenarioPacks, UNSPLASH,
 } from "../data";
 import type { ContextView, CartItem, Mission, Task } from "../types";
+import TaskDetail from "./TaskDetail";
+import { Icon } from "@iconify/react";
+
+/* 共用小圖示 — Solar Bold Duotone，取代原本的 emoji 符號 */
+const SparkleIcon = ({ size = 12, color = "currentColor" }: { size?: number; color?: string }) => (
+  <Icon icon="solar:magic-stick-3-bold-duotone" width={size} height={size} style={{ color, flexShrink: 0 }} />
+);
+const CheckIcon = ({ size = 12, color = "currentColor" }: { size?: number; color?: string }) => (
+  <Icon icon="solar:check-circle-bold-duotone" width={size} height={size} style={{ color, flexShrink: 0 }} />
+);
+const CloseIcon = ({ size = 12, color = "currentColor" }: { size?: number; color?: string }) => (
+  <Icon icon="solar:close-circle-bold-duotone" width={size} height={size} style={{ color, flexShrink: 0 }} />
+);
+const PlusIcon = ({ size = 14, color = "currentColor" }: { size?: number; color?: string }) => (
+  <Icon icon="solar:add-circle-bold-duotone" width={size} height={size} style={{ color, flexShrink: 0 }} />
+);
 
 interface ContextPanelProps {
   view: ContextView;
@@ -17,7 +33,28 @@ interface ContextPanelProps {
   onDismissComplete: () => void;
   onProductAdd: (item: CartItem) => void;
   agentMission?: any;
+  /* 送一句預設文字給 AI（重新規劃／調整預算等快速操作），並關閉面板回到對話 */
+  onQuickPrompt?: (text: string) => void;
+  /* 單純關閉面板回到對話，不清除目前的任務狀態 */
+  onOpenChat?: () => void;
 }
+
+/* agent-mission 任務的服務分類 → 標籤樣式（值對齊 db/seed/05_ServicesCatalog.json 的 category） */
+const AGENT_CATEGORY_TAGS: Record<string, { label: string; icon: string; color: string }> = {
+  transport: { label: "交通", icon: "solar:bus-bold-duotone", color: "#0EA5E9" },
+  home_service: { label: "到府服務", icon: "solar:sledgehammer-bold-duotone", color: "#EA580C" },
+  travel: { label: "體驗", icon: "solar:magic-stick-3-bold-duotone", color: "#8B5CF6" },
+  retail: { label: "商品", icon: "solar:bag-3-bold-duotone", color: "#16A34A" },
+  product: { label: "商品", icon: "solar:bag-3-bold-duotone", color: "#16A34A" },
+  fitness: { label: "健身", icon: "solar:dumbbell-large-bold-duotone", color: "#7C3AED" },
+};
+
+const AGENT_TASK_FILTERS = [
+  { id: "all", label: "全部" },
+  { id: "pending", label: "待處理" },
+  { id: "in-progress", label: "進行中" },
+  { id: "confirmed", label: "已完成" },
+] as const;
 
 const statusConfig: Record<string, { label: string; bg: string; color: string }> = {
   confirmed:    { label: "已確認", bg: "#DCFCE7", color: "#16A34A" },
@@ -45,15 +82,28 @@ const SHOP_PRODUCTS: Partial<Record<ContextView, typeof products>> = {
   "pet-shop":          petProducts as any,
 };
 
+/* 附近可取貨的便利商店門市（demo 固定清單，之後可接門市查詢 API） */
+const PICKUP_STORES = [
+  { id: "711-songren", chain: "7-ELEVEN", icon: "🟢", name: "松仁門市", address: "台北市信義區松仁路100號", distance: "350m" },
+  { id: "family-xinyi", chain: "全家", icon: "🔵", name: "信義安和店", address: "台北市大安區安和路二段58號", distance: "480m" },
+  { id: "711-keelung", chain: "7-ELEVEN", icon: "🟢", name: "基河門市", address: "台北市信義區基隆路一段178號", distance: "600m" },
+  { id: "family-tunhwa", chain: "全家", icon: "🔵", name: "敦南門市", address: "台北市大安區敦化南路一段233號", distance: "820m" },
+];
+
 export default function ContextPanel({
   view, transportTime, cartItems, onCartUpdate, onCheckout,
   onSaveComplete, onDismissComplete, onProductAdd, agentMission,
+  onQuickPrompt, onOpenChat,
 }: ContextPanelProps) {
   const [taskStates, setTaskStates] = useState<Record<string, string>>({});
+  const [agentTaskFilter, setAgentTaskFilter] = useState<(typeof AGENT_TASK_FILTERS)[number]["id"]>("all");
+  const [shareCopied, setShareCopied] = useState(false);
   const [useOpenPoint, setUseOpenPoint] = useState(true);
   const [useCoupon, setUseCoupon] = useState(true);
   const [confirmingCheckout, setConfirmingCheckout] = useState(false);
+  const [selectedStoreId, setSelectedStoreId] = useState(PICKUP_STORES[0].id);
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
+  const [taskDetailId, setTaskDetailId] = useState<string | null>(null);
   const [cakeSize, setCakeSize] = useState<string | null>(null);
   const [newAddress, setNewAddress] = useState("");
   const [addressSaved, setAddressSaved] = useState(false);
@@ -209,89 +259,187 @@ export default function ContextPanel({
 
   /* ── AGENT MISSION VIEW (dynamic from AI) ── */
   if (view === "agent-mission" && agentMission) {
-    const tasks = agentMission.tasks || [];
+    const tasks: any[] = agentMission.tasks || [];
+    const selectedTask = taskDetailId ? tasks.find((t: any) => t.id === taskDetailId) : undefined;
+    if (selectedTask) {
+      return (
+        <TaskDetail
+          task={{ ...selectedTask, status: taskStates[selectedTask.id] || selectedTask.status }}
+          cartItems={cartItems}
+          onBack={() => setTaskDetailId(null)}
+          onProductAdd={onProductAdd}
+          onComplete={(taskId) => setTaskStates((prev) => ({ ...prev, [taskId]: "confirmed" }))}
+        />
+      );
+    }
     const confirmedCount = tasks.filter((t: any) => (taskStates[t.id] || t.status) === "confirmed").length;
     const prog = tasks.length > 0 ? Math.round((confirmedCount / tasks.length) * 100) || agentMission.progress : 0;
+    const ringDeg = Math.max(0, Math.min(360, prog * 3.6));
+    const filteredTasks = tasks.filter((t: any) => {
+      if (agentTaskFilter === "all") return true;
+      const st = taskStates[t.id] || t.status;
+      return agentTaskFilter === "pending" ? (st === "pending" || st === "warning") : st === agentTaskFilter;
+    });
+
+    const sendQuick = (text: string) => onQuickPrompt?.(text);
+
+    const handleShare = () => {
+      const lines = [agentMission.title, ...tasks.map((t: any) => `・${t.title}`)];
+      const shareText = lines.join("\n");
+      if (navigator.share) {
+        navigator.share({ title: agentMission.title, text: shareText }).catch(() => {});
+      } else {
+        navigator.clipboard?.writeText(shareText);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 1800);
+      }
+    };
 
     return (
       <div className="panel-enter" style={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
         {/* Hero banner */}
-        <div style={{ position: "relative", height: 130, flexShrink: 0, overflow: "hidden" }}>
+        <div style={{ position: "relative", height: 140, flexShrink: 0, overflow: "hidden" }}>
           <img src={agentMission.image || "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=720&h=200&fit=crop&auto=format"} alt={agentMission.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(15,10,46,0.82))" }} />
-          <div style={{ position: "absolute", bottom: 12, left: 16, right: 16 }}>
-            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 14, color: "white", marginBottom: 1 }}>{agentMission.title}</div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.8)" }}>{agentMission.subtitle}</div>
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(15,10,46,0.85))" }} />
+          <div style={{ position: "absolute", top: 10, left: 12, display: "flex", alignItems: "center", gap: 5, background: "rgba(98,70,234,0.9)", padding: "4px 10px 4px 8px", borderRadius: 20 }}>
+            <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#4ADE80" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: "white", fontFamily: "var(--font-display)" }}>進行中</span>
           </div>
-        </div>
-
-        {/* Progress */}
-        <div style={{ padding: "12px 16px 8px", background: "white", borderBottom: "1px solid #F3F4F6" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 11, fontWeight: 600, color: "#6246EA", fontFamily: "var(--font-display)" }}>進度 {prog}%</span>
-            <span style={{ fontSize: 11, color: "#9CA3AF" }}>{confirmedCount}/{tasks.length} 完成</span>
+          <div style={{ position: "absolute", bottom: 14, left: 16, right: 74 }}>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "white", marginBottom: 2 }}>{agentMission.title}</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.75)" }}>{agentMission.subtitle}</div>
           </div>
-          <div style={{ height: 4, background: "#F3F4F6", borderRadius: 2, overflow: "hidden" }}>
-            <div style={{ height: "100%", width: `${prog}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", borderRadius: 2, transition: "width 0.5s ease" }} />
-          </div>
-        </div>
-
-        {/* AI Summary */}
-        {agentMission.aiSummary && (
-          <div style={{ margin: "12px 16px 0", padding: "10px 14px", background: "linear-gradient(135deg, rgba(98,70,234,0.06), rgba(139,92,246,0.04))", border: "1px solid rgba(98,70,234,0.15)", borderRadius: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-              <span style={{ fontSize: 12 }}>✦</span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: "#6246EA", fontFamily: "var(--font-display)" }}>AI 摘要</span>
+          {/* Progress ring — 純 CSS conic-gradient，不需要額外套件 */}
+          <div style={{ position: "absolute", bottom: -18, right: 16, width: 52, height: 52, borderRadius: "50%", background: `conic-gradient(#8B5CF6 ${ringDeg}deg, rgba(255,255,255,0.28) 0deg)`, padding: 4, boxShadow: "0 6px 16px rgba(15,10,46,0.35)" }}>
+            <div style={{ width: "100%", height: "100%", borderRadius: "50%", background: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 800, color: "#6246EA", fontFamily: "var(--font-display)" }}>{prog}%</span>
             </div>
-            <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.5 }}>{agentMission.aiSummary}</div>
           </div>
-        )}
+        </div>
 
-        {/* Task list */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px" }} className="scrollbar-hide">
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {tasks.map((task: any) => {
+        {/* Overall progress */}
+        <div style={{ padding: "26px 16px 10px", background: "white", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#6B7280", fontFamily: "var(--font-display)" }}>整體進度</span>
+            <span style={{ fontSize: 11, color: "#9CA3AF" }}>{confirmedCount}/{tasks.length} 已完成</span>
+          </div>
+          <div style={{ height: 5, background: "#F3F4F6", borderRadius: 3, overflow: "hidden" }}>
+            <div style={{ height: "100%", width: `${prog}%`, background: "linear-gradient(90deg, #6246EA, #8B5CF6)", borderRadius: 3, transition: "width 0.5s ease" }} />
+          </div>
+        </div>
+
+        <div style={{ flex: 1, overflowY: "auto" }} className="scrollbar-hide">
+          {/* AI Summary + quick actions */}
+          {agentMission.aiSummary && (
+            <div style={{ margin: "12px 16px 0", padding: "12px 14px", background: "linear-gradient(135deg, rgba(98,70,234,0.07), rgba(139,92,246,0.04))", border: "1px solid rgba(98,70,234,0.15)", borderRadius: 14 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                <SparkleIcon size={13} color="#6246EA" />
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#6246EA", fontFamily: "var(--font-display)" }}>AI 摘要</span>
+              </div>
+              <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.5, marginBottom: 10 }}>{agentMission.aiSummary}</div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                {[
+                  { label: "重新規劃", text: "請幫我重新規劃這個行程" },
+                  { label: "調整預算", text: "這個計畫可以幫我抓省錢一點的版本嗎？" },
+                  { label: "新增需求", text: "我想在這個行程裡再加一些需求" },
+                ].map((chip) => (
+                  <button
+                    key={chip.label}
+                    onClick={() => sendQuick(chip.text)}
+                    style={{ fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 20, border: "1.5px solid rgba(98,70,234,0.3)", background: "white", color: "#6246EA", cursor: "pointer", fontFamily: "var(--font-display)" }}
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+                <button
+                  onClick={handleShare}
+                  style={{ fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 20, border: "1.5px solid rgba(98,70,234,0.3)", background: "white", color: "#6246EA", cursor: "pointer", fontFamily: "var(--font-display)", display: "flex", alignItems: "center", gap: 4 }}
+                >
+                  {shareCopied && <CheckIcon size={12} color="#6246EA" />}
+                  {shareCopied ? "已複製" : "分享行程"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* List header + filters */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 16px 8px" }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#0F0A2E", fontFamily: "var(--font-display)" }}>AI 規劃清單 ({tasks.length})</span>
+            <div style={{ display: "flex", gap: 4 }}>
+              {AGENT_TASK_FILTERS.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => setAgentTaskFilter(f.id)}
+                  style={{
+                    fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 20, border: "none", cursor: "pointer",
+                    fontFamily: "var(--font-display)",
+                    background: agentTaskFilter === f.id ? "#6246EA" : "#F3F4F6",
+                    color: agentTaskFilter === f.id ? "white" : "#9CA3AF",
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Task list */}
+          <div style={{ padding: "0 16px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+            {filteredTasks.map((task: any) => {
               const currentStatus = taskStates[task.id] || task.status;
               const cfg = statusConfig[currentStatus] || statusConfig["pending"];
-              const bookableId = task.serviceId || task.productId;
-              const inCart = bookableId ? cartItems.some((c) => c.id === bookableId) : false;
-              const actionLabel = task.category === "transport" ? "叫車" : task.productId ? "加入購物車" : "預約";
+              const catTag = task.category ? AGENT_CATEGORY_TAGS[task.category] : undefined;
               return (
-                <div key={task.id} style={{ background: "white", borderRadius: 12, padding: "12px 14px", border: "1px solid #E5E7EB", display: "flex", alignItems: "center", gap: 12 }}>
-                  {task.imgUrl ? (
-                    <img src={task.imgUrl} alt="" style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
-                  ) : (
-                    <span style={{ fontSize: 20, flexShrink: 0 }}>{task.icon}</span>
-                  )}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, color: "#0F0A2E", marginBottom: 2 }}>{task.title}</div>
-                    <div style={{ fontSize: 11, color: "#6B7280", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{task.detail}</div>
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
-                    <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, padding: "3px 8px", borderRadius: 20, fontFamily: "var(--font-display)" }}>{cfg.label}</span>
-                    {bookableId && (
-                      <button
-                        onClick={() => {
-                          if (inCart) return;
-                          onProductAdd({
-                            id: bookableId,
-                            name: task.vendorName ? `${task.vendorName} · ${task.title}` : task.title,
-                            detail: task.detail,
-                            price: task.price ?? 0,
-                            qty: 1,
-                            icon: task.icon,
-                          });
-                        }}
-                        style={{ fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 20, border: "none", cursor: inCart ? "default" : "pointer", background: inCart ? "#DCFCE7" : "#6246EA", color: inCart ? "#16A34A" : "white", fontFamily: "var(--font-display)", whiteSpace: "nowrap" }}
-                      >
-                        {inCart ? "✓ 已加入" : actionLabel}
-                      </button>
+                <div
+                  key={task.id}
+                  onClick={() => setTaskDetailId(task.id)}
+                  style={{ background: "white", borderRadius: 12, border: "1px solid #F3F4F6", overflow: "hidden", cursor: "pointer" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px" }}>
+                    {task.imgUrl ? (
+                      <img src={task.imgUrl} alt="" style={{ width: 36, height: 36, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
+                    ) : (
+                      <div style={{ width: 36, height: 36, borderRadius: 10, background: "#EDE9FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{task.icon}</div>
                     )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, color: "#0F0A2E", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.title}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        {catTag && (
+                          <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 9, fontWeight: 700, color: catTag.color, background: `${catTag.color}18`, padding: "1px 6px", borderRadius: 8, flexShrink: 0, fontFamily: "var(--font-display)" }}>
+                            <Icon icon={catTag.icon} width={10} height={10} />
+                            {catTag.label}
+                          </span>
+                        )}
+                        <span style={{ fontSize: 11, color: "#6B7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{task.detail}</span>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4, flexShrink: 0 }}>
+                      <span style={{ fontSize: 10, fontWeight: 600, color: cfg.color, background: cfg.bg, padding: "3px 8px", borderRadius: 20, fontFamily: "var(--font-display)" }}>{cfg.label}</span>
+                      <Icon icon="solar:alt-arrow-right-bold-duotone" width={14} height={14} style={{ color: "#C4B5FD" }} />
+                    </div>
                   </div>
                 </div>
               );
             })}
+            {filteredTasks.length === 0 && (
+              <div style={{ fontSize: 12, color: "#C4B5FD", textAlign: "center", padding: "24px 0" }}>這個篩選條件下沒有任務</div>
+            )}
           </div>
+        </div>
+
+        {/* Bottom CTA back to chat */}
+        <div style={{ flexShrink: 0, margin: "0 16px 16px", padding: "12px 14px", borderRadius: 14, background: "linear-gradient(135deg, #6246EA, #8B5CF6)", display: "flex", alignItems: "center", gap: 10 }}>
+          <Icon icon="solar:lightbulb-bolt-bold-duotone" width={22} height={22} style={{ color: "white", flexShrink: 0 }} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "white", fontFamily: "var(--font-display)" }}>想要調整行程或新增需求嗎？</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.75)" }}>告訴我你的想法，UNI 幫你重新規劃！</div>
+          </div>
+          <button
+            onClick={() => onOpenChat?.()}
+            style={{ fontSize: 11, fontWeight: 700, padding: "7px 14px", borderRadius: 20, border: "none", background: "white", color: "#6246EA", cursor: "pointer", fontFamily: "var(--font-display)", flexShrink: 0, whiteSpace: "nowrap" }}
+          >
+            與 UNI 對話
+          </button>
         </div>
       </div>
     );
@@ -324,7 +472,7 @@ export default function ContextPanel({
         {/* AI note */}
         {mission.aiSummary && (
           <div style={{ margin: "10px 12px 0", background: "linear-gradient(135deg, rgba(98,70,234,0.07), rgba(139,92,246,0.04))", border: "1px solid rgba(98,70,234,0.14)", borderRadius: 10, padding: "8px 12px", display: "flex", gap: 8, flexShrink: 0 }}>
-            <span style={{ fontSize: 12, color: "#6246EA", flexShrink: 0 }}>✦</span>
+            <SparkleIcon size={13} color="#6246EA" />
             <p style={{ fontSize: 12, color: "#6246EA", margin: 0, lineHeight: 1.5, fontWeight: 500 }}>{mission.aiSummary}</p>
           </div>
         )}
@@ -428,13 +576,14 @@ export default function ContextPanel({
                                             onProductAdd({ id: rec.id, name: rec.name, detail: rec.detail, price: rec.price, qty: 1, icon: rec.icon });
                                           }}
                                           style={{
+                                            display: "flex", alignItems: "center", gap: 3,
                                             fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 12, border: "none",
                                             cursor: inCart ? "default" : "pointer",
                                             background: inCart ? "#DCFCE7" : "#6246EA",
                                             color: inCart ? "#16A34A" : "white",
                                             fontFamily: "var(--font-display)", whiteSpace: "nowrap",
                                           }}
-                                        >{inCart ? "✓ 已加入" : "+ 加入"}</button>
+                                        >{inCart ? <CheckIcon size={11} color="#16A34A" /> : <PlusIcon size={11} color="white" />}{inCart ? "已加入" : "加入"}</button>
                                       </div>
                                     </div>
                                   );
@@ -481,11 +630,11 @@ export default function ContextPanel({
                               style={{
                                 width: 36, height: 36, borderRadius: 10, border: "none", flexShrink: 0,
                                 background: checklistInput.trim() ? "#6246EA" : "#E5E7EB",
-                                color: "white", fontSize: 20, cursor: checklistInput.trim() ? "pointer" : "default",
+                                color: "white", cursor: checklistInput.trim() ? "pointer" : "default",
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 transition: "background 0.15s",
                               }}
-                            >＋</button>
+                            ><PlusIcon size={18} /></button>
                           </div>
                           {checklistItems.length > 0 && (
                             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
@@ -495,14 +644,14 @@ export default function ContextPanel({
                                   <span style={{ flex: 1, fontSize: 13, color: "#0F0A2E", fontFamily: "var(--font-body)" }}>{item}</span>
                                   <button
                                     onClick={() => setChecklistItems((prev) => prev.filter((_, idx) => idx !== i))}
-                                    style={{ background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", fontSize: 14, padding: 0, lineHeight: 1 }}
-                                  >✕</button>
+                                    style={{ background: "none", border: "none", cursor: "pointer", color: "#9CA3AF", padding: 0, lineHeight: 1, display: "flex" }}
+                                  ><CloseIcon size={14} /></button>
                                 </div>
                               ))}
                             </div>
                           )}
                           {checklistItems.length === 0 && (
-                            <div style={{ fontSize: 11, color: "#C4B5FD", textAlign: "center", padding: "6px 0" }}>還沒有項目，輸入後按 ＋ 加入</div>
+                            <div style={{ fontSize: 11, color: "#C4B5FD", textAlign: "center", padding: "6px 0" }}>還沒有項目，輸入後按上方按鈕加入</div>
                           )}
                         </div>
                       )}
@@ -533,15 +682,17 @@ export default function ContextPanel({
                               color: newAddress.trim() ? "white" : "#9CA3AF",
                               fontSize: 13, fontWeight: 700, cursor: newAddress.trim() ? "pointer" : "default",
                               fontFamily: "var(--font-display)", transition: "all 0.2s",
+                              display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                             }}
                           >
-                            {addressSaved ? "✓ 已儲存，AI 將自動通知各單位" : "確認地址，自動寄送通知"}
+                            {addressSaved && <CheckIcon size={14} />}
+                            {addressSaved ? "已儲存，AI 將自動通知各單位" : "確認地址，自動寄送通知"}
                           </button>
                           {addressSaved && (
                             <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 4 }}>
                               {["銀行帳戶", "健保署", "公司人資", "保險公司"].map((unit) => (
                                 <div key={unit} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#16A34A", fontFamily: "var(--font-display)", fontWeight: 600 }}>
-                                  <span>✓</span><span>{unit} — 通知已寄送</span>
+                                  <CheckIcon size={12} /><span>{unit} — 通知已寄送</span>
                                 </div>
                               ))}
                             </div>
@@ -559,15 +710,15 @@ export default function ContextPanel({
                                 <img src={src} alt={`photo-${i}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                 <button
                                   onClick={() => setUploadedPhotos((p) => p.filter((_, idx) => idx !== i))}
-                                  style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", cursor: "pointer", color: "white", fontSize: 9, display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}
-                                >✕</button>
+                                  style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, borderRadius: "50%", background: "rgba(0,0,0,0.55)", border: "none", cursor: "pointer", color: "white", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}
+                                ><CloseIcon size={10} /></button>
                               </div>
                             ))}
                             <button
                               onClick={() => photoInputRef.current?.click()}
                               style={{ width: 64, height: 64, borderRadius: 8, border: "1.5px dashed #C4B5FD", background: "white", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, color: "#8B5CF6", flexShrink: 0 }}
                             >
-                              <span style={{ fontSize: 18 }}>＋</span>
+                              <PlusIcon size={18} />
                               <span style={{ fontSize: 9, fontWeight: 600, fontFamily: "var(--font-display)" }}>上傳</span>
                             </button>
                             <input
@@ -593,7 +744,7 @@ export default function ContextPanel({
                           </div>
                           {uploadedPhotos.length > 0 && (
                             <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6, background: "#EDE9FF", borderRadius: 8, padding: "5px 8px" }}>
-                              <span style={{ fontSize: 10 }}>✦</span>
+                              <SparkleIcon size={11} color="#6246EA" />
                               <span style={{ fontSize: 10, color: "#6246EA", fontWeight: 600, fontFamily: "var(--font-display)" }}>AI 已收到 {uploadedPhotos.length} 張照片，正在分析問題...</span>
                             </div>
                           )}
@@ -670,7 +821,7 @@ export default function ContextPanel({
                                     </div>
                                   ))}
                                 </div>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.6px", marginBottom: 6, fontFamily: "var(--font-display)" }}>✦ AI 推薦食物</div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.6px", marginBottom: 6, fontFamily: "var(--font-display)", display: "flex", alignItems: "center", gap: 4 }}><SparkleIcon size={11} />AI 推薦食物</div>
                                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                                   {FOOD_RECS.map((food) => (
                                     <div key={food.name} style={{ display: "flex", alignItems: "center", gap: 8, background: "white", borderRadius: 10, padding: "8px 10px", border: "1px solid #F3F4F6" }}>
@@ -723,8 +874,8 @@ export default function ContextPanel({
                               </div>
                             ))}
                           </div>
-                          <div style={{ marginTop: 8, padding: "6px 10px", background: "#EDE9FF", borderRadius: 8, fontSize: 10, color: "#6246EA", fontWeight: 600, fontFamily: "var(--font-display)" }}>
-                            ✦ 本週訓練 {Object.values(workoutSchedule).filter((v) => v !== "休息").length} 天，休息 {Object.values(workoutSchedule).filter((v) => v === "休息").length} 天
+                          <div style={{ marginTop: 8, padding: "6px 10px", background: "#EDE9FF", borderRadius: 8, fontSize: 10, color: "#6246EA", fontWeight: 600, fontFamily: "var(--font-display)", display: "flex", alignItems: "center", gap: 4 }}>
+                            <SparkleIcon size={11} />本週訓練 {Object.values(workoutSchedule).filter((v) => v !== "休息").length} 天，休息 {Object.values(workoutSchedule).filter((v) => v === "休息").length} 天
                           </div>
                         </div>
                       )}
@@ -749,13 +900,14 @@ export default function ContextPanel({
                                       onProductAdd({ id: rec.id, name: rec.name, detail: rec.detail, price: rec.price, qty: 1, icon: rec.icon });
                                     }}
                                     style={{
+                                      display: "flex", alignItems: "center", gap: 3,
                                       fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 12, border: "none",
                                       cursor: inCart ? "default" : "pointer",
                                       background: inCart ? "#DCFCE7" : "#6246EA",
                                       color: inCart ? "#16A34A" : "white",
                                       fontFamily: "var(--font-display)", whiteSpace: "nowrap", transition: "all 0.15s",
                                     }}
-                                  >{inCart ? "✓ 已加入" : rec.price === 0 ? "免費申請" : "+ 加入"}</button>
+                                  >{inCart ? <CheckIcon size={11} color="#16A34A" /> : rec.price === 0 ? null : <PlusIcon size={11} color="white" />}{inCart ? "已加入" : rec.price === 0 ? "免費申請" : "加入"}</button>
                                 </div>
                               </div>
                             );
@@ -903,15 +1055,16 @@ export default function ContextPanel({
                           <span style={{ fontSize: 9, fontWeight: 700, color: "#6246EA", background: "#EDE9FF", padding: "1px 5px", borderRadius: 20 }}>{p.tag}</span>
                         </div>
                         <div style={{ fontSize: 11, color: "#6B7280" }}>{p.detail}</div>
-                        <div style={{ fontSize: 10, color: "#6246EA", display: "flex", alignItems: "center", gap: 3, marginTop: 2 }}><span>✦</span>{p.reason}</div>
+                        <div style={{ fontSize: 10, color: "#6246EA", display: "flex", alignItems: "center", gap: 3, marginTop: 2 }}><SparkleIcon size={10} />{p.reason}</div>
                       </div>
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
                         <div style={{ fontSize: 14, fontWeight: 800, color: "#0F0A2E", fontFamily: "var(--font-display)", marginBottom: 4 }}>NT${p.price}</div>
                         <button
                           onClick={() => addProduct(p)}
-                          style={{ padding: "4px 12px", borderRadius: 20, border: added ? "1.5px solid #16A34A" : "none", background: added ? "white" : "#6246EA", color: added ? "#16A34A" : "white", fontSize: 11, fontWeight: 600, cursor: added ? "default" : "pointer", fontFamily: "var(--font-display)", whiteSpace: "nowrap" }}
+                          style={{ padding: "4px 12px", borderRadius: 20, border: added ? "1.5px solid #16A34A" : "none", background: added ? "white" : "#6246EA", color: added ? "#16A34A" : "white", fontSize: 11, fontWeight: 600, cursor: added ? "default" : "pointer", fontFamily: "var(--font-display)", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 3 }}
                         >
-                          {added ? "✓ 加入" : "加入"}
+                          {added && <CheckIcon size={11} color="#16A34A" />}
+                          加入
                         </button>
                       </div>
                     </div>
@@ -942,8 +1095,8 @@ export default function ContextPanel({
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 15, color: "#0F0A2E" }}>購物車</div>
           </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 32px", textAlign: "center" }}>
-            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#EDE9FF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, marginBottom: 14 }}>
-              🛒
+            <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#EDE9FF", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+              <Icon icon="solar:cart-large-bold-duotone" width={30} height={30} style={{ color: "#6246EA" }} />
             </div>
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "#0F0A2E", marginBottom: 6 }}>
               購物車是空的
@@ -970,9 +1123,31 @@ export default function ContextPanel({
                 <div style={{ fontSize: 11, color: "#6B7280" }}>{item.detail}</div>
               </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#0F0A2E", fontFamily: "var(--font-display)", flexShrink: 0 }}>NT${item.price}</div>
-              <button onClick={() => onCartUpdate(cartItems.filter((i) => i.id !== item.id))} style={{ background: "#F3F4F6", border: "none", borderRadius: "50%", width: 22, height: 22, cursor: "pointer", fontSize: 11, color: "#9CA3AF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>✕</button>
+              <button onClick={() => onCartUpdate(cartItems.filter((i) => i.id !== item.id))} style={{ background: "#F3F4F6", border: "none", borderRadius: "50%", width: 22, height: 22, cursor: "pointer", color: "#9CA3AF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><CloseIcon size={13} /></button>
             </div>
           ))}
+          <div style={{ background: "white", borderRadius: 12, padding: 12, marginBottom: 8, border: "1px solid #F3F4F6" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.8px", marginBottom: 8, fontFamily: "var(--font-display)" }}>選擇取貨門市</div>
+            {PICKUP_STORES.map((store) => {
+              const selected = store.id === selectedStoreId;
+              return (
+                <div
+                  key={store.id}
+                  onClick={() => setSelectedStoreId(store.id)}
+                  style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 6px", borderRadius: 10, cursor: "pointer", background: selected ? "#F5F3FF" : "transparent" }}
+                >
+                  <span style={{ fontSize: 16, flexShrink: 0 }}>{store.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#0F0A2E", fontFamily: "var(--font-display)" }}>{store.chain} {store.name}</div>
+                    <div style={{ fontSize: 10, color: "#6B7280", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{store.address} · {store.distance}</div>
+                  </div>
+                  <div style={{ width: 18, height: 18, borderRadius: "50%", border: `2px solid ${selected ? "#6246EA" : "#D1D5DB"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    {selected && <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#6246EA" }} />}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
           <div style={{ background: "white", borderRadius: 12, padding: 12, border: "1px solid #F3F4F6" }}>
             {[
               { icon: "⭐", label: "OPENPOINT 折抵", sub: "240點 → NT$120", val: 120, state: useOpenPoint, toggle: () => setUseOpenPoint((v) => !v) },
@@ -1010,7 +1185,10 @@ export default function ContextPanel({
             <div className="slide-up" style={{ background: "white", borderRadius: "18px 18px 0 0", padding: "22px 22px 36px", width: "100%" }}>
               <div style={{ width: 32, height: 4, borderRadius: 2, background: "#D1D5DB", margin: "0 auto 18px" }} />
               <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 17, textAlign: "center", margin: 0, marginBottom: 6 }}>確認結帳</h3>
-              <p style={{ textAlign: "center", fontSize: 13, color: "#6B7280", marginBottom: 18 }}>共 {cartItems.length} 件 · NT${total.toLocaleString()}</p>
+              <p style={{ textAlign: "center", fontSize: 13, color: "#6B7280", margin: 0 }}>共 {cartItems.length} 件 · NT${total.toLocaleString()}</p>
+              <p style={{ textAlign: "center", fontSize: 12, color: "#9CA3AF", marginBottom: 18 }}>
+                📦 {PICKUP_STORES.find((s) => s.id === selectedStoreId)?.chain} {PICKUP_STORES.find((s) => s.id === selectedStoreId)?.name} 取貨
+              </p>
               <button onClick={() => { setConfirmingCheckout(false); onCheckout(); }} style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(135deg, #6246EA, #8B5CF6)", color: "white", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: 10 }}>確認付款</button>
               <button onClick={() => setConfirmingCheckout(false)} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1.5px solid #E5E7EB", background: "white", color: "#6B7280", fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>取消</button>
             </div>
@@ -1046,7 +1224,7 @@ export default function ContextPanel({
             {completed.map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "5px 0" }}>
                 <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#DCFCE7", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <span style={{ fontSize: 9, color: "#16A34A" }}>✓</span>
+                  <CheckIcon size={11} color="#16A34A" />
                 </div>
                 <span style={{ fontSize: 13, color: "#0F0A2E" }}>{item}</span>
               </div>

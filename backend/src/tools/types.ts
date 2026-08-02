@@ -18,6 +18,8 @@ export interface Product {
   price: number;
   description: string;
   category: string;
+  imgUrl?: string;
+  vendorName?: string;
 }
 
 export interface SearchProductOutput {

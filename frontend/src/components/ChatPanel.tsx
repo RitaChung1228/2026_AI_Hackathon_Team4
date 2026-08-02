@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import type { KeyboardEvent as ReactKeyboardEvent } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent, Dispatch, SetStateAction, MutableRefObject } from "react";
 import type { ChatMessage, ContextView, CartItem } from "../types";
 import { recommendations, UNSPLASH } from "../data";
 
@@ -16,6 +16,13 @@ interface ChatPanelProps {
   panelOpen: boolean;
   isMobile: boolean;
   onAgentMission?: (mission: any) => void;
+  /* AI 規劃卡片上的快速操作文字，設定後自動當成使用者訊息送出 */
+  quickPrompt?: string | null;
+  onQuickPromptConsumed?: () => void;
+  /* 對話紀錄提升到 App 層級保存，切換頁面／面板不會遺失 */
+  messages: ChatMessage[];
+  setMessages: Dispatch<SetStateAction<ChatMessage[]>>;
+  agentHistory: MutableRefObject<any[]>;
 }
 
 /**
@@ -67,7 +74,7 @@ const SCENARIO_PROMPTS: Record<string, string> = {
   "fitness": "我想開始健身",
 };
 
-const WELCOME_MESSAGES: ChatMessage[] = [
+export const WELCOME_MESSAGES: ChatMessage[] = [
   {
     id: "w1",
     role: "ai",
@@ -116,8 +123,9 @@ function parseReply(reply: string): { text: string; quickReplies?: string[] } {
 export default function ChatPanel({
   onContextChange, onPanelToggle, onMenuOpen, onMissionCreate,
   cartItems, contextView, panelOpen, isMobile, onAgentMission,
+  quickPrompt, onQuickPromptConsumed,
+  messages, setMessages, agentHistory,
 }: ChatPanelProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>(WELCOME_MESSAGES);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [planningActive, setPlanningActive] = useState(false);
@@ -126,7 +134,6 @@ export default function ChatPanel({
   const [currentPlanningSteps, setCurrentPlanningSteps] = useState<PlanStep[]>([]);
   const [currentPlanningTitle, setCurrentPlanningTitle] = useState("");
   const [inputFocused, setInputFocused] = useState(false);
-  const agentHistory = useRef<any[]>([]);
   /* 由情境卡片開啟的流程 → 記住情境包 id，AI 建立計畫後同步到「我的任務」 */
   const pendingPackId = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -300,6 +307,13 @@ export default function ChatPanel({
     setTimeout(() => callAgent(msg), 250);
   }, [input, appendMessage, callAgent]);
 
+  /* AI 規劃卡片上的快速操作（重新規劃／調整預算…）→ 當成使用者訊息自動送出 */
+  useEffect(() => {
+    if (!quickPrompt) return;
+    handleSend(quickPrompt);
+    onQuickPromptConsumed?.();
+  }, [quickPrompt, handleSend, onQuickPromptConsumed]);
+
   /* 情境卡片點選 → 送出對應的自然語言需求給 AI */
   const handleScenarioStart = useCallback((scenarioId: string) => {
     const prompt = SCENARIO_PROMPTS[scenarioId];
@@ -360,7 +374,6 @@ export default function ChatPanel({
             onReply={handleSend}
             onScenarioStart={handleScenarioStart}
             onContextChange={onContextChange}
-            onPanelToggle={onPanelToggle}
             isLast={idx === messages.length - 1}
           />
         ))}
@@ -423,7 +436,7 @@ export default function ChatPanel({
           {trayItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => { onContextChange(item.view); onPanelToggle(); }}
+              onClick={() => onContextChange(item.view)}
               style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 12px 5px 8px", borderRadius: 20, background: `${item.color}12`, border: `1.5px solid ${item.color}30`, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, transition: "all 0.15s" }}
             >
               <span style={{ fontSize: 14 }}>{item.icon}</span>
@@ -556,12 +569,11 @@ function ServiceGrid({ onScenarioStart }: { onScenarioStart: (id: string) => voi
   );
 }
 
-function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanelToggle, isLast }: {
+function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, isLast }: {
   msg: ChatMessage;
   onReply: (text: string) => void;
   onScenarioStart: (id: string) => void;
   onContextChange: (view: ContextView) => void;
-  onPanelToggle: () => void;
   isLast: boolean;
 }) {
   const isUser = msg.role === "user";
@@ -598,7 +610,7 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanel
           <div>
             {msg.text && <div style={{ fontSize: 14, color: "#0F0A2E", marginBottom: 10, lineHeight: 1.5 }}>{msg.text}</div>}
             <div
-              onClick={() => { onContextChange("agent-mission"); onPanelToggle(); }}
+              onClick={() => onContextChange("agent-mission")}
               style={{ background: "white", borderRadius: 16, border: "1.5px solid #6246EA", cursor: "pointer", overflow: "hidden", marginBottom: 8, transition: "box-shadow 0.15s" }}
               onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 20px rgba(98,70,234,0.18)")}
               onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
@@ -632,7 +644,7 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanel
             {(msg.data as typeof recommendations).map((rec) => (
               <div
                 key={rec.id}
-                onClick={() => { onReply(`選擇${rec.label}方案`); onContextChange("shopping"); onPanelToggle(); }}
+                onClick={() => { onReply(`選擇${rec.label}方案`); onContextChange("shopping"); }}
                 style={{ background: "white", borderRadius: 14, padding: "12px 14px", border: rec.isDefault ? `2px solid ${rec.tagColor}` : "1px solid #E5E7EB", cursor: "pointer", position: "relative", overflow: "hidden", transition: "all 0.15s" }}
                 onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(98,70,234,0.1)")}
                 onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}
@@ -673,7 +685,7 @@ function MessageBubble({ msg, onReply, onScenarioStart, onContextChange, onPanel
           <div style={{ background: "#F8F9FC", borderRadius: 14, padding: "12px 14px", border: "1px solid #E5E7EB", marginBottom: 8 }}>
             <div style={{ fontSize: 13, color: "#0F0A2E", marginBottom: 8, lineHeight: 1.5 }}>{msg.text}</div>
             <div style={{ fontSize: 12, color: "#6246EA", display: "flex", alignItems: "center", gap: 4, marginBottom: 10 }}><span>✦</span> {msg.data?.reason}</div>
-            <button onClick={() => { onContextChange("shopping"); onPanelToggle(); }} style={{ padding: "7px 16px", borderRadius: 20, border: "none", background: "#6246EA", color: "white", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-display)" }}>
+            <button onClick={() => onContextChange("shopping")} style={{ padding: "7px 16px", borderRadius: 20, border: "none", background: "#6246EA", color: "white", fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-display)" }}>
               查看推薦商品 →
             </button>
           </div>
