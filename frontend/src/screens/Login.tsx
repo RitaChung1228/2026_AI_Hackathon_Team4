@@ -12,18 +12,18 @@ const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "14px 14px 14px 42px",
   borderRadius: 14,
-  border: "1.5px solid #E5E7EB",
-  background: "#F8F9FC",
+  border: "1.5px solid #E2E8F0",
+  background: "#F5F7FA",
   fontSize: 15,
   fontFamily: "var(--font-body)",
-  color: "#0F0A2E",
+  color: "#16232E",
   outline: "none",
 };
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
   fontWeight: 700,
-  color: "#6B7280",
+  color: "#64748B",
   fontFamily: "var(--font-display)",
   marginBottom: 6,
   display: "block",
@@ -86,7 +86,7 @@ export default function Login({ onLogin }: LoginProps) {
       {/* Gradient hero */}
       <div
         style={{
-          background: "linear-gradient(160deg, #130E28 0%, #6246EA 75%, #8B5CF6 100%)",
+          background: "linear-gradient(160deg, #1B2A38 0%, #4C6E91 75%, #6E92B4 100%)",
           padding: "68px 28px 34px",
           flexShrink: 0,
           position: "relative",
@@ -114,16 +114,17 @@ export default function Login({ onLogin }: LoginProps) {
               height: 56,
               borderRadius: 18,
               background: "rgba(255,255,255,0.15)",
-              border: "1px solid rgba(255,255,255,0.25)",
               backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255,255,255,0.25)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               marginBottom: 18,
               boxShadow: "0 12px 34px rgba(0,0,0,0.25)",
+              padding: 9,
             }}
           >
-            <span style={{ color: "white", fontWeight: 900, fontSize: 24, fontFamily: "var(--font-display)" }}>U</span>
+            <img src="/logo-mark.png" alt="Lifepack" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
           <h1
             style={{
@@ -140,8 +141,8 @@ export default function Login({ onLogin }: LoginProps) {
           </h1>
           <p style={{ fontSize: 14, color: "rgba(255,255,255,0.72)", margin: 0, lineHeight: 1.6 }}>
             {mode === "login"
-              ? "登入 UNI Flow，繼續你的 AI 生活管家"
-              : "註冊後，UNI AI 會記住你的偏好與任務"}
+              ? "登入 Lifepack，繼續你的 AI 生活管家"
+              : "註冊後，Lifepack AI 會記住你的偏好與任務"}
           </p>
         </div>
       </div>
@@ -149,7 +150,7 @@ export default function Login({ onLogin }: LoginProps) {
       {/* Form */}
       <form onSubmit={handleSubmit} style={{ flex: 1, padding: "26px 28px 0", display: "flex", flexDirection: "column" }}>
         {/* Mode switch */}
-        <div style={{ display: "flex", gap: 4, background: "#F3F4F6", borderRadius: 14, padding: 4, marginBottom: 22 }}>
+        <div style={{ display: "flex", gap: 4, background: "#F1F5F9", borderRadius: 14, padding: 4, marginBottom: 22 }}>
           {(["login", "signup"] as Mode[]).map((m) => (
             <button
               key={m}
@@ -161,12 +162,12 @@ export default function Login({ onLogin }: LoginProps) {
                 borderRadius: 11,
                 border: "none",
                 background: mode === m ? "white" : "transparent",
-                color: mode === m ? "#6246EA" : "#9CA3AF",
+                color: mode === m ? "#4C6E91" : "#94A3B8",
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
                 fontSize: 14,
                 cursor: "pointer",
-                boxShadow: mode === m ? "0 2px 8px rgba(15,10,46,0.08)" : "none",
+                boxShadow: mode === m ? "0 2px 8px rgba(22,35,46,0.08)" : "none",
                 transition: "all 0.18s ease",
               }}
             >
@@ -245,7 +246,7 @@ export default function Login({ onLogin }: LoginProps) {
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 6 }}>
             <button
               type="button"
-              style={{ background: "none", border: "none", color: "#6246EA", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-display)", padding: 0 }}
+              style={{ background: "none", border: "none", color: "#4C6E91", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-display)", padding: 0 }}
             >
               忘記密碼？
             </button>
@@ -279,13 +280,13 @@ export default function Login({ onLogin }: LoginProps) {
             padding: "17px",
             borderRadius: 18,
             border: "none",
-            background: loading ? "#C4B5FD" : "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: loading ? "#A9C0D6" : "linear-gradient(135deg, #4C6E91, #6E92B4)",
             color: "white",
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: 17,
             cursor: loading ? "wait" : "pointer",
-            boxShadow: "0 10px 32px rgba(98,70,234,0.35)",
+            boxShadow: "0 10px 32px rgba(76,110,145,0.35)",
             transition: "background 0.2s",
           }}
         >
@@ -294,42 +295,9 @@ export default function Login({ onLogin }: LoginProps) {
 
         {/* Divider */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "22px 0 16px" }}>
-          <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
-          <span style={{ fontSize: 12, color: "#9CA3AF", fontFamily: "var(--font-display)" }}>或</span>
-          <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
-        </div>
-
-        {/* Social (demo only) */}
-        <div style={{ display: "flex", gap: 10 }}>
-          {[
-            { icon: "🍎", label: "Apple" },
-            { icon: "🟢", label: "LINE" },
-          ].map((s) => (
-            <button
-              key={s.label}
-              type="button"
-              onClick={() => onLogin(toUser(`${s.label.toLowerCase()}.user@uniflow.demo`, `${s.label} 使用者`), false)}
-              style={{
-                flex: 1,
-                padding: "13px",
-                borderRadius: 14,
-                border: "1.5px solid #E5E7EB",
-                background: "white",
-                fontFamily: "var(--font-display)",
-                fontWeight: 600,
-                fontSize: 14,
-                color: "#0F0A2E",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 7,
-              }}
-            >
-              <span style={{ fontSize: 15 }}>{s.icon}</span>
-              {s.label}
-            </button>
-          ))}
+          <div style={{ flex: 1, height: 1, background: "#E2E8F0" }} />
+          <span style={{ fontSize: 12, color: "#94A3B8", fontFamily: "var(--font-display)" }}>或</span>
+          <div style={{ flex: 1, height: 1, background: "#E2E8F0" }} />
         </div>
 
         <button
@@ -337,12 +305,12 @@ export default function Login({ onLogin }: LoginProps) {
           onClick={handleGuest}
           style={{
             width: "100%",
-            margin: "14px 0 36px",
+            margin: "0 0 36px",
             padding: "12px",
             background: "none",
             border: "none",
             fontSize: 14,
-            color: "#9CA3AF",
+            color: "#94A3B8",
             cursor: "pointer",
             fontFamily: "var(--font-body)",
           }}

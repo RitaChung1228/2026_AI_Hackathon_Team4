@@ -39,7 +39,7 @@ export const recoCatalog: RecoItem[] = [
     id: "adapter", name: "萬國轉接頭", detail: "日本 / 全球適用", price: 299,
     vendor: "悠選生活商城", kind: "product", icon: "🔌", tag: "出差必備",
     packIds: ["business-trip"], pairsWith: ["esim"],
-    image: IMG("1749498682646-45e7c11506ec"),
+    image: "/images/adapter.jpg",
   },
   {
     id: "powerbank", name: "行動電源 20000mAh", detail: "PD 65W 快充", price: 799,
@@ -98,7 +98,7 @@ export const recoCatalog: RecoItem[] = [
   {
     id: "food-delivery", name: "派對外送拼盤", detail: "6-8 人份 / 指定時段", price: 1180,
     vendor: "好味餐旅集團", kind: "service", icon: "🍱", tag: "免運",
-    packIds: ["birthday"], pairsWith: ["cake", "gift"], featured: true, tint: "#EDE9FF",
+    packIds: ["birthday"], pairsWith: ["cake", "gift"], featured: true, tint: "#E7EEF5",
   },
 
   /* ── 居家修繕（核心情境） ── */
@@ -136,7 +136,8 @@ export const recoCatalog: RecoItem[] = [
   {
     id: "pet-checkup", name: "寵物健康檢查", detail: "基礎血檢 + 觸診", price: 1800,
     vendor: "毛日子寵物照護", kind: "service", icon: "🩺", tag: "可線上掛號",
-    packIds: ["pet-care"], pairsWith: ["pet-food"], featured: true, tint: "#EDE9FF",
+    packIds: ["pet-care"], pairsWith: ["pet-food"], featured: true,
+    image: "/images/pet-checkup.jpg",
   },
   {
     id: "pet-food", name: "主食罐頭 6 入", detail: "雞肉口味 / 成貓用", price: 420,
@@ -177,7 +178,7 @@ export const recoCatalog: RecoItem[] = [
   {
     id: "bubble-wrap", name: "氣泡布 20m", detail: "易碎品包裝用", price: 220,
     vendor: "悠選生活商城", kind: "product", icon: "🫧", tag: "搭配推薦",
-    packIds: ["moving"], pairsWith: ["moving-box"], tint: "#EDE9FF",
+    packIds: ["moving"], pairsWith: ["moving-box"], tint: "#E7EEF5",
   },
   {
     id: "new-home-clean", name: "新居入住清潔", detail: "3 房 / 約 4 小時", price: 2400,
@@ -187,7 +188,7 @@ export const recoCatalog: RecoItem[] = [
   {
     id: "parcel-send", name: "包裹寄送（5 件）", detail: "隔日到府取件", price: 380,
     vendor: "順遞快運", kind: "service", icon: "📮", tag: "免出門",
-    packIds: ["moving"], pairsWith: ["moving-box"], featured: true, tint: "#EDE9FF",
+    packIds: ["moving"], pairsWith: ["moving-box"], featured: true, tint: "#E7EEF5",
   },
 
   /* ── 健身計畫 ── */
@@ -200,7 +201,7 @@ export const recoCatalog: RecoItem[] = [
   {
     id: "protein", name: "乳清蛋白 1kg", detail: "巧克力風味", price: 1290,
     vendor: "悠選生活商城", kind: "product", icon: "🥤", tag: "熱銷",
-    packIds: ["fitness"], pairsWith: ["pt-session"], tint: "#EDE9FF",
+    packIds: ["fitness"], pairsWith: ["pt-session"], tint: "#E7EEF5",
   },
   {
     id: "yoga-mat", name: "加厚瑜珈墊", detail: "10mm / 附背帶", price: 690,

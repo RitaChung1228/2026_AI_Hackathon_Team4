@@ -2,6 +2,12 @@ import { useState } from "react";
 
 interface OnboardingProps {
   onComplete: (tags: string[]) => void;
+  /** "edit" 直接進標籤選定頁，存檔後回上一頁，不跑歡迎頁與偏好檔案預覽 */
+  mode?: "onboarding" | "edit";
+  /** 編輯模式帶入目前已選的標籤 */
+  initialTags?: string[];
+  /** 編輯模式的返回（不儲存） */
+  onCancel?: () => void;
 }
 
 const TAG_CATEGORIES = [
@@ -39,9 +45,26 @@ const TAG_CATEGORIES = [
 
 type Step = "welcome" | "survey" | "profile";
 
-export default function Onboarding({ onComplete }: OnboardingProps) {
-  const [step, setStep] = useState<Step>("welcome");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+/** 示範資料用的舊英文標籤，編輯時對應到同義的中文標籤才選得起來 */
+const LEGACY_TAG_ALIASES: Record<string, string> = {
+  "#TimeSaver": "#效率優先",
+  "#FrequentPickup": "#超商取貨",
+  "#Traveler": "#旅行常客",
+  "#CoffeeLover": "#咖啡控",
+};
+
+const ALL_TAGS = new Set(TAG_CATEGORIES.flatMap((c) => c.tags));
+
+/** 只保留這個頁面選得到的標籤，避免存回無法再取消的標籤 */
+function normalizeTags(tags: string[]): string[] {
+  const mapped = tags.map((t) => LEGACY_TAG_ALIASES[t] ?? t).filter((t) => ALL_TAGS.has(t));
+  return [...new Set(mapped)];
+}
+
+export default function Onboarding({ onComplete, mode = "onboarding", initialTags = [], onCancel }: OnboardingProps) {
+  const isEdit = mode === "edit";
+  const [step, setStep] = useState<Step>(isEdit ? "survey" : "welcome");
+  const [selectedTags, setSelectedTags] = useState<string[]>(() => normalizeTags(initialTags));
   const [profileReady, setProfileReady] = useState(false);
 
   const toggleTag = (tag: string) => {
@@ -50,7 +73,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
     );
   };
 
+  /* 編輯模式直接存檔返回，不再跑一次偏好檔案預覽 */
   const goToProfile = () => {
+    if (isEdit) {
+      onComplete(selectedTags);
+      return;
+    }
     setStep("profile");
     setTimeout(() => setProfileReady(true), 400);
   };
@@ -63,7 +91,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         <div
           style={{
             flex: 1,
-            background: "linear-gradient(160deg, #130E28 0%, #6246EA 60%, #8B5CF6 100%)",
+            background: "linear-gradient(160deg, #1B2A38 0%, #4C6E91 60%, #6E92B4 100%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -91,9 +119,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               justifyContent: "center",
               marginBottom: 28,
               boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+              padding: 12,
             }}
           >
-            <span style={{ color: "white", fontWeight: 900, fontSize: 32, fontFamily: "var(--font-display)" }}>U</span>
+            <img src="/logo-mark.png" alt="Lifepack" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
 
           <h1
@@ -109,7 +138,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               lineHeight: 1.15,
             }}
           >
-            UNI Flow
+            Lifepack
           </h1>
           <p style={{ fontSize: 16, color: "rgba(255,255,255,0.72)", textAlign: "center", lineHeight: 1.6, margin: 0 }}>
             一站式 AI 生活管家<br />幫你把繁雜的事變成一個對話
@@ -118,10 +147,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
         {/* Bottom CTA */}
         <div style={{ padding: "32px 28px 48px", background: "white" }}>
-          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22, color: "#0F0A2E", margin: 0, marginBottom: 8, letterSpacing: "-0.4px" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 22, color: "#16232E", margin: 0, marginBottom: 8, letterSpacing: "-0.4px" }}>
             讓 AI 更懂你的生活
           </h2>
-          <p style={{ fontSize: 15, color: "#6B7280", lineHeight: 1.6, margin: 0, marginBottom: 28 }}>
+          <p style={{ fontSize: 15, color: "#64748B", lineHeight: 1.6, margin: 0, marginBottom: 28 }}>
             花 30 秒選擇你的標籤，之後你說一句話，我幫你搞定其他的。
           </p>
           <button
@@ -131,20 +160,20 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               padding: "17px",
               borderRadius: 18,
               border: "none",
-              background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+              background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
               color: "white",
               fontFamily: "var(--font-display)",
               fontWeight: 700,
               fontSize: 17,
               cursor: "pointer",
-              boxShadow: "0 10px 32px rgba(98,70,234,0.35)",
+              boxShadow: "0 10px 32px rgba(76,110,145,0.35)",
             }}
           >
             開始設定 →
           </button>
           <button
             onClick={() => onComplete([])}
-            style={{ width: "100%", marginTop: 12, padding: "12px", background: "none", border: "none", fontSize: 14, color: "#9CA3AF", cursor: "pointer", fontFamily: "var(--font-body)" }}
+            style={{ width: "100%", marginTop: 12, padding: "12px", background: "none", border: "none", fontSize: 14, color: "#94A3B8", cursor: "pointer", fontFamily: "var(--font-body)" }}
           >
             先跳過
           </button>
@@ -156,17 +185,29 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   /* ── Survey ── */
   if (step === "survey") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "#F8F9FC" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100%", background: "#F5F7FA" }}>
         {/* Header */}
-        <div style={{ background: "white", padding: "52px 20px 20px", borderBottom: "1px solid #F3F4F6", flexShrink: 0 }}>
+        <div style={{ background: "white", padding: "52px 20px 20px", borderBottom: "1px solid #F1F5F9", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: "linear-gradient(135deg, #6246EA, #8B5CF6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "white", fontWeight: 800, fontSize: 14, fontFamily: "var(--font-display)" }}>U</span>
-            </div>
-            <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 17, color: "#0F0A2E" }}>選擇你的標籤</span>
+            {isEdit ? (
+              <button
+                onClick={onCancel}
+                aria-label="返回"
+                style={{ width: 34, height: 34, borderRadius: 9, background: "#F1F5F9", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 5l-7 7 7 7" stroke="#16232E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            ) : (
+              <img src="/logo-mark.png" alt="Lifepack" style={{ width: 34, height: 34, objectFit: "contain" }} />
+            )}
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 17, color: "#16232E" }}>
+              {isEdit ? "編輯我的標籤" : "選擇你的標籤"}
+            </span>
           </div>
-          <p style={{ fontSize: 14, color: "#6B7280", margin: 0, lineHeight: 1.5 }}>
-            選越多越準確，每個類別至少選一個 ✦
+          <p style={{ fontSize: 14, color: "#64748B", margin: 0, lineHeight: 1.5 }}>
+            {isEdit ? "點一下加入或移除，改完按下方儲存 ✦" : "選越多越準確，每個類別至少選一個 ✦"}
           </p>
           {/* Selected count */}
           {selectedTags.length > 0 && (
@@ -175,7 +216,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                 <span
                   key={tag}
                   className="tag-pop"
-                  style={{ flexShrink: 0, padding: "4px 10px", borderRadius: 20, background: "#6246EA", color: "white", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-display)" }}
+                  style={{ flexShrink: 0, padding: "4px 10px", borderRadius: 20, background: "#4C6E91", color: "white", fontSize: 12, fontWeight: 600, fontFamily: "var(--font-display)" }}
                 >
                   {tag}
                 </span>
@@ -190,7 +231,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <div key={cat.id} style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                 <span style={{ fontSize: 16 }}>{cat.emoji}</span>
-                <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#0F0A2E" }}>{cat.label}</span>
+                <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, color: "#16232E" }}>{cat.label}</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {cat.tags.map((tag) => {
@@ -202,9 +243,9 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                       style={{
                         padding: "8px 16px",
                         borderRadius: 24,
-                        border: `2px solid ${active ? "#6246EA" : "#E5E7EB"}`,
-                        background: active ? "#EDE9FF" : "white",
-                        color: active ? "#6246EA" : "#6B7280",
+                        border: `2px solid ${active ? "#4C6E91" : "#E2E8F0"}`,
+                        background: active ? "#E7EEF5" : "white",
+                        color: active ? "#4C6E91" : "#64748B",
                         fontSize: 14,
                         fontWeight: active ? 700 : 500,
                         cursor: "pointer",
@@ -224,7 +265,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         </div>
 
         {/* CTA */}
-        <div style={{ padding: "14px 20px 36px", background: "white", borderTop: "1px solid #F3F4F6", flexShrink: 0 }}>
+        <div style={{ padding: "14px 20px 36px", background: "white", borderTop: "1px solid #F1F5F9", flexShrink: 0 }}>
           <button
             onClick={goToProfile}
             disabled={selectedTags.length === 0}
@@ -233,17 +274,21 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               padding: "16px",
               borderRadius: 16,
               border: "none",
-              background: selectedTags.length > 0 ? "linear-gradient(135deg, #6246EA, #8B5CF6)" : "#E5E7EB",
-              color: selectedTags.length > 0 ? "white" : "#9CA3AF",
+              background: selectedTags.length > 0 ? "linear-gradient(135deg, #4C6E91, #6E92B4)" : "#E2E8F0",
+              color: selectedTags.length > 0 ? "white" : "#94A3B8",
               fontFamily: "var(--font-display)",
               fontWeight: 700,
               fontSize: 16,
               cursor: selectedTags.length > 0 ? "pointer" : "not-allowed",
               transition: "all 0.2s",
-              boxShadow: selectedTags.length > 0 ? "0 8px 24px rgba(98,70,234,0.3)" : "none",
+              boxShadow: selectedTags.length > 0 ? "0 8px 24px rgba(76,110,145,0.3)" : "none",
             }}
           >
-            {selectedTags.length > 0 ? `生成我的偏好檔案 (${selectedTags.length} 個標籤)` : "至少選擇一個標籤"}
+            {selectedTags.length === 0
+              ? "至少選擇一個標籤"
+              : isEdit
+                ? `儲存標籤 (${selectedTags.length} 個)`
+                : `生成我的偏好檔案 (${selectedTags.length} 個標籤)`}
           </button>
         </div>
       </div>
@@ -256,7 +301,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
       {/* Gradient top */}
       <div
         style={{
-          background: "linear-gradient(160deg, #130E28 0%, #6246EA 70%)",
+          background: "linear-gradient(160deg, #1B2A38 0%, #4C6E91 70%)",
           padding: "64px 24px 32px",
           flexShrink: 0,
         }}
@@ -268,7 +313,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           你的 AI 偏好檔案
         </h2>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: 1.5 }}>
-          根據你的選擇，UNI AI 會用這些標籤幫你做更聰明的決策
+          根據你的選擇，Lifepack AI 會用這些標籤幫你做更聰明的決策
         </p>
       </div>
 
@@ -279,7 +324,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
           if (catTags.length === 0) return null;
           return (
             <div key={cat.id} style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "#9CA3AF", letterSpacing: "0.8px", marginBottom: 8, fontFamily: "var(--font-display)" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#94A3B8", letterSpacing: "0.8px", marginBottom: 8, fontFamily: "var(--font-display)" }}>
                 {cat.emoji} {cat.label.toUpperCase()}
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -290,13 +335,13 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
                     style={{
                       padding: "7px 14px",
                       borderRadius: 24,
-                      background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+                      background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
                       color: "white",
                       fontSize: 14,
                       fontWeight: 700,
                       fontFamily: "var(--font-display)",
                       animationDelay: `${i * 0.07}s`,
-                      boxShadow: "0 4px 12px rgba(98,70,234,0.25)",
+                      boxShadow: "0 4px 12px rgba(76,110,145,0.25)",
                     }}
                   >
                     {tag}
@@ -310,16 +355,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
         {/* AI note */}
         <div
           style={{
-            background: "linear-gradient(135deg, rgba(98,70,234,0.06), rgba(139,92,246,0.04))",
-            border: "1px solid rgba(98,70,234,0.15)",
+            background: "linear-gradient(135deg, rgba(76,110,145,0.06), rgba(110,146,180,0.04))",
+            border: "1px solid rgba(76,110,145,0.15)",
             borderRadius: 16,
             padding: "16px",
             marginTop: 8,
           }}
         >
           <div style={{ display: "flex", gap: 10 }}>
-            <span style={{ color: "#6246EA", fontSize: 14, flexShrink: 0 }}>✦</span>
-            <p style={{ fontSize: 13, color: "#6246EA", margin: 0, lineHeight: 1.6, fontWeight: 500 }}>
+            <span style={{ color: "#4C6E91", fontSize: 14, flexShrink: 0 }}>✦</span>
+            <p style={{ fontSize: 13, color: "#4C6E91", margin: 0, lineHeight: 1.6, fontWeight: 500 }}>
               根據你選擇的 {selectedTags.length} 個標籤，我已為你預先推薦最適合的情境包。之後可以隨時在「我的」調整偏好。
             </p>
           </div>
@@ -334,16 +379,16 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             padding: "17px",
             borderRadius: 18,
             border: "none",
-            background: "linear-gradient(135deg, #6246EA, #8B5CF6)",
+            background: "linear-gradient(135deg, #4C6E91, #6E92B4)",
             color: "white",
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: 17,
             cursor: "pointer",
-            boxShadow: "0 10px 32px rgba(98,70,234,0.35)",
+            boxShadow: "0 10px 32px rgba(76,110,145,0.35)",
           }}
         >
-          開始使用 UNI Flow →
+          開始使用 Lifepack →
         </button>
       </div>
     </div>
