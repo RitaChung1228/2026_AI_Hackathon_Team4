@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import { chat, invokeBedrockClaude, ChatMessage } from "./bedrock.js";
 import { agentChat } from "./agent.js";
+import { getCart, listBundles, listOrders } from "./api/userLists.js";
+import { getProfile } from "./api/profile.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;

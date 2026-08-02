@@ -26,11 +26,12 @@ const AGENT_URL = import.meta.env.VITE_AGENT_URL ?? `${API_BASE}/api/chat/agent`
 
 /**
  * Demo 使用者 ID。
- * DynamoDB UserProfile 目前只有 usr_jamie_888 / usr_alex_666，
- * 用 u1 會查不到 profile（AI 拿不到偏好標籤）。
- * 要讓個人化生效就設 VITE_USER_ID=usr_jamie_888。
+ * 必須對得上 DynamoDB UserProfile 表裡實際存在的 user_id，
+ * 否則 get_user_profile 會回空 profile，AI 就拿不到偏好標籤、個人化失效。
+ * 目前表裡有 usr_jamie_888（Busy Professional）與 usr_alex_666（Efficiency Chaser）。
+ * 要換人測試就設 VITE_USER_ID。
  */
-const USER_ID = import.meta.env.VITE_USER_ID ?? "u1";
+const USER_ID = import.meta.env.VITE_USER_ID ?? "usr_jamie_888";
 
 let msgCounter = 1;
 const mkId = () => `msg-${++msgCounter}-${Date.now()}`;
